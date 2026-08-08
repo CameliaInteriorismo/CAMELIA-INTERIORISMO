@@ -45,7 +45,9 @@ export function HorizontalTabs({
             <span
               className={cn(
                 "font-title text-xl transition-opacity duration-500",
-                active ? "text-primary opacity-100" : "text-primary opacity-45 hover:opacity-70",
+                active
+                  ? "text-primary opacity-100"
+                  : "text-primary opacity-45 hover:opacity-70",
               )}
             >
               {item.label}

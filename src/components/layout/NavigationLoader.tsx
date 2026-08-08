@@ -131,7 +131,9 @@ export function NavigationLoader() {
         >
           <motion.div
             animate={
-              shouldReduceMotion ? undefined : { scale: [1, 1.08, 1], opacity: [0.75, 1, 0.75] }
+              shouldReduceMotion
+                ? undefined
+                : { scale: [1, 1.08, 1], opacity: [0.75, 1, 0.75] }
             }
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
           >

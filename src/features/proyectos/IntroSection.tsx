@@ -11,10 +11,10 @@ export function IntroSection() {
         </h2>
         <p className="text-primary/75 mt-title text-sm leading-relaxed">
           Diseñamos espacios que responden a quienes lo habitan, cuidando la
-          distribución, la luz, los materiales y cada detalle desde una
-          mirada coherente y duradera. Cada proyecto nace de entender cómo
-          vive cada cliente para traducirlo en interiores equilibrados,
-          funcionales y con identidad propia.
+          distribución, la luz, los materiales y cada detalle desde una mirada
+          coherente y duradera. Cada proyecto nace de entender cómo vive cada
+          cliente para traducirlo en interiores equilibrados, funcionales y con
+          identidad propia.
         </p>
       </Container>
     </section>

@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
-import { CONTACT, MAPS_URL, SOCIALS } from "@/features/contacto/data";
+import {
+  CONTACT,
+  MAPS_URL,
+  SOCIALS,
+  SOCIAL_URLS,
+} from "@/features/contacto/data";
 
 function CardAction({ href, label }: { href: string; label: string }) {
   return (
@@ -9,7 +14,7 @@ function CardAction({ href, label }: { href: string; label: string }) {
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="text-primary hover:text-auxiliary mt-auto inline-flex items-center gap-2 text-sm transition-colors duration-300"
+      className="text-primary hover:text-primary/60 mt-auto inline-flex items-center gap-2 text-sm transition-colors duration-300"
     >
       {label}
       <ArrowRightIcon className="h-3 w-3" />
@@ -29,7 +34,7 @@ function Card({
     // page, matching the reference's restraint. Vertical rhythm is tighter
     // than the outer padding (gap-sm rather than gap-block) so the card
     // stays compact without crowding the text; width is untouched.
-    <div className="border-primary/25 flex h-full flex-col gap-sm border px-6 py-6">
+    <div className="border-primary/25 gap-sm flex h-full flex-col border px-6 py-6">
       <h2 className="font-title text-primary text-sm tracking-wide uppercase">
         {title}
       </h2>
@@ -66,13 +71,9 @@ export function ContactCards() {
             {/* Bare icons — no border, fill or container. Hover keeps the
                 same soft fade the other card actions use. */}
             <div className="flex items-center gap-4">
-              {SOCIALS.map(({ label, src }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  className="block transition-opacity duration-300 hover:opacity-60"
-                >
+              {SOCIALS.map(({ label, src }) => {
+                const href = SOCIAL_URLS[label];
+                const icon = (
                   <Image
                     src={src}
                     alt=""
@@ -80,8 +81,25 @@ export function ContactCards() {
                     height={20}
                     className="h-5 w-5"
                   />
-                </a>
-              ))}
+                );
+                // LinkedIn has no URL yet — shown, but not as a dead link.
+                return href ? (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="block transition-opacity duration-300 hover:opacity-60"
+                  >
+                    {icon}
+                  </a>
+                ) : (
+                  <span key={label} aria-hidden className="block">
+                    {icon}
+                  </span>
+                );
+              })}
             </div>
           </Card>
         </div>

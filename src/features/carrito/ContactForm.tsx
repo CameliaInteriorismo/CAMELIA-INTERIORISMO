@@ -10,24 +10,26 @@ import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon, PinIcon } from "@/components/ui/icons";
 import { DeliveryModeToggle } from "@/features/carrito/DeliveryModeToggle";
+import { CONTACT, MAPS_URL } from "@/features/contacto/data";
 import { useCartStore } from "@/stores/cartStore";
 
-// Real studio address/hours, per Diseño's CONFIRMACIÓN PEDIDO DATOS.png —
-// more specific than Footer.tsx's shorter "Alzira, Valencia (España)" line
-// (which is out of scope here; flagged separately, not silently changed).
+// Address and Maps link come from the shared contact data — this screen
+// used to carry its own copy of both, which is exactly how the site ended
+// up with three different versions of the studio's street.
 const STUDIO_NAME = "Camelia interiorismo";
-const STUDIO_ADDRESS = "Avenida de la Hispanidad, 4";
-const STUDIO_LOCALITY = "46600, Alzira, Valencia";
+const [STUDIO_ADDRESS, STUDIO_LOCALITY] = CONTACT.addressLines;
 const STUDIO_HOURS = "Horario: L-V de 9:00 a 18:00";
-const STUDIO_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=" +
-  encodeURIComponent(`${STUDIO_ADDRESS}, ${STUDIO_LOCALITY}`);
+const STUDIO_MAPS_URL = MAPS_URL;
 
 const schema = z
   .object({
     name: z.string().trim().min(1, "Campo obligatorio"),
     taxId: z.string().trim().min(1, "Campo obligatorio"),
-    email: z.string().trim().min(1, "Campo obligatorio").email("Correo electrónico no válido"),
+    email: z
+      .string()
+      .trim()
+      .min(1, "Campo obligatorio")
+      .email("Correo electrónico no válido"),
     phone: z.string().trim().min(1, "Campo obligatorio"),
     deliveryMode: z.enum(["domicilio", "recogida"], {
       error: "Selecciona un método de entrega",
@@ -116,7 +118,8 @@ export function ContactForm() {
       email: data.email,
       phone: data.phone,
       address: data.deliveryMode === "domicilio" ? data.address : undefined,
-      postalCode: data.deliveryMode === "domicilio" ? data.postalCode : undefined,
+      postalCode:
+        data.deliveryMode === "domicilio" ? data.postalCode : undefined,
       city: data.deliveryMode === "domicilio" ? data.city : undefined,
       province: data.deliveryMode === "domicilio" ? data.province : undefined,
     });
@@ -168,7 +171,7 @@ export function ContactForm() {
               </div>
             </div>
 
-            <div className="col-span-12 mt-title md:col-span-6 md:col-start-7 md:mt-0">
+            <div className="mt-title col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
               <DeliveryModeToggle
                 value={deliveryMode ?? null}
                 onChange={(mode) =>

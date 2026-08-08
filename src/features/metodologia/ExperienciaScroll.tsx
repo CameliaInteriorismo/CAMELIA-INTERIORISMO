@@ -192,9 +192,9 @@ export function ExperienciaScroll() {
           Queremos que te sientas acompañado en cada fase del proyecto,
           entendiendo lo que ocurre en todo momento y viviendo el proceso con
           tranquilidad y confianza. Sabemos que diseñar un espacio implica
-          muchas decisiones y tiempo, por eso buscamos hacer las cosas de
-          forma cercana, clara y bien organizada, cuidando tanto el resultado
-          final como la experiencia de todo el camino.
+          muchas decisiones y tiempo, por eso buscamos hacer las cosas de forma
+          cercana, clara y bien organizada, cuidando tanto el resultado final
+          como la experiencia de todo el camino.
         </p>
 
         <div ref={stepsRef} className="relative mt-[100px]">

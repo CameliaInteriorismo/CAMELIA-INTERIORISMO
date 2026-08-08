@@ -27,7 +27,9 @@ export function ContactHero() {
             sizes="(min-width: 1024px) 1120px, 100vw"
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <h1 className={cn("font-title text-primary px-6", PAGE_TITLE_SCALE)}>
+            <h1
+              className={cn("font-title text-primary px-6", PAGE_TITLE_SCALE)}
+            >
               Contacto
             </h1>
           </div>

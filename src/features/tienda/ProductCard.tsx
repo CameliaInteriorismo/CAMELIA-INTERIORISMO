@@ -63,9 +63,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </h3>
         {product.price !== undefined && (
-          <p className="text-primary shrink-0 text-base">
-            {product.price} €
-          </p>
+          <p className="text-primary shrink-0 text-base">{product.price} €</p>
         )}
       </div>
       {product.category && (

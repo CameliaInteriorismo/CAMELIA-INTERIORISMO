@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ConsentSettingsLink } from "@/components/consent/ConsentSettingsLink";
 import { Container } from "@/components/layout/Container";
+import { CONTACT, SOCIALS, SOCIAL_URLS } from "@/features/contacto/data";
 
 const NAV_LINKS = [
   { label: "Inicio", href: "/" },
@@ -9,9 +10,8 @@ const NAV_LINKS = [
   { label: "Metodología", href: "/metodologia" },
   { label: "Servicios", href: "/servicios" },
   { label: "Proyectos", href: "/proyectos" },
-  { label: "Tienda", href: "/tienda" },
+  { label: "Shop", href: "/tienda" },
   { label: "Blog", href: "/blog" },
-  { label: "Contacto", href: "/contacto" },
 ];
 
 // Fixed order, set by the studio. "Configuración de cookies" sits fourth as
@@ -25,12 +25,6 @@ const LEGAL_LINKS_BEFORE_SETTINGS = [
 
 const LEGAL_LINKS_AFTER_SETTINGS = [
   { label: "Accesibilidad", href: "/accesibilidad" },
-];
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", src: "/assets/icons/ins.png" },
-  { label: "TikTok", src: "/assets/icons/tiktok.png" },
-  { label: "LinkedIn", src: "/assets/icons/linkedin.png" },
 ];
 
 export function Footer() {
@@ -59,13 +53,9 @@ export function Footer() {
               para habitarse, vivirse y sentirse propios.
             </p>
             <div className="mt-6 flex gap-4">
-              {SOCIAL_LINKS.map(({ label, src }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  className="transition-opacity hover:opacity-70"
-                >
+              {SOCIALS.map(({ label, src }) => {
+                const href = SOCIAL_URLS[label];
+                const icon = (
                   <Image
                     src={src}
                     alt=""
@@ -73,8 +63,25 @@ export function Footer() {
                     height={24}
                     className="h-5 w-5"
                   />
-                </a>
-              ))}
+                );
+                // LinkedIn has no URL yet — shown, but not as a dead link.
+                return href ? (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="transition-opacity hover:opacity-70"
+                  >
+                    {icon}
+                  </a>
+                ) : (
+                  <span key={label} aria-hidden>
+                    {icon}
+                  </span>
+                );
+              })}
             </div>
           </div>
 
@@ -96,18 +103,24 @@ export function Footer() {
 
           <div>
             <p className="text-sm font-normal tracking-[0.06em]">Contacto</p>
+            {/* Bloque informativo, no navegación: nada de aquí es clicable ni
+                tiene hover. Los únicos enlaces del pie son los de Navegación
+                y los legales de abajo. */}
             <ul className="mt-4 space-y-3 text-sm font-light tracking-[-0.01em]">
-              <li>Alzira, Valencia (España)</li>
-              <li>
-                <a href="mailto:info@cameliainteriorismo.com">
-                  info@cameliainteriorismo.com
-                </a>
+              {/* Las dos líneas de la dirección van juntas dentro de un mismo
+                  li, con su propio interlineado ajustado: se separan menos
+                  entre sí (≈20px) que del resto de la lista (12px de
+                  space-y-3 + altura de línea), así que se leen como un bloque
+                  y no como dos datos distintos. */}
+              <li className="leading-relaxed">
+                {CONTACT.addressLines.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
               </li>
-              <li>
-                <a href="tel:+34601531201" className="[word-spacing:0.3em]">
-                  +34 601 53 12 01
-                </a>
-              </li>
+              <li>info@cameliainteriorismo.com</li>
+              <li className="[word-spacing:0.3em]">+34 601 53 12 01</li>
             </ul>
           </div>
 

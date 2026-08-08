@@ -11,7 +11,7 @@ const STRIPE_PATTERN =
 export function CtaBanner() {
   return (
     <section
-      className="bg-auxiliary py-20 mb-[120px]"
+      className="bg-auxiliary mb-[120px] py-20"
       style={{ backgroundImage: STRIPE_PATTERN }}
     >
       <Container>

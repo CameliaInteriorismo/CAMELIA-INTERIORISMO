@@ -58,6 +58,13 @@ const PROCESO_TABS: ProcesoTab[] = [
   },
 ];
 
+// Numbered from the array index rather than written into the data, so the
+// sequence can't fall out of step if a phase is added, removed or reordered.
+const NUMBERED_TABS = PROCESO_TABS.map((tab, index) => ({
+  ...tab,
+  label: `${index + 1}. ${tab.label}`,
+}));
+
 export function ProcesoTabs() {
   const [activeIndex, setActiveIndex] = useState(0);
   const current = PROCESO_TABS[activeIndex];
@@ -70,7 +77,7 @@ export function ProcesoTabs() {
         </h2>
 
         <HorizontalTabs
-          items={PROCESO_TABS}
+          items={NUMBERED_TABS}
           activeIndex={activeIndex}
           onChange={setActiveIndex}
           layoutId="proceso-tab-underline"
@@ -81,7 +88,7 @@ export function ProcesoTabs() {
           <div className="col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-center">
             <div>
               <h3 className="font-title text-primary text-2xl">
-                {current.title}
+                {activeIndex + 1}. {current.title}
               </h3>
               <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
                 {current.body.map((paragraph, index) => (

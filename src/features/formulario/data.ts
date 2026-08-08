@@ -33,6 +33,8 @@ export type Step =
       name: string;
       title: string;
       help?: string;
+      /** Substring of `help` to set in bold. Matched verbatim. */
+      helpBold?: string;
       fields: { name: string; label: string; placeholder?: string }[];
       image: string;
     }
@@ -148,6 +150,7 @@ export const STEPS: Step[] = [
     name: "detalles",
     title: "Algunos detalles más sobre el proyecto",
     help: "Esta parte es completamente opcional, pero nos ayudará a entender mejor tu estilo, tus necesidades y la visión que tienes para el espacio.",
+    helpBold: "Esta parte es completamente opcional",
     fields: [
       {
         name: "razonPrincipal",

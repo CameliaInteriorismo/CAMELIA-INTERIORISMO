@@ -75,8 +75,7 @@ export const PRODUCTS: Product[] = [
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       materialesYMedidas:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      envioYEntrega:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      envioYEntrega: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
   },
   { slug: "producto-2", name: "Producto 2" },

@@ -6,12 +6,23 @@ import { Marquee } from "@/components/ui/Marquee";
 // Corston and Ramón Soler shipped on solid white, which was flood-filled
 // away from the edges so interior counters stayed intact. Order interleaves
 // wide wordmarks with compact marks so neither kind clumps together.
-const PARTNERS = [
+/** The common slot every mark is fitted into. */
+const SLOT = "h-10 w-[140px] md:h-12 md:w-[170px]";
+
+const PARTNERS: { name: string; src: string; slot?: string }[] = [
   { name: "Blum", src: "/assets/colaboradores/blum.png" },
   { name: "Casamance", src: "/assets/colaboradores/casamance.png" },
   { name: "Gessi", src: "/assets/colaboradores/gessi.png" },
   { name: "Ramón Soler", src: "/assets/colaboradores/ramonsoler.png" },
-  { name: "Maora Ceramic", src: "/assets/colaboradores/maora.png" },
+  {
+    name: "Maora Ceramic",
+    src: "/assets/colaboradores/maora.png",
+    // ~35% larger than the common slot, at the studio's request. It's a
+    // stacked lockup rather than a wordmark, so object-contain fits it to
+    // the slot's height and leaves it optically small beside the wide
+    // marks; the bigger box gives back the presence its proportions cost.
+    slot: "h-14 w-[190px] md:h-16 md:w-[230px]",
+  },
   { name: "Falmec", src: "/assets/colaboradores/falmec.png" },
   { name: "GRE Studio", src: "/assets/colaboradores/gre-studio.png" },
   { name: "Asko", src: "/assets/colaboradores/asko.png" },
@@ -28,7 +39,7 @@ export function PartnerLogos() {
     // mark on the page background.
     <span
       key={partner.name}
-      className="relative block h-10 w-[140px] shrink-0 md:h-12 md:w-[170px]"
+      className={`relative block shrink-0 ${partner.slot ?? SLOT}`}
     >
       {/* Eager: the duplicated half of the track sits off-screen, and
           lazy-loading would leave it blank until it drifted in — visible
@@ -38,7 +49,7 @@ export function PartnerLogos() {
         src={partner.src}
         alt={partner.name}
         fill
-        sizes="170px"
+        sizes="230px"
         loading="eager"
         className="object-contain"
       />

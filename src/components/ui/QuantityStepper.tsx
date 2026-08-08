@@ -22,9 +22,7 @@ export function QuantityStepper({
       >
         −
       </button>
-      <span className="text-primary min-w-8 text-center text-sm">
-        {value}
-      </span>
+      <span className="text-primary min-w-8 text-center text-sm">{value}</span>
       <button
         type="button"
         onClick={() => onChange(value + 1)}

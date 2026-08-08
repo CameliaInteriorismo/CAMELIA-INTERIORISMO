@@ -26,6 +26,28 @@ const STEP_SHIFT = 24;
 const STEP_IN = 0.3;
 const STEP_OUT = 0.18;
 
+/**
+ * The help line, with `helpBold` set in bold where a step asks for it (the
+ * optional-section notice). Split rather than stored as markup so the copy
+ * stays a plain sentence in the data file.
+ */
+function renderHelp(step: Exclude<Step, { kind: "intro" }>) {
+  const help = step.help;
+  if (!help) return null;
+
+  const bold = "helpBold" in step ? step.helpBold : undefined;
+  if (!bold || !help.includes(bold)) return help;
+
+  const [before, ...rest] = help.split(bold);
+  return (
+    <>
+      {before}
+      <strong className="text-primary font-semibold">{bold}</strong>
+      {rest.join(bold)}
+    </>
+  );
+}
+
 function StepBody({
   step,
   answers,
@@ -46,7 +68,7 @@ function StepBody({
       </h1>
       {step.help && (
         <p className="text-primary/70 mt-sm max-w-[30rem] text-sm leading-relaxed">
-          {step.help}
+          {renderHelp(step)}
         </p>
       )}
 

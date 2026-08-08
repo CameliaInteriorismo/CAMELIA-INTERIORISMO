@@ -7,11 +7,7 @@ import { ProductCard } from "@/features/tienda/ProductCard";
 import { PRODUCTS } from "@/features/tienda/data";
 
 type SortOption =
-  | "destacados"
-  | "recientes"
-  | "precio-asc"
-  | "precio-desc"
-  | "nombre-asc";
+  "destacados" | "recientes" | "precio-asc" | "precio-desc" | "nombre-asc";
 
 const SORT_OPTIONS: { label: string; value: SortOption }[] = [
   { label: "Destacados", value: "destacados" },
@@ -52,10 +48,14 @@ export function ProductsGrid() {
         list = [...list].reverse();
         break;
       case "precio-asc":
-        list = [...list].sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+        list = [...list].sort(
+          (a, b) => (a.price ?? Infinity) - (b.price ?? Infinity),
+        );
         break;
       case "precio-desc":
-        list = [...list].sort((a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity));
+        list = [...list].sort(
+          (a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity),
+        );
         break;
       case "nombre-asc":
         list = [...list].sort((a, b) => a.name.localeCompare(b.name, "es"));

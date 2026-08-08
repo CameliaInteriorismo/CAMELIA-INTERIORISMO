@@ -34,7 +34,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
         </div>
       </div>
 
-      <div className="col-span-12 mt-block md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="mt-block col-span-12 md:col-span-8 md:col-start-5 md:mt-0">
         <h2 className="font-title text-primary text-2xl uppercase">
           {item.title}
         </h2>
@@ -48,9 +48,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
         {product?.price !== undefined && (
           <p className="text-primary mt-sm text-base">
             {formatPrice(product.price * item.quantity)}{" "}
-            <span className="text-primary/60 text-xs italic">
-              IVA incluido
-            </span>
+            <span className="text-primary/60 text-xs italic">IVA incluido</span>
           </p>
         )}
 

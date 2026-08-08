@@ -35,7 +35,7 @@ export function FinishSwatch({
       aria-label={finish.name}
       aria-pressed={active}
       className={cn(
-        "shrink-0 rounded-full ring-1 ring-offset-2 ring-offset-background transition-shadow",
+        "ring-offset-background shrink-0 rounded-full ring-1 ring-offset-2 transition-shadow",
         size,
         active ? "ring-primary" : "ring-primary/20",
       )}

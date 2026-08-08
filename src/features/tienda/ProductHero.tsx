@@ -79,7 +79,7 @@ export function ProductHero({ product }: { product: Product }) {
 
           <div className="col-span-12 md:col-span-5 md:col-start-8">
             {product.category && (
-              <p className="text-primary/60 text-sm uppercase tracking-wide">
+              <p className="text-primary/60 text-sm tracking-wide uppercase">
                 {product.category}
               </p>
             )}

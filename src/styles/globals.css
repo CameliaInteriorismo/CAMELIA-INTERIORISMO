@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #310304;
+  /* Marca: vino y coral. Todo el color del sitio sale de estas variables,
+     así que un cambio de marca es un cambio aquí y en ningún otro sitio. */
+  --color-primary: #3f0e1a; /* Vino  — RGB 63 14 26 */
   --color-background: #fcf7ec;
-  --color-secondary: #d64843;
+  --color-secondary: #c6404e; /* Coral — RGB 198 64 78 */
   --color-auxiliary: #778b9a;
 
   --grid-margin: 160px;
@@ -44,4 +46,64 @@ h5,
 h6,
 .font-title {
   font-family: var(--font-arizona-flare);
+}
+
+/* --- Interacción -------------------------------------------------------
+   Todo lo clicable se comporta igual en todo el sitio, en vez de repetir
+   las mismas clases en cada componente. */
+
+a,
+button,
+label:has(input[type="radio"]),
+label:has(input[type="checkbox"]),
+summary,
+[role="button"],
+[role="switch"],
+[role="option"] {
+  cursor: pointer;
+}
+
+/* Un botón deshabilitado no invita a pulsarse. */
+button:disabled,
+[role="switch"][aria-disabled="true"],
+button[disabled] {
+  cursor: not-allowed;
+}
+
+/* El hover base: un aclarado mínimo y un desplazamiento de medio píxel.
+   Tres exclusiones:
+   - lo que ya trae su propio hover: (subrayados, overlays de las tarjetas
+     de proyecto, cambios de borde en los campos…), para no pisarlo;
+   - los grupos, por lo mismo;
+   - cualquier enlace o botón que envuelva una imagen. Eso cubre todos los
+     logotipos del sitio — el de la navbar, el del menú, el del formulario —
+     que deben ser clicables pero no reaccionar visualmente. */
+a:not([class*="hover:"]):not([class*="group"]):not(:has(img)),
+button:not([class*="hover:"]):not(:disabled):not(:has(img)) {
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+@media (hover: hover) {
+  a:not([class*="hover:"]):not([class*="group"]):not(:has(img)):hover,
+  button:not([class*="hover:"]):not(:disabled):not(:has(img)):hover {
+    opacity: 0.7;
+    transform: translateY(-1px);
+  }
+}
+
+/* Respeta la preferencia del sistema: se mantiene el cambio de opacidad,
+   que comunica lo mismo, y se elimina el movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  a:hover,
+  button:hover {
+    transform: none;
+  }
+}
+
+/* Foco visible y consistente para navegación con teclado. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }

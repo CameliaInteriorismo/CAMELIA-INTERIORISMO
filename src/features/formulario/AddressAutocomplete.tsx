@@ -8,8 +8,20 @@ import { cn } from "@/utils/cn";
 
 /** Matches MIN_QUERY_LENGTH in the route handler — below it, no request. */
 const MIN_QUERY_LENGTH = 3;
-/** Long enough to skip the middle of a word, short enough to feel live. */
-const DEBOUNCE_MS = 300;
+/**
+ * 120ms rather than 300: short enough that the list tracks typing instead of
+ * arriving after you've stopped, still long enough to collapse a burst of
+ * keystrokes into one request.
+ */
+const DEBOUNCE_MS = 120;
+
+/**
+ * Answers already seen this page view. Backspacing, retyping a street or
+ * pausing mid-word all replay a query we've resolved before — serving those
+ * from memory makes the list appear instantly and with no network at all.
+ * Per-mount and capped, so it can't grow unbounded.
+ */
+const CACHE_LIMIT = 40;
 
 type Props = {
   value: string;
@@ -38,6 +50,7 @@ export function AddressAutocomplete({
   // "the user typed this" from "we just wrote this" and not immediately
   // reopen the list under the value it just chose.
   const justPickedRef = useRef(false);
+  const cacheRef = useRef(new Map<string, AddressSuggestion[]>());
   const reduceMotion = useReducedMotion();
 
   const query = value.trim();
@@ -54,6 +67,17 @@ export function AddressAutocomplete({
     }
     if (!isQueryable) return;
 
+    // Seen before: show it now, with no debounce and no request at all.
+    const cached = cacheRef.current.get(query);
+    if (cached) {
+      setSuggestions(cached);
+      setFailed(false);
+      setLoading(false);
+      setActiveIndex(-1);
+      setOpen(true);
+      return;
+    }
+
     const controller = new AbortController();
 
     // Debounced, and every keystroke aborts the request still in flight —
@@ -68,7 +92,15 @@ export function AddressAutocomplete({
         if (!res.ok) throw new Error(`Lookup responded ${res.status}`);
 
         const data: { suggestions?: AddressSuggestion[] } = await res.json();
-        setSuggestions(data.suggestions ?? []);
+        const list = data.suggestions ?? [];
+
+        const cache = cacheRef.current;
+        if (cache.size >= CACHE_LIMIT) {
+          cache.delete(cache.keys().next().value as string);
+        }
+        cache.set(query, list);
+
+        setSuggestions(list);
         setFailed(false);
         setActiveIndex(-1);
         setOpen(true);

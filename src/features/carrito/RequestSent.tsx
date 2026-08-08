@@ -37,7 +37,11 @@ export function RequestSent() {
       <header className="border-secondary/15 border-b">
         <Container>
           <div className="flex h-20 items-center justify-center">
-            <Link href="/" aria-label="Camelia — inicio" className="flex items-center">
+            <Link
+              href="/"
+              aria-label="Camelia — inicio"
+              className="flex items-center"
+            >
               <Image
                 src="/assets/logo/trimmed/Camelia logo naranja.png"
                 alt="Camelia"

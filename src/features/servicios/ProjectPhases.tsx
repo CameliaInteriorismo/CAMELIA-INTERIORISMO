@@ -1,8 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+} from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
@@ -47,48 +52,51 @@ const PHASES = [
 ];
 
 /**
- * Scroll-driven stacked cards on desktop only: the section title AND a
- * "stage" holding all three phases absolutely on top of each other are
- * pinned together (right below the navbar, no extra offset), so the title
- * stays put while cards slide underneath it — same `mt-title` gap between
- * title and content as any other section on the site, just pinned instead
- * of scrolling away.
+ * Scroll distance each card occupies, as a fraction of the viewport. The
+ * block pins for `PHASES.length * this` and the cards advance across it, so
+ * it sets how much scrolling one card costs: 0.5 puts a card at roughly one
+ * firm trackpad swipe, against the full screen the first version demanded.
+ */
+const CARD_SCROLL_VH = 0.5;
+const CARD_EASE = [0.4, 0, 0.2, 1] as const;
+const CARD_DURATION = 0.5;
+
+/**
+ * Stacked phase cards, pinned while they advance — the inoffarquitectura
+ * pattern the studio pointed at.
  *
- * Each card is sized to its OWN natural content height — the image
- * column has no fixed aspect ratio on desktop, so Grid's default
- * `align-items: stretch` makes it match the text column's height exactly,
- * whatever that happens to be for that phase's copy. Because cards can
- * therefore differ slightly in height, the stage's own height is not a
- * constant either: it's driven by the same scroll progress as the cards
- * themselves, interpolating from one card's measured height to the next
- * over exactly the slice of scroll where that next card is sliding into
- * place — so the stage "breathes" in sync with the cover transition
- * instead of leaving slack or clipping a taller card.
+ * The block sticks under the navbar and holds there while the page scrolls
+ * through a spacer as tall as the whole sequence. During that stretch the
+ * cards rise over one another and the composition doesn't move; once the
+ * last one has landed the spacer runs out, the block unpins and the page
+ * carries on. Scrolling back up runs it in reverse, card by card.
  *
- * Each card's own `y` is tied to its slice of the group's overall scroll
- * progress — 100% (parked off-screen below) until its turn, animating to
- * 0% (fully covering the previous card) as the user scrolls through, then
- * holding there. Scrolling back up runs the same interpolation in reverse.
+ * The card index comes from that scroll progress, floored — so each card is
+ * a discrete step that animates into place, rather than being dragged
+ * one-to-one with the wheel. That's what makes it read as a snap.
  *
- * Below `md`, cards render in normal document flow instead (see the
- * `isDesktop` branches below) — a scroll-jacked stack doesn't translate
- * well to touch, and there's no shared stage to size.
+ * An earlier attempt intercepted the wheel to freeze the page outright. It
+ * gave exactly one card per gesture, but a scroll-jacked block can strand a
+ * reader if any of its release conditions is wrong, and it left the section
+ * with no scroll height of its own — so overshooting the entry left it
+ * half off-screen with nothing to pin against. Native scrolling with a real
+ * spacer can't fail that way.
+ *
+ * Below md none of it runs: the cards render in normal document flow.
  */
 function PhaseCard({
   phase,
   index,
-  total,
-  isFirst,
+  activeIndex,
   isDesktop,
-  scrollYProgress,
+  reduceMotion,
   onMeasure,
 }: {
   phase: (typeof PHASES)[number];
   index: number;
-  total: number;
-  isFirst: boolean;
+  activeIndex: number;
   isDesktop: boolean;
-  scrollYProgress: MotionValue<number>;
+  reduceMotion: boolean;
   onMeasure: (index: number, height: number) => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -103,76 +111,77 @@ function PhaseCard({
     return () => observer.disconnect();
   }, [index, onMeasure]);
 
-  // The first card is already in place from the start. Each later card
-  // slides in (100% -> 0%) over the PREVIOUS card's slice of the overall
-  // scroll range, so it finishes covering just as that card's "turn" ends.
-  // On mobile the transform is disabled entirely (always 0%).
-  const animated = isDesktop && !isFirst;
-  // Memoized so useTransform gets stable array references across
-  // re-renders (e.g. when `heights` updates in the parent) — recreating
-  // these arrays on every render has previously caused Framer's
-  // array-based useTransform to silently stop tracking scroll mid-gesture.
-  const inputRange = useMemo(
-    () => (animated ? [(index - 1) / total, index / total] : [0, 1]),
-    [animated, index, total],
-  );
-  const outputRange = useMemo(
-    () => (animated ? ["100%", "0%"] : ["0%", "0%"]),
-    [animated],
-  );
-  const y = useTransform(scrollYProgress, inputRange, outputRange);
+  // Parked below until its turn, then covering. Cards already passed stay
+  // put underneath the ones on top of them.
+  const covered = index <= activeIndex;
+  const y = !isDesktop || covered ? "0%" : "100%";
 
   return (
     <motion.div
       ref={cardRef}
-      style={{ y, zIndex: index + 1 }}
+      // Always pass `animate`, with `isDesktop` folded into `y` above.
+      // useMediaQuery reports false on the first render and flips true after
+      // mount; going from `undefined` to an object left Framer with nothing
+      // to animate from, so every card stayed at y:0 and the last one simply
+      // covered the rest.
+      animate={{ y }}
+      initial={false}
+      transition={
+        reduceMotion
+          ? { duration: 0 }
+          : { duration: CARD_DURATION, ease: CARD_EASE }
+      }
+      style={{ zIndex: index + 1 }}
       className={cn(
-        // md:pb-[40px]: breathing room at the bottom of the pinned card
-        // before the next one starts covering it. The top gap comes from
-        // the shared mt-title between the (now also pinned) section title
-        // and this stage — no separate offset needed here.
-        "bg-background relative md:absolute md:inset-x-0 md:top-0 md:pb-[40px]",
-        !isFirst && "pt-16 md:pt-0",
+        "bg-background relative md:absolute md:inset-x-0 md:top-0",
+        index > 0 && "pt-16 md:pt-0",
       )}
     >
       <Container>
-        <Grid>
-          <div className="col-span-12 md:col-span-5">
-            <h3 className="font-title text-primary/20 text-2xl uppercase">
-              {phase.label}
-            </h3>
-            <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
-              {phase.body.map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
+        {/* Caja cerrada por los cuatro lados, con 40px iguales arriba, abajo
+            y a los lados. Antes solo había una línea inferior, que no
+            delimitaba la tarjeta: al subir una sobre otra no se percibía
+            dónde acababa una y empezaba la siguiente. El fondo opaco lo
+            pone el contenedor de arriba, así que la tarjeta que sube tapa
+            por completo a la de debajo, borde incluido. */}
+        <div className="border-primary/[0.13] bg-background border p-[40px]">
+          <Grid>
+            <div className="col-span-12 md:col-span-5">
+              <h3 className="font-title text-primary/20 text-2xl uppercase">
+                {phase.label}
+              </h3>
+              <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
+                {phase.body.map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
-            <div className="relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full">
-              <Image
-                src={phase.image}
-                alt={phase.label}
-                fill
-                className="object-cover"
-                sizes="(min-width: 768px) 40vw, 100vw"
-              />
+            <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
+              <div className="relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full">
+                <Image
+                  src={phase.image}
+                  alt={phase.label}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 40vw, 100vw"
+                />
+              </div>
             </div>
-          </div>
-        </Grid>
-
-        {/* Only separator between cards: a hairline hitting 40px below
-            wherever the text/image content ends, full-width. */}
-        <div className="border-primary/[0.13] mt-[40px] border-t" />
+          </Grid>
+        </div>
       </Container>
     </motion.div>
   );
 }
 
 export function ProjectPhases() {
-  const groupRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
   const total = PHASES.length;
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const [activeIndex, setActiveIndex] = useState(0);
   const [heights, setHeights] = useState<number[]>(() => PHASES.map(() => 0));
 
   const handleMeasure = useCallback((index: number, height: number) => {
@@ -184,54 +193,68 @@ export function ProjectPhases() {
     });
   }, []);
 
+  // 0 at the moment the block pins, 1 as it releases.
   const { scrollYProgress } = useScroll({
-    target: groupRef,
+    target: spacerRef,
     offset: ["start start", "end end"],
   });
 
-  const allMeasured = heights.every((h) => h > 0);
-  const fallbackHeight = Math.max(...heights, 1);
-  const [h0, h1, h2] = allMeasured ? heights : [fallbackHeight, fallbackHeight, fallbackHeight];
-  // Memoized for the same reason as PhaseCard's own inputRange/outputRange
-  // above — stable references so useTransform keeps tracking scroll
-  // instead of silently freezing when `heights` updates.
-  const stageInputRange = useMemo(() => [0, 1 / total, 2 / total, 1], [total]);
-  const stageOutputRange = useMemo(() => [h0, h1, h2, h2], [h0, h1, h2]);
-  const stageHeight = useTransform(scrollYProgress, stageInputRange, stageOutputRange);
+  // Floored into a card index: each card holds for its whole slice and then
+  // the next one animates over it, which is what gives the discrete step
+  // instead of a card dragged along under the finger.
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const next = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
+    setActiveIndex((current) => (current === next ? current : next));
+  });
+
+  const fallback = Math.max(...heights, 1);
+  const stageHeight = heights[activeIndex] || fallback;
 
   return (
-    // pt-[100px]: fixed hero-to-title gap, same on every breakpoint —
-    // matches the rest of the site's section spacing. Breathing room from
-    // the navbar once the cards are pinned comes entirely from the sticky
-    // wrapper's own top-[120px] offset below, not from extra space here.
     <section className="pt-[100px]">
-      {/* md:h-[300vh] = PHASES.length * 100vh, one "screen" of scroll per card */}
-      <div ref={groupRef} className="relative md:h-[300vh]">
-        {/* top-[120px] = navbar's own 80px height + ~40px of breathing
-            room: the title (and, per its own mt-title gap, the cards)
-            stay pinned there for the whole sequence. */}
+      {/* The spacer is what the block pins against: as tall as the sequence
+          needs, so the page has somewhere to scroll while the composition
+          stays put. Without it `sticky` has no range and the block simply
+          scrolls away. */}
+      <div
+        ref={spacerRef}
+        className="relative"
+        // 100vh + the sequence's own length. The extra viewport matters:
+        // with offset ["start start", "end end"] the progress range is the
+        // spacer MINUS one viewport, so a bare 150vh spacer ran all three
+        // cards inside 450px and a single scroll skipped past two of them.
+        style={
+          isDesktop
+            ? { height: `calc(100vh + 100vh * ${total * CARD_SCROLL_VH})` }
+            : undefined
+        }
+      >
         <div className="md:sticky md:top-[120px]">
           <Container>
             <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
               Cada proyecto,
-              <br />
-              a medida
+              <br />a medida
             </h2>
           </Container>
 
           <motion.div
-            className="relative mt-title md:overflow-hidden"
-            style={isDesktop ? { height: stageHeight } : undefined}
+            className="mt-title relative md:overflow-hidden"
+            animate={{ height: isDesktop ? stageHeight : "auto" }}
+            initial={false}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : { duration: CARD_DURATION, ease: CARD_EASE }
+            }
           >
             {PHASES.map((phase, index) => (
               <PhaseCard
                 key={phase.label}
                 phase={phase}
                 index={index}
-                total={total}
-                isFirst={index === 0}
+                activeIndex={activeIndex}
                 isDesktop={isDesktop}
-                scrollYProgress={scrollYProgress}
+                reduceMotion={reduceMotion}
                 onMeasure={handleMeasure}
               />
             ))}

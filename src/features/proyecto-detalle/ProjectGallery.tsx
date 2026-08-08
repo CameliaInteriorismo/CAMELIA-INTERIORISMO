@@ -5,7 +5,7 @@ import type { ProjectGalleryImages } from "@/features/proyecto-detalle/data";
 
 function FullImage({ src, label }: { src?: string; label: string }) {
   return (
-    <div className="relative w-full overflow-hidden aspect-[1120/661]">
+    <div className="relative aspect-[1120/661] w-full overflow-hidden">
       {src ? (
         <Image
           src={src}
@@ -29,7 +29,7 @@ function FullImage({ src, label }: { src?: string; label: string }) {
 
 function PairImage({ src, label }: { src?: string; label: string }) {
   return (
-    <div className="relative w-full overflow-hidden aspect-[544/760]">
+    <div className="relative aspect-[544/760] w-full overflow-hidden">
       {src ? (
         <Image
           src={src}

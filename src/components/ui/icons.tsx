@@ -53,7 +53,13 @@ export function MenuIcon(props: SVGProps<SVGSVGElement>) {
       strokeWidth={1}
       {...props}
     >
-      <line x1="0" y1="0.5" x2="18" y2="0.5" vectorEffect="non-scaling-stroke" />
+      <line
+        x1="0"
+        y1="0.5"
+        x2="18"
+        y2="0.5"
+        vectorEffect="non-scaling-stroke"
+      />
       <line x1="0" y1="6" x2="11" y2="6" vectorEffect="non-scaling-stroke" />
       <line
         x1="0"

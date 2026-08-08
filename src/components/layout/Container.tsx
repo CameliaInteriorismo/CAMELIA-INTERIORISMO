@@ -33,7 +33,9 @@ export function Grid({
     // gap-y stays 32px throughout: every existing layout already relies
     // on it for the vertical spacing between mobile-stacked items, and
     // this fix has no reason to touch that.
-    <div className={`grid grid-cols-12 gap-y-8 gap-x-2 md:gap-x-8 ${className}`}>
+    <div
+      className={`grid grid-cols-12 gap-x-2 gap-y-8 md:gap-x-8 ${className}`}
+    >
       {children}
     </div>
   );

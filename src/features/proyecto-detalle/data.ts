@@ -8,9 +8,7 @@ export type ProjectGalleryImages = {
 // The only three service labels allowed anywhere in the project fichas —
 // never a variant like "Proyecto de interiorismo" or "Ejecución de obra".
 export type ProjectService =
-  | "Interiorismo"
-  | "Decoración"
-  | "Ejecución y supervisión de obra";
+  "Interiorismo" | "Decoración" | "Ejecución y supervisión de obra";
 
 export type ProjectDetail = {
   slug: string;

@@ -62,7 +62,7 @@ export function CookieBanner({
                 <button
                   type="button"
                   onClick={onConfigure}
-                  className="text-primary hover:text-auxiliary inline-flex h-11 items-center justify-center text-sm underline underline-offset-4 transition-colors duration-300 sm:px-4"
+                  className="text-primary hover:text-primary/60 inline-flex h-11 items-center justify-center text-sm underline underline-offset-4 transition-colors duration-300 sm:px-4"
                 >
                   Configurar
                 </button>

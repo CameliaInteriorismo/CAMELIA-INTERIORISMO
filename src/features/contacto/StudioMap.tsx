@@ -78,7 +78,7 @@ export function StudioMap() {
                 href={MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-primary/15 text-primary hover:text-auxiliary flex flex-col gap-5 border-t p-10 transition-colors duration-300 sm:basis-[37%] sm:border-t-0 sm:border-l"
+                className="border-primary/15 text-primary hover:text-primary/60 flex flex-col gap-5 border-t p-10 transition-colors duration-300 sm:basis-[37%] sm:border-t-0 sm:border-l"
               >
                 <span className="flex items-start gap-2 text-sm">
                   <MapIcon className="mt-0.5 h-4 w-4 shrink-0" />

@@ -16,7 +16,7 @@ export function PostList() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group block py-title"
+              className="group py-title block"
             >
               <Grid className="items-center">
                 <div className="col-span-12 md:col-span-6">
@@ -34,7 +34,7 @@ export function PostList() {
                   </h2>
                 </div>
 
-                <div className="col-span-12 mt-block md:col-span-4 md:col-start-9 md:mt-0">
+                <div className="mt-block col-span-12 md:col-span-4 md:col-start-9 md:mt-0">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     {post.image ? (
                       <Image

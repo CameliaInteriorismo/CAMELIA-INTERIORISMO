@@ -70,8 +70,7 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "la-importancia-de-la-iluminacion",
     title: "La importancia de la iluminación",
     titleLines: ["La importancia de la", "iluminación"],
-    subtitle:
-      "La luz no solo ilumina, transforma la forma de vivir un espacio",
+    subtitle: "La luz no solo ilumina, transforma la forma de vivir un espacio",
     image: `${DIR}/La importancia de la iluminacion.jpg`,
     // Swapped with gallery image 1 — "foto 1" now leads the article and
     // "foto principal" has taken its place in the pair below. The file

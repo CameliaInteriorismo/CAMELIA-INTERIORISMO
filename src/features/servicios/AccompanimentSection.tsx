@@ -52,9 +52,14 @@ export function AccompanimentSection() {
           acompañarte
         </h2>
 
-        <Grid className="mt-title">
+        {/* 32px en vez de los 60px del ritmo título→contenido: las dos frases
+            se leen como una sola idea encadenada, y a 60px la segunda se
+            desprendía de la primera. */}
+        <Grid className="mt-md">
           <div className="col-span-12 md:col-span-5">
-            <h3 className="font-title text-primary text-xl">
+            {/* Un escalón más grande (24px) para que gane peso sin acercarse
+                al h2 de 36px que la encabeza. */}
+            <h3 className="font-title text-primary text-2xl">
               Sea cual sea el punto en el que estés.
             </h3>
             <p className="text-primary/75 mt-md text-sm leading-relaxed">
@@ -67,7 +72,10 @@ export function AccompanimentSection() {
               {ACCOMPANIMENT_ITEMS.map((item, index) => {
                 const open = index === openIndex;
                 return (
-                  <div key={item.question} className="border-primary/15 border-b">
+                  <div
+                    key={item.question}
+                    className="border-primary/15 border-b"
+                  >
                     <button
                       type="button"
                       onClick={() => setOpenIndex(open ? null : index)}
@@ -84,7 +92,10 @@ export function AccompanimentSection() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                          transition={{
+                            duration: 0.35,
+                            ease: [0.4, 0, 0.2, 1],
+                          }}
                           className="overflow-hidden"
                         >
                           <p className="text-primary pb-6 text-sm leading-relaxed">
