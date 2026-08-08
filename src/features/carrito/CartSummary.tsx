@@ -38,15 +38,23 @@ export function CartSummary() {
           Resumen del pedido
         </h1>
 
+        {/* 72px por línea en vez de 60: con la foto a ~340px las filas
+            necesitan más aire entre sí para no leerse comprimidas. */}
         <div className="divide-primary/15 mt-title divide-y">
           {items.map((item) => (
-            <div key={item.id} className="py-title first:pt-0 last:pb-0">
+            <div key={item.id} className="py-[72px] first:pt-0 last:pb-0">
               <CartLineItem item={item} />
             </div>
           ))}
         </div>
 
-        <ButtonLink href="/carrito/confirmacion" className="mt-title w-full">
+        {/* Mismo aire que entre líneas, y 56px de alto en escritorio: es la
+            acción principal de la página y a 44px quedaba menuda al pie de
+            un bloque tan ancho. */}
+        <ButtonLink
+          href="/carrito/confirmacion"
+          className="mt-[72px] w-full md:h-14"
+        >
           CONTINUAR
         </ButtonLink>
       </Container>

@@ -14,7 +14,9 @@ export function CartLineItem({ item }: { item: CartItem }) {
 
   return (
     <Grid>
-      <div className="col-span-12 md:col-span-3">
+      {/* 4 columnas en vez de 3: la foto pasa de ~250 a ~340px y la línea
+          deja de leerse como una miniatura con texto al lado. */}
+      <div className="col-span-12 md:col-span-4">
         <div className="relative aspect-square w-full overflow-hidden">
           {item.image ? (
             <Image
@@ -34,7 +36,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
         </div>
       </div>
 
-      <div className="mt-block col-span-12 md:col-span-8 md:col-start-5 md:mt-0">
+      <div className="mt-block col-span-12 md:col-span-7 md:col-start-6 md:mt-0 md:flex md:flex-col md:justify-center">
         <h2 className="font-title text-primary text-2xl uppercase">
           {item.title}
         </h2>
@@ -52,7 +54,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
           </p>
         )}
 
-        <div className="mt-title flex flex-wrap items-start gap-8">
+        <div className="mt-title flex flex-wrap items-start gap-10">
           <div>
             <p className="text-primary mb-2 text-sm">Cantidad</p>
             {/* min=0 (not the stepper's default 1): reaching 0 is the
@@ -66,7 +68,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
               onChange={(quantity) => updateQuantity(item.id, quantity)}
             />
           </div>
-          <div className="min-w-52 flex-1">
+          <div className="min-w-64 flex-1">
             <p className="text-primary mb-2 text-sm">Observaciones</p>
             <input
               type="text"

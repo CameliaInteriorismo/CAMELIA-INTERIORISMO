@@ -5,9 +5,26 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
-// Navigations that resolve faster than this never show the overlay, so
-// instant (prefetched/static) route changes don't flash a loader.
-const SHOW_AFTER_MS = 150;
+/**
+ * Navigations that resolve faster than this never show the overlay.
+ *
+ * 400ms, not the 150 it started at. Every route here is static and
+ * prefetched on hover, so a production navigation lands well inside this
+ * window and the overlay simply never appears — which is the point. At 150
+ * it was firing on almost every click, including ones that finished a
+ * fraction of a second later, so the site read as permanently loading.
+ *
+ * (In `next dev` routes are compiled on demand and a first visit takes
+ * around a second, so the overlay will still show there. That's the dev
+ * server, not the site.)
+ */
+const SHOW_AFTER_MS = 400;
+/**
+ * Once it's up, it stays up this long. Without a floor, a route landing just
+ * after the overlay appeared would blink it out after a few frames — worse
+ * than never showing it. Counted from the moment it became visible.
+ */
+const MIN_VISIBLE_MS = 500;
 // Failsafe: if a route change never lands (blocked navigation, external
 // handler calling preventDefault later, a download), don't strand the
 // overlay on screen.
@@ -28,27 +45,38 @@ export function NavigationLoader() {
   const shouldReduceMotion = useReducedMotion();
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failsafeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** When the overlay actually went up, for the minimum-visible floor. */
+  const shownAt = useRef(0);
+  /** Read inside the pathname effect without making `visible` a dependency. */
+  const visibleRef = useRef(false);
 
   function clearTimers() {
     if (showTimer.current) clearTimeout(showTimer.current);
     if (failsafeTimer.current) clearTimeout(failsafeTimer.current);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
     showTimer.current = null;
     failsafeTimer.current = null;
-  }
-
-  // The new route has rendered — tear the overlay down. Adjusted during
-  // render (React's recommended pattern, same as Navbar.tsx closing its
-  // menu on navigation) rather than in an effect, which would be a
-  // cascading synchronous setState.
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
-    setVisible(false);
+    hideTimer.current = null;
   }
 
   useEffect(() => {
-    // Side effect only, no setState — safe in an effect.
+    visibleRef.current = visible;
+  }, [visible]);
+
+  // The new route has committed. Cancel anything pending, then take the
+  // overlay down — but not before it has had its minimum time on screen, or
+  // a route that lands just after it appears would blink.
+  useEffect(() => {
     clearTimers();
+    if (!visibleRef.current) return;
+
+    const remaining = MIN_VISIBLE_MS - (performance.now() - shownAt.current);
+    if (remaining <= 0) {
+      setVisible(false);
+      return;
+    }
+    hideTimer.current = setTimeout(() => setVisible(false), remaining);
   }, [pathname]);
 
   useEffect(() => {
@@ -97,6 +125,7 @@ export function NavigationLoader() {
       const from = window.location.pathname + window.location.search;
       showTimer.current = setTimeout(() => {
         if (window.location.pathname + window.location.search === from) {
+          shownAt.current = performance.now();
           setVisible(true);
         }
       }, SHOW_AFTER_MS);

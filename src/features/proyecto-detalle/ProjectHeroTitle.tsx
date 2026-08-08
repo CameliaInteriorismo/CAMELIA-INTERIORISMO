@@ -54,7 +54,7 @@ export function ProjectHeroTitle({
           aria-hidden
           fill
           priority
-          quality={100}
+          quality={90}
           className="object-cover"
           sizes="100vw"
         />

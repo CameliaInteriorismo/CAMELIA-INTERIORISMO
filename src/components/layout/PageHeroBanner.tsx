@@ -60,7 +60,7 @@ export function PageHeroBanner({
           aria-hidden
           fill
           priority
-          quality={100}
+          quality={90}
           className="object-cover"
           style={{ objectPosition: imagePosition }}
           sizes="100vw"
