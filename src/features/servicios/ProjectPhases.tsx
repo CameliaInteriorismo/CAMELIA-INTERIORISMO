@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  motion,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
+  type MotionValue,
 } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -58,8 +58,32 @@ const PHASES = [
  * firm trackpad swipe, against the full screen the first version demanded.
  */
 const CARD_SCROLL_VH = 0.5;
-const CARD_EASE = [0.4, 0, 0.2, 1] as const;
-const CARD_DURATION = 0.5;
+
+/** How far a card rises as it comes in. Small on purpose — a drift, not a slide. */
+const ENTER_Y = 56;
+/** And how far the one underneath drifts on as it's covered. */
+const EXIT_Y = -28;
+/** The outgoing card dims to this rather than going dark, so the cross-fade stays light. */
+const EXIT_OPACITY = 0.35;
+
+/**
+ * Piecewise-linear lookup, clamped at both ends. `stops` must increase.
+ * Used instead of Framer's useTransform so the value is computed here and
+ * written straight to the node — see the note in PhaseCard.
+ */
+function interpolate(value: number, stops: number[], outputs: number[]) {
+  const last = stops.length - 1;
+  if (value <= stops[0]) return outputs[0];
+  if (value >= stops[last]) return outputs[last];
+  for (let i = 1; i <= last; i++) {
+    if (value <= stops[i]) {
+      const span = stops[i] - stops[i - 1];
+      const t = span === 0 ? 0 : (value - stops[i - 1]) / span;
+      return outputs[i - 1] + (outputs[i] - outputs[i - 1]) * t;
+    }
+  }
+  return outputs[last];
+}
 
 /**
  * Stacked phase cards, pinned while they advance — the inoffarquitectura
@@ -67,36 +91,40 @@ const CARD_DURATION = 0.5;
  *
  * The block sticks under the navbar and holds there while the page scrolls
  * through a spacer as tall as the whole sequence. During that stretch the
- * cards rise over one another and the composition doesn't move; once the
+ * cards cross over one another and the composition doesn't move; once the
  * last one has landed the spacer runs out, the block unpins and the page
- * carries on. Scrolling back up runs it in reverse, card by card.
+ * carries on. Scrolling back up runs it in reverse.
  *
- * The card index comes from that scroll progress, floored — so each card is
- * a discrete step that animates into place, rather than being dragged
- * one-to-one with the wheel. That's what makes it read as a snap.
+ * Every card is tied *continuously* to scroll position — position and
+ * opacity are read straight off the scroll, so a card is wherever the
+ * scroll says it is at that instant and follows the finger exactly. An
+ * earlier version floored the progress into a card index and animated
+ * between whole steps on a timer, which is what made it snap: the card
+ * jumped on its own clock instead of tracking the gesture. Nothing here
+ * runs on a duration any more.
  *
- * An earlier attempt intercepted the wheel to freeze the page outright. It
- * gave exactly one card per gesture, but a scroll-jacked block can strand a
- * reader if any of its release conditions is wrong, and it left the section
- * with no scroll height of its own — so overshooting the entry left it
- * half off-screen with nothing to pin against. Native scrolling with a real
- * spacer can't fail that way.
+ * The incoming card rises {@link ENTER_Y}px while fading up from nothing;
+ * the one it covers drifts {@link EXIT_Y}px on and dims to
+ * {@link EXIT_OPACITY}. The two overlap, so the handover reads as a soft
+ * dissolve rather than a card being dealt on top.
  *
  * Below md none of it runs: the cards render in normal document flow.
  */
 function PhaseCard({
   phase,
   index,
-  activeIndex,
+  total,
   isDesktop,
   reduceMotion,
+  scrollYProgress,
   onMeasure,
 }: {
   phase: (typeof PHASES)[number];
   index: number;
-  activeIndex: number;
+  total: number;
   isDesktop: boolean;
   reduceMotion: boolean;
+  scrollYProgress: MotionValue<number>;
   onMeasure: (index: number, height: number) => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -111,26 +139,82 @@ function PhaseCard({
     return () => observer.disconnect();
   }, [index, onMeasure]);
 
-  // Parked below until its turn, then covering. Cards already passed stay
-  // put underneath the ones on top of them.
-  const covered = index <= activeIndex;
-  const y = !isDesktop || covered ? "0%" : "100%";
+  // Stops across the whole sequence's progress: this card finishes arriving
+  // at `mid` and is fully covered by `exit`.
+  //
+  // Every stop has to stay inside 0..1 and strictly increase. Framer hands
+  // these straight to the Web Animations API as keyframe offsets, and a
+  // negative one throws outright ("Offsets must be monotonically
+  // non-decreasing") — which is why the first card can't be given the
+  // `(index - 1) / total` entrance the others get. It has no entrance at
+  // all: it's already in place when the block pins, and only ever exits.
+  // The last card is the mirror image — it arrives and then holds, because
+  // there's nothing after it to dim for.
+  const isFirst = index === 0;
+  const isLast = index === total - 1;
+  const enter = (index - 1) / total;
+  const mid = index / total;
+  const exit = (index + 1) / total;
+
+  const stops = useMemo(() => {
+    if (isFirst && isLast) return [0, 1];
+    if (isFirst) return [mid, exit];
+    if (isLast) return [enter, mid];
+    return [enter, mid, exit];
+  }, [isFirst, isLast, enter, mid, exit]);
+
+  const yOutput = useMemo(() => {
+    const rise = reduceMotion ? 0 : ENTER_Y;
+    const drift = reduceMotion ? 0 : EXIT_Y;
+    if (isFirst && isLast) return [0, 0];
+    if (isFirst) return [0, drift];
+    if (isLast) return [rise, 0];
+    return [rise, 0, drift];
+  }, [isFirst, isLast, reduceMotion]);
+
+  const opacityOutput = useMemo(() => {
+    if (isFirst && isLast) return [1, 1];
+    if (isFirst) return [1, EXIT_OPACITY];
+    if (isLast) return [0, 1];
+    return [0, 1, EXIT_OPACITY];
+  }, [isFirst, isLast]);
+
+  // Styles are written straight onto the node on every scroll change rather
+  // than going through a MotionValue bound to `style`.
+  //
+  // Framer hands accelerated properties like opacity to the Web Animations
+  // API and scrubs them from its own frame loop. That's a fine optimisation
+  // until the loop is starved — then the element sits frozen on its first
+  // keyframe while the scroll has moved on, which showed up here as the last
+  // card never appearing at the end of the sequence. Writing the values
+  // directly removes the indirection: the element is always exactly where
+  // the current scroll position says it should be, in both directions, and
+  // it costs no React render.
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const el = cardRef.current;
+    if (!el || !isDesktop) return;
+    el.style.transform = `translateY(${interpolate(progress, stops, yOutput)}px)`;
+    el.style.opacity = String(interpolate(progress, stops, opacityOutput));
+  });
+
+  // First paint, and whenever the breakpoint flips: without this the cards
+  // sit unstyled until the first scroll event arrives.
+  useLayoutEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    if (!isDesktop) {
+      el.style.transform = "";
+      el.style.opacity = "";
+      return;
+    }
+    const progress = scrollYProgress.get();
+    el.style.transform = `translateY(${interpolate(progress, stops, yOutput)}px)`;
+    el.style.opacity = String(interpolate(progress, stops, opacityOutput));
+  }, [isDesktop, scrollYProgress, stops, yOutput, opacityOutput]);
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
-      // Always pass `animate`, with `isDesktop` folded into `y` above.
-      // useMediaQuery reports false on the first render and flips true after
-      // mount; going from `undefined` to an object left Framer with nothing
-      // to animate from, so every card stayed at y:0 and the last one simply
-      // covered the rest.
-      animate={{ y }}
-      initial={false}
-      transition={
-        reduceMotion
-          ? { duration: 0 }
-          : { duration: CARD_DURATION, ease: CARD_EASE }
-      }
       style={{ zIndex: index + 1 }}
       className={cn(
         "bg-background relative md:absolute md:inset-x-0 md:top-0",
@@ -171,7 +255,7 @@ function PhaseCard({
           </Grid>
         </div>
       </Container>
-    </motion.div>
+    </div>
   );
 }
 
@@ -181,7 +265,6 @@ export function ProjectPhases() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const reduceMotion = useReducedMotion() ?? false;
 
-  const [activeIndex, setActiveIndex] = useState(0);
   const [heights, setHeights] = useState<number[]>(() => PHASES.map(() => 0));
 
   const handleMeasure = useCallback((index: number, height: number) => {
@@ -199,16 +282,34 @@ export function ProjectPhases() {
     offset: ["start start", "end end"],
   });
 
-  // Floored into a card index: each card holds for its whole slice and then
-  // the next one animates over it, which is what gives the discrete step
-  // instead of a card dragged along under the finger.
+  // The stage grows and shrinks with the cards instead of jumping between
+  // their heights: cards differ by a few dozen pixels, and a stepped height
+  // would show up as a nudge at the exact moment of the handover. Written
+  // straight to the node for the same reason as the cards' own styles.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const fallback = Math.max(...heights, 1);
+  const heightStops = useMemo(
+    () => PHASES.map((_, i) => i / total).concat(1),
+    [total],
+  );
+  const heightOutput = useMemo(() => {
+    const measured = heights.map((h) => h || fallback);
+    return measured.concat(measured[measured.length - 1]);
+  }, [heights, fallback]);
+
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const next = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
-    setActiveIndex((current) => (current === next ? current : next));
+    const el = stageRef.current;
+    if (!el || !isDesktop) return;
+    el.style.height = `${interpolate(progress, heightStops, heightOutput)}px`;
   });
 
-  const fallback = Math.max(...heights, 1);
-  const stageHeight = heights[activeIndex] || fallback;
+  useLayoutEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    el.style.height = isDesktop
+      ? `${interpolate(scrollYProgress.get(), heightStops, heightOutput)}px`
+      : "";
+  }, [isDesktop, scrollYProgress, heightStops, heightOutput]);
 
   return (
     <section className="pt-[100px]">
@@ -237,28 +338,20 @@ export function ProjectPhases() {
             </h2>
           </Container>
 
-          <motion.div
-            className="mt-title relative md:overflow-hidden"
-            animate={{ height: isDesktop ? stageHeight : "auto" }}
-            initial={false}
-            transition={
-              reduceMotion
-                ? { duration: 0 }
-                : { duration: CARD_DURATION, ease: CARD_EASE }
-            }
-          >
+          <div ref={stageRef} className="mt-title relative md:overflow-hidden">
             {PHASES.map((phase, index) => (
               <PhaseCard
                 key={phase.label}
                 phase={phase}
                 index={index}
-                activeIndex={activeIndex}
+                total={total}
                 isDesktop={isDesktop}
                 reduceMotion={reduceMotion}
+                scrollYProgress={scrollYProgress}
                 onMeasure={handleMeasure}
               />
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

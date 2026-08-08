@@ -6,14 +6,17 @@
  * Hispanidad, 4 — 46600, Alzira, Valencia. The earlier variants ("Av.
  * Hispanitat, 4, entresuelo 1", "Alzira, Valencia (España)") are gone.
  *
- * NOTE: the email and phone are still not reconciled between designs.
- * CONTACTO.png gives camelia@interiorismo.com / +34 601 53 13 01, while
- * FOOTER.png and the legal texts give info@cameliainteriorismo.com and a
- * phone ending 12 01. Left as-is because only the address was in scope —
- * still flagged for the client.
+ * The email is likewise unified: info@cameliainteriorismo.com everywhere,
+ * which is the address the footer and all four legal documents already
+ * used. The variant CONTACTO.png showed is gone — it sat on a different
+ * domain altogether.
+ *
+ * NOTE: the phone is still not reconciled. CONTACTO.png gives
+ * +34 601 53 13 01 while FOOTER.png and the legal texts end 12 01. Out of
+ * scope here, still flagged for the client.
  */
 export const CONTACT = {
-  email: "camelia@interiorismo.com",
+  email: "info@cameliainteriorismo.com",
   phone: "+34 601 53 13 01",
   phoneHref: "tel:+34601531301",
   /** The one address. Used wherever the studio's location is written out. */
