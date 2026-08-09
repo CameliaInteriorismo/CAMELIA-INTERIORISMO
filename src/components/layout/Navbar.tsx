@@ -189,11 +189,19 @@ export function Navbar() {
                   <Link
                     href="/carrito"
                     aria-label="Carrito"
-                    className="relative"
+                    // Área de pulsación de 44px alrededor del icono, como el
+                    // resto de controles de la barra; el -mr compensa ese
+                    // acolchado para que el icono siga alineado al margen.
+                    className="relative -mr-2 flex h-11 w-11 items-center justify-center"
                   >
-                    <CartIcon className="h-5 w-5" />
+                    {/* 24px en vez de 20: junto al CTA y al "Menu" el icono
+                        quedaba pequeño y poco visible. Sube un escalón, sin
+                        pasar de la altura de la x del texto de la barra. */}
+                    <CartIcon className="h-6 w-6" strokeWidth={1.3} />
                     {itemCount > 0 && (
-                      <span className="bg-secondary text-background absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full text-[10px]">
+                      // El contador acompaña al icono: sigue mordiendo su
+                      // esquina superior derecha, ahora sobre 24px.
+                      <span className="bg-secondary text-background absolute top-1.5 right-1.5 flex h-4 w-4 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[10px] leading-none">
                         {itemCount}
                       </span>
                     )}

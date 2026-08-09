@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { SOCIALS_MENU, SOCIAL_URLS } from "@/features/contacto/data";
 
@@ -18,12 +18,49 @@ const NAV_LINKS = [
   { label: "Contacto", href: "/contacto" },
 ];
 
-// One block, one movement. The panel drops in from above the viewport on
-// open and continues downward and out on close — the whole thing travelling
-// together, contents included, with no per-column stagger and nothing
-// animating on its own. Replaces the earlier column curtain.
-const DURATION = 0.45;
+// The panel drops in from above and retreats the same way. 0.6s rather than
+// the earlier 0.45: the contents now reveal *inside* this window, and the
+// slightly longer slide gives them room to do it without either half
+// feeling rushed.
+const DURATION = 0.6;
 const EASE = [0.4, 0, 0.2, 1] as const;
+
+// The contents are not a second act. Each one fades up through a short
+// vertical drift while the panel is still travelling, top to bottom, so the
+// whole thing reads as one movement arriving rather than a menu that opens
+// and then fills itself in.
+const ITEM_DURATION = 0.4;
+const ITEM_SHIFT = 12;
+/**
+ * Small enough that the reveal reads as a soft cascade rather than a counted
+ * sequence — at 45ms across ten items several are always in flight at once.
+ */
+const ITEM_STAGGER = 0.045;
+/**
+ * Barely after the panel starts moving. The last item lands at roughly
+ * 0.1 + 9×0.045 + 0.4 ≈ 0.9s against the panel's 0.6s, so the two overlap
+ * almost end to end instead of queueing.
+ */
+const ITEM_DELAY = 0.1;
+
+/**
+ * Closing is not the reverse: everything leaves with the panel, at once and
+ * immediately. Unwinding the cascade would leave links hanging over a
+ * surface that has already gone.
+ */
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: -ITEM_SHIFT },
+  open: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: ITEM_DURATION,
+      ease: EASE,
+      delay: ITEM_DELAY + i * ITEM_STAGGER,
+    },
+  }),
+  exit: { opacity: 0, y: 0, transition: { duration: 0.12 } },
+};
 
 export function HamburgerMenu({
   onNavigate,
@@ -33,6 +70,19 @@ export function HamburgerMenu({
   onClose: () => void;
 }) {
   const shouldReduceMotion = useReducedMotion();
+
+  // Reduced motion keeps the panel but drops the per-item choreography —
+  // the contents are simply there when it lands.
+  const item = (i: number) =>
+    shouldReduceMotion
+      ? {}
+      : ({
+          custom: i,
+          variants: itemVariants,
+          initial: "hidden",
+          animate: "open",
+          exit: "exit",
+        } as const);
 
   // There's no visible close control any more (the panel shuts via its
   // wordmark or a click off the links), so Escape is what keeps it
@@ -52,8 +102,7 @@ export function HamburgerMenu({
     <motion.div
       className="bg-primary fixed inset-0 z-40 overflow-hidden"
       // Baja desde arriba al abrir y se retira por arriba al cerrar: el
-      // mismo recorrido en los dos sentidos, como una persiana. Panel y
-      // contenido viajan juntos; nada de dentro se anima por su cuenta.
+      // mismo recorrido en los dos sentidos, como una persiana.
       initial={shouldReduceMotion ? { opacity: 0 } : { y: "-100%" }}
       animate={shouldReduceMotion ? { opacity: 1 } : { y: "0%" }}
       exit={shouldReduceMotion ? { opacity: 0 } : { y: "-100%" }}
@@ -73,48 +122,65 @@ export function HamburgerMenu({
         />
       </div>
 
-      <div className="text-background relative z-10 flex h-full flex-col overflow-y-auto">
+      {/* Sin scroll interno: el menú cabe entero en pantalla. El contenido
+          se reparte con flex y la lista se aprieta lo justo para que no
+          desborde ni en portátiles cortos. */}
+      <div className="text-background relative z-10 flex h-full flex-col overflow-hidden">
         <Container>
           <div className="flex h-20 shrink-0 items-center justify-end">
-            {/* Closes the menu and returns Home. */}
-            <Link
-              href="/"
-              onClick={onNavigate}
-              aria-label="Camelia — inicio"
-              className="flex items-center"
-            >
-              <Image
-                src="/assets/logo/trimmed/Camelia logo crema.png"
-                alt="Camelia"
-                width={828}
-                height={130}
-                priority
-                className="h-6 w-auto"
-              />
-            </Link>
+            {/* Cierra el menú y vuelve a Inicio. Entra con el panel, sin
+                esperar turno: no forma parte de la cadena de enlaces. */}
+            <motion.div {...item(0)}>
+              <Link
+                href="/"
+                onClick={onNavigate}
+                aria-label="Camelia — inicio"
+                className="flex items-center"
+              >
+                <Image
+                  src="/assets/logo/trimmed/Camelia logo crema.png"
+                  alt="Camelia"
+                  width={828}
+                  height={130}
+                  priority
+                  className="h-6 w-auto"
+                />
+              </Link>
+            </motion.div>
           </div>
         </Container>
 
-        <Container className="flex flex-1 flex-col justify-center">
+        <Container className="flex min-h-0 flex-1 flex-col justify-center">
           {/* Sized down from the previous 40px so the wordmark keeps the
               upper hand: at 30px the links read as calm navigation rather
-              than as the headline of the screen. */}
-          <nav className="flex flex-col items-end gap-4 py-10">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={onNavigate}
-                className="font-title hover:text-auxiliary block text-2xl leading-tight transition-colors duration-300 md:text-3xl"
-              >
-                {link.label}
-              </Link>
+              than as the headline of the screen.
+
+              gap-3 y py-6 (antes 4 y 10): con ocho enlaces, el logotipo y
+              los iconos, el conjunto tiene que caber sin scroll incluso en
+              una pantalla de portátil corta. */}
+          <nav className="flex flex-col items-end gap-3 py-6">
+            {NAV_LINKS.map((link, i) => (
+              // +1 because the wordmark above is the first in the sequence.
+              <motion.div key={link.href} {...item(i + 1)}>
+                <Link
+                  href={link.href}
+                  onClick={onNavigate}
+                  className="font-title hover:text-auxiliary block text-2xl leading-tight transition-colors duration-300 md:text-3xl"
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
           </nav>
         </Container>
 
         <Container>
-          <div className="flex shrink-0 justify-end gap-5 pb-16">
+          {/* Cierra la cadena, justo detrás del último enlace. pb-10 en vez
+              de pb-16 para no forzar el alto total. */}
+          <motion.div
+            {...item(NAV_LINKS.length + 1)}
+            className="flex shrink-0 justify-end gap-5 pb-10"
+          >
             {SOCIALS_MENU.map(({ label, src }) => {
               const href = SOCIAL_URLS[label];
               const icon = (
@@ -145,7 +211,7 @@ export function HamburgerMenu({
                 </span>
               );
             })}
-          </div>
+          </motion.div>
         </Container>
       </div>
     </motion.div>
