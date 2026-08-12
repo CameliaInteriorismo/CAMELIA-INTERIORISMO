@@ -32,10 +32,14 @@ export function formatProjectLocation(project: ProjectDetail): string {
 }
 
 // Copy definitivo confirmado para los 5 proyectos. Vídeo de hero solo para
-// los proyectos que ya lo tienen exportado en Diseño/Videos proyectos/
-// (Ermita, Plaza Mayor) — el resto mantiene su imagen de la grid hasta que
-// exista un vídeo. Galería con foto real solo para Ermita; el resto usa
-// placeholders explícitos hasta tener las fotos de detalle.
+// Ermita y Plaza Mayor, ya servidos desde Cloudinary — el resto mantiene su
+// imagen de la grid hasta que exista un vídeo. Galería con foto real solo para
+// Ermita; el resto usa placeholders explícitos hasta tener las fotos de detalle.
+//
+// La cadena de transformación es la misma en los tres vídeos de la web (ver
+// también features/home/Hero.tsx): f_auto elige el códec según el navegador,
+// q_auto la compresión, y c_limit,w_1920 pone un techo de ancho sin recortar
+// ni deformar — c_limit solo reduce, nunca amplía.
 export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
   "plaza-mayor": {
     slug: "plaza-mayor",
@@ -44,7 +48,11 @@ export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
     location: "Alzira",
     province: "Valencia",
     services: ["Interiorismo"],
-    heroVideo: "/assets/proyectos/Video Plaza Mayor.mp4",
+    // El máster es 4K (3840×2160) y q_auto comprime pero no reescala: sin el
+    // techo de 1920 el hero descargaba 24MB para pintarlos, como mucho, a
+    // ancho de viewport.
+    heroVideo:
+      "https://res.cloudinary.com/uvofxvtg/video/upload/f_auto,q_auto,c_limit,w_1920/Proyecto_Plaza_Mayor_4K_2_ifeemv.mp4",
     paragraphs: [
       "Reforma integral de una vivienda en Alzira, desarrollada a partir de un vaciado completo, conservando únicamente la estructura original. Esto permitió replantear el espacio desde la base, sin condicionantes.",
       "El proyecto responde a la necesidad de una pareja joven, con una hija recién nacida, de adaptar una vivienda familiar a su forma de vida actual, priorizando el orden, el buen funcionamiento y la tranquilidad en el uso diario.",
@@ -77,7 +85,10 @@ export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
     location: "Alzira",
     province: "Valencia",
     services: ["Interiorismo", "Decoración", "Ejecución y supervisión de obra"],
-    heroVideo: "/assets/proyectos/Video Ermita.mp4",
+    // 1142px de ancho: el techo de 1920 no llega a actuar aquí, va por
+    // coherencia con los otros dos y como red por si cambia el máster.
+    heroVideo:
+      "https://res.cloudinary.com/uvofxvtg/video/upload/f_auto,q_auto,c_limit,w_1920/ScreenRecording_08-02-2026_11-18-44_1_aawoty.mov",
     paragraphs: [
       "Proyecto desarrollado en una vivienda de obra nueva en Alzira, entregada con un acabado básico y sin elementos que definieran el espacio. La clienta buscaba dotarla de calidez y hacerla más propia desde lo cotidiano.",
       "El trabajo se centró en la selección de iluminación, cortinas y piezas de mobiliario, incorporando elementos a medida como una vitrina en chapa de roble barnizada, junto con otras piezas que aportan equilibrio al conjunto. La terraza se plantea como una prolongación de la vivienda, con una pérgola bioclimática, estores y cortinas que permiten un uso más cómodo del espacio.",

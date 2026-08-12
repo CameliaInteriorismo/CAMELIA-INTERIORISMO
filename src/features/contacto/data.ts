@@ -1,27 +1,30 @@
 /**
  * Contact details, shared by the Contacto page, the footer and the menu.
  *
- * The address is now unified across the whole site at the studio's request:
- * every location reference and every Maps link resolves to Avenida de la
- * Hispanidad, 4 — 46600, Alzira, Valencia. The earlier variants ("Av.
- * Hispanitat, 4, entresuelo 1", "Alzira, Valencia (España)") are gone.
+ * La dirección está unificada en toda la web por indicación del estudio, y
+ * en valenciano: "Av. de la Hispanitat, 4 — 46600, Alzira, Valencia". Es la
+ * forma que se escribe en cada referencia a la ubicación, en los textos
+ * legales y en la consulta de Google Maps. Las variantes anteriores (la
+ * castellanizada, la que llevaba planta, y "Alzira, Valencia (España)") ya
+ * no aparecen en ningún sitio.
  *
  * The email is likewise unified: info@cameliainteriorismo.com everywhere,
  * which is the address the footer and all four legal documents already
  * used. The variant CONTACTO.png showed is gone — it sat on a different
  * domain altogether.
  *
- * NOTE: the phone is still not reconciled. CONTACTO.png gives
- * +34 601 53 13 01 while FOOTER.png and the legal texts end 12 01. Out of
- * scope here, still flagged for the client.
+ * El teléfono ya está reconciliado en 601 53 13 01. FOOTER.png mostraba una
+ * variante acabada en 12 01 que queda descartada; el footer lee `phone` de
+ * aquí en lugar de repetirlo escrito a mano, y los textos legales escriben el
+ * mismo número agrupado como "601 531 301".
  */
 export const CONTACT = {
   email: "info@cameliainteriorismo.com",
   phone: "+34 601 53 13 01",
   phoneHref: "tel:+34601531301",
   /** The one address. Used wherever the studio's location is written out. */
-  addressLines: ["Avenida de la Hispanidad, 4", "46600, Alzira, Valencia"],
-  mapCardLines: ["Avenida de la Hispanidad, 4", "46600, Alzira, Valencia"],
+  addressLines: ["Av. de la Hispanitat, 4", "46600, Alzira, Valencia"],
+  mapCardLines: ["Av. de la Hispanitat, 4", "46600, Alzira, Valencia"],
 } as const;
 
 /** Single line, for places that can't stack two (the footer's list). */
@@ -36,9 +39,11 @@ export const MAPS_URL =
   encodeURIComponent(ADDRESS_ONE_LINE);
 
 /**
- * Official profiles. LinkedIn has no URL yet — until the studio supplies
- * one its icon renders as plain artwork rather than a link that goes
- * nowhere, which is why `href` is optional.
+ * Perfiles oficiales. LinkedIn se queda de momento sin URL, por decisión del
+ * estudio: su icono se dibuja como ilustración y no como enlace, en vez de
+ * apuntar a "#" y parecer pulsable sin llevar a ninguna parte. Cuando llegue
+ * la URL basta con escribirla aquí — el footer, el menú y ContactCards ya
+ * cambian solos de <span> a <a>.
  */
 export const SOCIAL_URLS = {
   Instagram: "https://instagram.com/camelia.interiorismo",

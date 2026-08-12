@@ -6,9 +6,14 @@
  * ("Este texto es perfectamente válido como base para Camelia…") is left
  * out because it describes the document rather than forming part of it.
  *
- * Note that the phone number below (601 531 301) is the one the legal text
- * gives, and it does not match the footer's (+34 601 53 12 01). Both are
- * reproduced from their own source; they need reconciling.
+ * Única excepción, y por indicación expresa del estudio: el domicilio. El
+ * texto original traía otra forma de la calle y añadía la planta; aquí se
+ * escribe la dirección pública de la web, "Av. de la Hispanitat, 4" (ver
+ * CONTACT en features/contacto/data.ts), para no mantener dos variantes.
+ *
+ * El teléfono de abajo (601 531 301) ya coincide con el del footer y el de
+ * Contacto: es el mismo número, y solo cambia la agrupación de los dígitos,
+ * que aquí se respeta tal como la escribe el texto legal.
  */
 
 import type { LegalSection } from "@/features/legal/types";
@@ -25,7 +30,7 @@ export const AVISO_LEGAL_SECTIONS: LegalSection[] = [
           { label: "Titular", value: "Laura Castillo Valverde" },
           {
             label: "Domicilio",
-            value: "Av. Hispanitat, 4 entresuelo 1, 46600 Alzira (Valencia)",
+            value: "Av. de la Hispanitat, 4, 46600 Alzira (Valencia)",
           },
           { label: "NIF", value: "20850524N" },
           {

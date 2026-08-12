@@ -10,11 +10,11 @@
  *
  * Two things worth flagging rather than quietly fixing:
  *
- * - The phone number here (601 531 301) matches the Aviso Legal but not the
- *   footer's (+34 601 53 12 01), and the address is "Av. Hispanitat, 4,
- *   entresuelo 1" against the Contacto map card's "Avenida de la
- *   Hispanidad, 4". Every page reproduces its own source; they need
- *   reconciling in one pass.
+ * - Teléfono y dirección ya coinciden con el Aviso Legal, el footer y
+ *   Contacto. El teléfono es el mismo número con distinta agrupación
+ *   (601 531 301). La dirección se corrigió por indicación del estudio: el
+ *   texto original traía otra forma de la calle y añadía la planta, y aquí se
+ *   escribe la pública, "Av. de la Hispanitat, 4".
  * - Section 10 names Google Places as the address autocomplete. The form
  *   currently runs on Photon and only switches to Google when a key is set
  *   (see src/lib/address/providers.ts), so this clause describes the
@@ -50,7 +50,7 @@ export const PRIVACIDAD_SECTIONS: LegalSection[] = [
           { label: "NIF", value: "20850524N" },
           {
             label: "Dirección",
-            value: "Av. Hispanitat, 4, entresuelo 1, 46600 Alzira (Valencia)",
+            value: "Av. de la Hispanitat, 4, 46600 Alzira (Valencia)",
           },
           {
             label: "Teléfono",
@@ -354,7 +354,7 @@ export const PRIVACIDAD_SECTIONS: LegalSection[] = [
       {
         type: "lines",
         items: [
-          { value: "Av. Hispanitat, 4, entresuelo 1" },
+          { value: "Av. de la Hispanitat, 4" },
           { value: "46600 Alzira (Valencia)" },
         ],
       },

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import { VideoBackground } from "@/components/ui/VideoBackground";
 import { useHeroStore } from "@/stores/heroStore";
 
 export function ProjectHeroTitle({
@@ -38,15 +39,7 @@ export function ProjectHeroTitle({
   return (
     <section ref={heroRef} className="relative h-dvh w-full overflow-hidden">
       {heroVideo ? (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          src={heroVideo}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <VideoBackground src={heroVideo} />
       ) : heroImage ? (
         <Image
           src={heroImage}

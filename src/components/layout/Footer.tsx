@@ -119,8 +119,10 @@ export function Footer() {
                   </span>
                 ))}
               </li>
-              <li>info@cameliainteriorismo.com</li>
-              <li className="[word-spacing:0.3em]">+34 601 53 12 01</li>
+              <li>{CONTACT.email}</li>
+              {/* Desde CONTACT, no escrito a mano: el literal que había aquí
+                  acababa en 12 01 y contradecía al de la página de Contacto. */}
+              <li className="[word-spacing:0.3em]">{CONTACT.phone}</li>
             </ul>
           </div>
 
