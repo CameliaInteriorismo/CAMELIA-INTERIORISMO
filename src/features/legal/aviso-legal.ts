@@ -6,10 +6,11 @@
  * ("Este texto es perfectamente válido como base para Camelia…") is left
  * out because it describes the document rather than forming part of it.
  *
- * Única excepción, y por indicación expresa del estudio: el domicilio. El
- * texto original traía otra forma de la calle y añadía la planta; aquí se
- * escribe la dirección pública de la web, "Av. de la Hispanitat, 4" (ver
- * CONTACT en features/contacto/data.ts), para no mantener dos variantes.
+ * El domicilio se escribe en la forma legal confirmada por el estudio, en una
+ * línea y con planta. La misma dirección aparece rotulada en tres líneas en
+ * el footer y en Contacto (ver CONTACT en features/contacto/data.ts), y en
+ * los enlaces a Maps sin la planta: son presentaciones distintas del mismo
+ * dato, no variantes sueltas.
  *
  * El teléfono de abajo (601 531 301) ya coincide con el del footer y el de
  * Contacto: es el mismo número, y solo cambia la agrupación de los dígitos,
@@ -30,7 +31,7 @@ export const AVISO_LEGAL_SECTIONS: LegalSection[] = [
           { label: "Titular", value: "Laura Castillo Valverde" },
           {
             label: "Domicilio",
-            value: "Av. de la Hispanitat, 4, 46600 Alzira (Valencia)",
+            value: "Av. Hispanitat, 4, Entresuelo 1, 46600, Alzira (Valencia)",
           },
           { label: "NIF", value: "20850524N" },
           {

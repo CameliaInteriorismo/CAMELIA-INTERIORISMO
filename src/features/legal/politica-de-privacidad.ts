@@ -12,9 +12,9 @@
  *
  * - Teléfono y dirección ya coinciden con el Aviso Legal, el footer y
  *   Contacto. El teléfono es el mismo número con distinta agrupación
- *   (601 531 301). La dirección se corrigió por indicación del estudio: el
- *   texto original traía otra forma de la calle y añadía la planta, y aquí se
- *   escribe la pública, "Av. de la Hispanitat, 4".
+ *   (601 531 301). La dirección va en la forma legal de una línea, con
+ *   planta; el footer y Contacto la rotulan en tres líneas y los enlaces a
+ *   Maps la usan sin planta (ver CONTACT en features/contacto/data.ts).
  * - Section 10 names Google Places as the address autocomplete. The form
  *   currently runs on Photon and only switches to Google when a key is set
  *   (see src/lib/address/providers.ts), so this clause describes the
@@ -50,7 +50,7 @@ export const PRIVACIDAD_SECTIONS: LegalSection[] = [
           { label: "NIF", value: "20850524N" },
           {
             label: "Dirección",
-            value: "Av. de la Hispanitat, 4, 46600 Alzira (Valencia)",
+            value: "Av. Hispanitat, 4, Entresuelo 1, 46600, Alzira (Valencia)",
           },
           {
             label: "Teléfono",
@@ -354,8 +354,11 @@ export const PRIVACIDAD_SECTIONS: LegalSection[] = [
       {
         type: "lines",
         items: [
-          { value: "Av. de la Hispanitat, 4" },
-          { value: "46600 Alzira (Valencia)" },
+          // Dirección postal para ejercer derechos: la misma forma legal de
+          // una línea que el bloque de identificación de arriba.
+          {
+            value: "Av. Hispanitat, 4, Entresuelo 1, 46600, Alzira (Valencia)",
+          },
         ],
       },
       {

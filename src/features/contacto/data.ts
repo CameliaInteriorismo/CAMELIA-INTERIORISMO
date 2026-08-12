@@ -1,12 +1,17 @@
 /**
  * Contact details, shared by the Contacto page, the footer and the menu.
  *
- * La dirección está unificada en toda la web por indicación del estudio, y
- * en valenciano: "Av. de la Hispanitat, 4 — 46600, Alzira, Valencia". Es la
- * forma que se escribe en cada referencia a la ubicación, en los textos
- * legales y en la consulta de Google Maps. Las variantes anteriores (la
- * castellanizada, la que llevaba planta, y "Alzira, Valencia (España)") ya
- * no aparecen en ningún sitio.
+ * La dirección, confirmada por el estudio, se escribe en tres formas y cada
+ * una tiene su motivo:
+ *
+ * - Rotulada (footer, Contacto, tarjeta del mapa, recogida en estudio): tres
+ *   líneas apiladas, calle / planta / localidad. Es `addressLines`.
+ * - Legal (Aviso Legal, Política de Privacidad): la misma dirección en una
+ *   línea, con planta y la provincia entre paréntesis. Va escrita en cada
+ *   documento porque el texto legal se transcribe entero, no se compone.
+ * - Google Maps: `ADDRESS_ONE_LINE`, deliberadamente **sin la planta**. Un
+ *   entresuelo no ayuda a geolocalizar el portal y puede estropear la
+ *   búsqueda; Maps necesita calle, número, código postal y municipio.
  *
  * The email is likewise unified: info@cameliainteriorismo.com everywhere,
  * which is the address the footer and all four legal documents already
@@ -18,17 +23,30 @@
  * aquí en lugar de repetirlo escrito a mano, y los textos legales escriben el
  * mismo número agrupado como "601 531 301".
  */
+/** Las tres piezas de la dirección, para no repetir ninguna literal. */
+const STREET = "Av. Hispanitat, 4";
+const FLOOR = "Entresuelo 1";
+const LOCALITY = "46600, Alzira, Valencia";
+
 export const CONTACT = {
   email: "info@cameliainteriorismo.com",
   phone: "+34 601 53 13 01",
   phoneHref: "tel:+34601531301",
-  /** The one address. Used wherever the studio's location is written out. */
-  addressLines: ["Av. de la Hispanitat, 4", "46600, Alzira, Valencia"],
-  mapCardLines: ["Av. de la Hispanitat, 4", "46600, Alzira, Valencia"],
+  /**
+   * La dirección rotulada, en tres líneas. Quien la pinte debe recorrer el
+   * array entero: cualquier sitio que dé por hecho un número fijo de líneas
+   * se dejará una fuera.
+   */
+  addressLines: [STREET, FLOOR, LOCALITY],
+  mapCardLines: [STREET, FLOOR, LOCALITY],
 } as const;
 
-/** Single line, for places that can't stack two (the footer's list). */
-export const ADDRESS_ONE_LINE = CONTACT.addressLines.join(", ");
+/**
+ * La dirección en una línea **sin la planta**, que es la que se usa para
+ * localizar el estudio: a Google Maps le sirve el portal, y un "Entresuelo 1"
+ * en la consulta solo añade ruido a la búsqueda.
+ */
+export const ADDRESS_ONE_LINE = `${STREET}, ${LOCALITY}`;
 
 /**
  * Every "cómo llegar" / "ver ubicación" control points here. Built from the

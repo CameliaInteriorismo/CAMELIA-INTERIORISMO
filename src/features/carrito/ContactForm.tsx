@@ -17,7 +17,9 @@ import { useCartStore } from "@/stores/cartStore";
 // used to carry its own copy of both, which is exactly how the site ended
 // up with three different versions of the studio's street.
 const STUDIO_NAME = "Camelia interiorismo";
-const [STUDIO_ADDRESS, STUDIO_LOCALITY] = CONTACT.addressLines;
+// Se recorre el array entero en vez de desestructurar: antes se tomaban dos
+// líneas fijas y, al pasar la dirección a tres, la localidad se perdía.
+const STUDIO_ADDRESS_LINES = CONTACT.addressLines;
 const STUDIO_HOURS = "Horario: L-V de 9:00 a 18:00";
 const STUDIO_MAPS_URL = MAPS_URL;
 
@@ -78,8 +80,9 @@ function PickupInfo() {
       <div>
         <p className="text-primary text-base">{STUDIO_NAME}</p>
         <div className="text-primary/75 mt-2 space-y-1 text-sm">
-          <p>{STUDIO_ADDRESS}</p>
-          <p>{STUDIO_LOCALITY}</p>
+          {STUDIO_ADDRESS_LINES.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
           <p>{STUDIO_HOURS}</p>
         </div>
         <a
