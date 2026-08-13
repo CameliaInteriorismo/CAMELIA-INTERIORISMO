@@ -1,9 +1,11 @@
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/features/tienda/ProductCard";
-import { getRelatedProducts, type Product } from "@/features/tienda/data";
+import type { Product } from "@/features/tienda/types";
 
 export function RelatedProducts({ product }: { product: Product }) {
-  const related = getRelatedProducts(product);
+  // Las resuelve la propia consulta GROQ (misma categoría, sin incluirse a
+  // sí misma y ya filtradas por disponibilidad).
+  const related = product.related ?? [];
   if (related.length === 0) return null;
 
   return (
@@ -14,7 +16,7 @@ export function RelatedProducts({ product }: { product: Product }) {
         </h2>
         <div className="mt-title grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           {related.map((item) => (
-            <ProductCard key={item.slug} product={item} />
+            <ProductCard key={item._id} product={item} />
           ))}
         </div>
       </Container>

@@ -1,5 +1,5 @@
 import { Accordion, type AccordionItem } from "@/components/ui/Accordion";
-import type { Product } from "@/features/tienda/data";
+import type { Product } from "@/features/tienda/types";
 
 // Literal caps (not a CSS transform) — matches how every other all-caps
 // label on the site (e.g. "CUÉNTANOS TU PROYECTO") is written directly,

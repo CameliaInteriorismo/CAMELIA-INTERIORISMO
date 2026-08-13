@@ -6,14 +6,15 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { FinishSwatches } from "@/features/tienda/FinishSwatches";
-import type { Product } from "@/features/tienda/data";
+import type { ProductCardData } from "@/features/tienda/types";
+import { imageProps } from "@/sanity/lib/image";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: ProductCardData }) {
   const [finishIndex, setFinishIndex] = useState(0);
   const finish = product.finishes?.[finishIndex];
-  // No finish has its own photo yet (see data.ts) — falls back to the
-  // base product image until real per-finish photos exist.
-  const activeImage = finish?.image ?? product.image;
+  // Un acabado sin foto propia mantiene la imagen base de la pieza, en vez
+  // de dejar el hueco vacío al seleccionarlo.
+  const activeImage = imageProps(finish?.image ?? product.image);
 
   return (
     <Link href={`/tienda/${product.slug}`} className="group block">
@@ -21,7 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
         {activeImage ? (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={activeImage}
+              key={activeImage.src}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -29,9 +30,11 @@ export function ProductCard({ product }: { product: Product }) {
               className="absolute inset-0"
             >
               <Image
-                src={activeImage}
-                alt={product.name}
+                src={activeImage.src}
+                alt={activeImage.alt || product.name}
                 fill
+                placeholder={activeImage.blurDataURL ? "blur" : undefined}
+                blurDataURL={activeImage.blurDataURL}
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 sizes="(min-width: 640px) 50vw, 100vw"
               />
@@ -40,7 +43,7 @@ export function ProductCard({ product }: { product: Product }) {
         ) : (
           <PlaceholderImage
             aspectRatio="5 / 6"
-            label={`${product.name} — sin foto en Diseño/`}
+            label={`${product.name} — sin foto`}
             className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
         )}

@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
     // the small end. Any value not listed here is rejected outright by the
     // optimiser, which is why it has to be declared.
     qualities: [75, 90],
+    // Las imágenes gestionadas desde Sanity se sirven desde su CDN. Sin
+    // declarar el dominio, next/image las rechaza y la página devuelve un 500.
+    remotePatterns: [
+      { protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" },
+    ],
   },
 };
 

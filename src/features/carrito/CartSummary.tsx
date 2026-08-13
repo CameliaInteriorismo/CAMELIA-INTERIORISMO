@@ -4,8 +4,13 @@ import { Container } from "@/components/layout/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { CartLineItem } from "@/features/carrito/CartLineItem";
 import { useCartHasHydrated, useCartStore } from "@/stores/cartStore";
+import type { ProductCardData } from "@/features/tienda/types";
 
-export function CartSummary() {
+export function CartSummary({
+  products = [],
+}: {
+  products?: (ProductCardData & { description?: string })[];
+}) {
   const items = useCartStore((state) => state.items);
   const hasHydrated = useCartHasHydrated();
 
@@ -43,7 +48,10 @@ export function CartSummary() {
         <div className="divide-primary/15 mt-title divide-y">
           {items.map((item) => (
             <div key={item.id} className="py-[72px] first:pt-0 last:pb-0">
-              <CartLineItem item={item} />
+              <CartLineItem
+                item={item}
+                product={products.find((p) => p.slug === item.slug)}
+              />
             </div>
           ))}
         </div>

@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { VideoBackground } from "@/components/ui/VideoBackground";
 import { useHeroStore } from "@/stores/heroStore";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
 export function ProjectHeroTitle({
   name,
@@ -13,8 +14,9 @@ export function ProjectHeroTitle({
 }: {
   name: string;
   heroVideo?: string;
-  heroImage?: string;
+  heroImage?: SanityImageSource;
 }) {
+  const hero = imageProps(heroImage);
   const heroRef = useRef<HTMLElement>(null);
   const setHeroActive = useHeroStore((state) => state.setHeroActive);
 
@@ -40,14 +42,15 @@ export function ProjectHeroTitle({
     <section ref={heroRef} className="relative h-dvh w-full overflow-hidden">
       {heroVideo ? (
         <VideoBackground src={heroVideo} />
-      ) : heroImage ? (
+      ) : hero ? (
         <Image
-          src={heroImage}
-          alt=""
-          aria-hidden
+          src={hero.src}
+          alt={hero.alt}
+          aria-hidden={!hero.alt}
           fill
           priority
-          quality={90}
+          placeholder={hero.blurDataURL ? "blur" : undefined}
+          blurDataURL={hero.blurDataURL}
           className="object-cover"
           sizes="100vw"
         />

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { Dropdown } from "@/features/tienda/Dropdown";
 import { ProductCard } from "@/features/tienda/ProductCard";
-import { PRODUCTS } from "@/features/tienda/data";
+import type { ProductCardData } from "@/features/tienda/types";
 
 type SortOption =
   "destacados" | "recientes" | "precio-asc" | "precio-desc" | "nombre-asc";
@@ -17,7 +17,11 @@ const SORT_OPTIONS: { label: string; value: SortOption }[] = [
   { label: "Nombre A–Z", value: "nombre-asc" },
 ];
 
-export function ProductsGrid() {
+export function ProductsGrid({
+  products: all,
+}: {
+  products: ProductCardData[];
+}) {
   const [category, setCategory] = useState<string | null>(null);
   const [sort, setSort] = useState<SortOption | null>(null);
 
@@ -26,25 +30,28 @@ export function ProductsGrid() {
   // (eventually from the CMS) are added.
   const categoryOptions = useMemo(() => {
     const seen = new Set<string>();
-    return PRODUCTS.filter((product) => {
-      if (!product.category || seen.has(product.category)) return false;
-      seen.add(product.category);
-      return true;
-    }).map((product) => ({
-      label: product.category as string,
-      value: product.category as string,
-    }));
-  }, []);
+    return all
+      .filter((product) => {
+        if (!product.category || seen.has(product.category)) return false;
+        seen.add(product.category);
+        return true;
+      })
+      .map((product) => ({
+        label: product.category as string,
+        value: product.category as string,
+      }));
+  }, [all]);
 
   const products = useMemo(() => {
     let list = category
-      ? PRODUCTS.filter((product) => product.category === category)
-      : PRODUCTS;
+      ? all.filter((product) => product.category === category)
+      : all;
 
     switch (sort) {
       case "recientes":
-        // No CMS `_createdAt` yet — array order stands in for it, last
-        // entry being the most recently added.
+        // Se mantiene el criterio anterior: el orden inverso al del listado.
+        // No se usa la fecha de creación de Sanity porque la migración creó
+        // todas las piezas a la vez y ordenar por ella sería arbitrario.
         list = [...list].reverse();
         break;
       case "precio-asc":
@@ -64,7 +71,7 @@ export function ProductsGrid() {
         break;
     }
     return list;
-  }, [category, sort]);
+  }, [all, category, sort]);
 
   return (
     <section className="pt-[100px] pb-[100px]">
@@ -93,7 +100,7 @@ export function ProductsGrid() {
 
         <div className="mt-title grid grid-cols-1 gap-8 sm:grid-cols-2">
           {products.map((product) => (
-            <ProductCard key={product.slug} product={product} />
+            <ProductCard key={product._id} product={product} />
           ))}
         </div>
       </Container>

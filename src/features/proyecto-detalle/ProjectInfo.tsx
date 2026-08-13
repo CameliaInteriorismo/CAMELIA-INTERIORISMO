@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { Container } from "@/components/layout/Container";
-import type { ProjectService } from "@/features/proyecto-detalle/data";
 
 // Shrinks an element's font just enough to keep its content on one line
 // (rather than letting the browser wrap it) when it would otherwise
@@ -31,7 +30,8 @@ export function ProjectInfo({
 }: {
   year: string;
   location: string;
-  services: ProjectService[];
+  /** Nombres de los servicios, resueltos desde las referencias de Sanity. */
+  services: string[];
 }) {
   const line1Ref = useRef<HTMLParagraphElement>(null);
   const line2Ref = useRef<HTMLParagraphElement>(null);

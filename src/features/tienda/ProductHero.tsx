@@ -9,7 +9,8 @@ import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { FinishSwatch } from "@/features/tienda/FinishSwatches";
 import { ProductInfo } from "@/features/tienda/ProductInfo";
-import type { Product } from "@/features/tienda/data";
+import type { Product } from "@/features/tienda/types";
+import { imageProps } from "@/sanity/lib/image";
 import { useCartStore } from "@/stores/cartStore";
 
 export function ProductHero({ product }: { product: Product }) {
@@ -19,9 +20,8 @@ export function ProductHero({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
 
   const finish = product.finishes?.[finishIndex];
-  // No finish has its own photo yet (see data.ts) — falls back to the
-  // one real product shot until real per-finish images exist.
-  const activeImage = finish?.image ?? product.image;
+  // Un acabado sin foto propia mantiene la imagen base de la pieza.
+  const activeImage = imageProps(finish?.image ?? product.image);
 
   function handleAddToCart() {
     addItem({
@@ -30,7 +30,7 @@ export function ProductHero({ product }: { product: Product }) {
       slug: product.slug,
       title: product.name,
       finish: finish?.name,
-      image: activeImage,
+      image: activeImage?.src,
       quantity,
     });
     setAdded(true);
@@ -50,7 +50,7 @@ export function ProductHero({ product }: { product: Product }) {
               {activeImage ? (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
-                    key={activeImage}
+                    key={activeImage.src}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -58,10 +58,12 @@ export function ProductHero({ product }: { product: Product }) {
                     className="absolute inset-0"
                   >
                     <Image
-                      src={activeImage}
-                      alt={product.name}
+                      src={activeImage.src}
+                      alt={activeImage.alt || product.name}
                       fill
                       priority
+                      placeholder={activeImage.blurDataURL ? "blur" : undefined}
+                      blurDataURL={activeImage.blurDataURL}
                       className="object-cover"
                       sizes="(min-width: 768px) 50vw, 100vw"
                     />
@@ -70,7 +72,7 @@ export function ProductHero({ product }: { product: Product }) {
               ) : (
                 <PlaceholderImage
                   aspectRatio="17 / 25"
-                  label={`${product.name} — sin foto en Diseño/`}
+                  label={`${product.name} — sin foto`}
                   className="w-full"
                 />
               )}

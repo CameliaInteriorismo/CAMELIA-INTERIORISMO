@@ -2,15 +2,29 @@ import Image from "next/image";
 import { Grid } from "@/components/layout/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
-import { getProduct } from "@/features/tienda/data";
+import type { ProductCardData } from "@/features/tienda/types";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/utils/formatPrice";
 import type { CartItem } from "@/types/cart";
 
-export function CartLineItem({ item }: { item: CartItem }) {
+/**
+ * El precio y la descripción vienen del catálogo vivo de Sanity, no del
+ * snapshot guardado en el carrito: así una pieza que cambia de precio se
+ * muestra actualizada aunque lleve semanas en el carrito de alguien.
+ *
+ * `product` puede faltar —pieza retirada o marcada como no disponible— y la
+ * línea sigue mostrándose con su título e imagen guardados, sin importe. Es
+ * el mismo comportamiento tolerante que ya tenía.
+ */
+export function CartLineItem({
+  item,
+  product,
+}: {
+  item: CartItem;
+  product?: ProductCardData & { description?: string };
+}) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const updateNotes = useCartStore((state) => state.updateNotes);
-  const product = getProduct(item.slug);
 
   return (
     <Grid>

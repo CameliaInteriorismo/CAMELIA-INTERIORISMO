@@ -1,18 +1,43 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import type { ProjectGalleryImages } from "@/features/proyecto-detalle/data";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
-function FullImage({ src, label }: { src?: string; label: string }) {
+/**
+ * Las seis posiciones de la galería, fijas y en el orden del diseño.
+ *
+ * Son posiciones de la composición, no una lista variable: una posición sin
+ * foto conserva su hueco, igual que antes, y al subir la imagen desde Sanity
+ * aparece en su sitio sin que cambie la maquetación.
+ */
+export type ProjectGalleryImages = {
+  imageA?: SanityImageSource;
+  pair1Left?: SanityImageSource;
+  pair1Right?: SanityImageSource;
+  imageB?: SanityImageSource;
+  pair2Left?: SanityImageSource;
+  pair2Right?: SanityImageSource;
+};
+
+function FullImage({
+  source,
+  label,
+}: {
+  source?: SanityImageSource;
+  label: string;
+}) {
+  const image = imageProps(source);
   return (
     <div className="relative aspect-[1120/661] w-full overflow-hidden">
-      {src ? (
+      {image ? (
         <Image
-          src={src}
-          alt=""
-          aria-hidden
+          src={image.src}
+          alt={image.alt}
+          aria-hidden={!image.alt}
           fill
           quality={75}
+          placeholder={image.blurDataURL ? "blur" : undefined}
+          blurDataURL={image.blurDataURL}
           className="object-cover"
           sizes="(min-width: 1024px) 1120px, 100vw"
         />
@@ -27,16 +52,25 @@ function FullImage({ src, label }: { src?: string; label: string }) {
   );
 }
 
-function PairImage({ src, label }: { src?: string; label: string }) {
+function PairImage({
+  source,
+  label,
+}: {
+  source?: SanityImageSource;
+  label: string;
+}) {
+  const image = imageProps(source);
   return (
     <div className="relative aspect-[544/760] w-full overflow-hidden">
-      {src ? (
+      {image ? (
         <Image
-          src={src}
-          alt=""
-          aria-hidden
+          src={image.src}
+          alt={image.alt}
+          aria-hidden={!image.alt}
           fill
           quality={75}
+          placeholder={image.blurDataURL ? "blur" : undefined}
+          blurDataURL={image.blurDataURL}
           className="object-cover"
           sizes="(min-width: 768px) 50vw, 100vw"
         />
@@ -51,25 +85,40 @@ function PairImage({ src, label }: { src?: string; label: string }) {
   );
 }
 
-export function ProjectGallery({ gallery }: { gallery: ProjectGalleryImages }) {
-  const [pair1Left, pair1Right] = gallery.pair1 ?? [undefined, undefined];
-  const [pair2Left, pair2Right] = gallery.pair2 ?? [undefined, undefined];
+export function ProjectGallery({
+  gallery,
+}: {
+  gallery?: ProjectGalleryImages;
+}) {
+  const g = gallery ?? {};
 
   return (
     <section className="mt-block pb-[100px]">
       <Container className="space-y-8">
-        <FullImage src={gallery.imageA} label="Galería — foto A sin Diseño/" />
+        <FullImage source={g.imageA} label="Galería — posición 1 sin imagen" />
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <PairImage src={pair1Left} label="Galería — foto B1 sin Diseño/" />
-          <PairImage src={pair1Right} label="Galería — foto B2 sin Diseño/" />
+          <PairImage
+            source={g.pair1Left}
+            label="Galería — posición 2 sin imagen"
+          />
+          <PairImage
+            source={g.pair1Right}
+            label="Galería — posición 3 sin imagen"
+          />
         </div>
 
-        <FullImage src={gallery.imageB} label="Galería — foto C sin Diseño/" />
+        <FullImage source={g.imageB} label="Galería — posición 4 sin imagen" />
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <PairImage src={pair2Left} label="Galería — foto D1 sin Diseño/" />
-          <PairImage src={pair2Right} label="Galería — foto D2 sin Diseño/" />
+          <PairImage
+            source={g.pair2Left}
+            label="Galería — posición 5 sin imagen"
+          />
+          <PairImage
+            source={g.pair2Right}
+            label="Galería — posición 6 sin imagen"
+          />
         </div>
       </Container>
     </section>

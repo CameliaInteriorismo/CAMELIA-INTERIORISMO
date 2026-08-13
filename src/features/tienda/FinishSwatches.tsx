@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/utils/cn";
-import type { Finish } from "@/features/tienda/data";
+import type { Finish } from "@/features/tienda/types";
 
 // The circle itself — the one visual element shared everywhere a finish
 // is selectable (grid card row, product hero's stacked list), so a swatch
