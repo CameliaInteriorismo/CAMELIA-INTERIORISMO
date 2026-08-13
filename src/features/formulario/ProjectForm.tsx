@@ -8,7 +8,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { AddressAutocomplete } from "@/features/formulario/AddressAutocomplete";
-import { STEPS, type Step } from "@/features/formulario/data";
+import { type Step } from "@/features/formulario/data";
 import { fieldClass } from "@/features/formulario/styles";
 import { cn } from "@/utils/cn";
 
@@ -190,7 +190,7 @@ function StepBody({
   );
 }
 
-export function ProjectForm() {
+export function ProjectForm({ steps }: { steps: Step[] }) {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
   const shift = reduceMotion ? 0 : STEP_SHIFT;
@@ -198,8 +198,8 @@ export function ProjectForm() {
   const [answers, setAnswers] = useState<Answers>({});
   const [error, setError] = useState<string>();
 
-  const step = STEPS[index];
-  const isLast = index === STEPS.length - 1;
+  const step = steps[index];
+  const isLast = index === steps.length - 1;
 
   function setAnswer(name: string, value: string) {
     setAnswers((prev) => ({ ...prev, [name]: value }));

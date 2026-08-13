@@ -3,56 +3,35 @@
 import { useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { ArrowLeftIcon, ArrowRightIcon, StarIcon } from "@/components/ui/icons";
+import { Multiline } from "@/features/shared/MultilineText";
 
 // Reseñas reales de Google (vestavalencia.com), estudio anterior renombrado a Camelia.
-const TESTIMONIALS = [
-  {
-    quote:
-      "Necesitaba un cambio en mi casa que me diese esa calidez de hogar y en Camelia encontré lo que estaba buscando. Laura tiene un estilo y un buen gusto en todo lo que hace. Desde el primer momento confié ciegamente en ella y quedé encantada con el resultado final. Ha pensado al milímetro cada espacio, las calidades de los materiales no pueden ser mejores, los colores que ha combinado y las luces cálidas, me dan esa paz en mi casa que necesitaba.",
-    name: "Eva F.",
-    source: "Google Reviews",
-  },
-  {
-    quote:
-      "Quiero agradecer a Camelia por el excelente trabajo realizado en la reforma de mi hogar. Desde el primer contacto, mostraron profesionalismo, seriedad y compromiso. Cumplieron con los plazos establecidos, cuidando cada detalle y manteniendo siempre una comunicación clara y fluida. El resultado final superó mis expectativas, con acabados de alta calidad y un trato cercano y amable.",
-    name: "Rafa A.",
-    source: "Google Reviews",
-  },
-  {
-    quote:
-      "Un gusto trabajar con gente tan dedicada y profesional. Encantada con la atención personalizada y la capacidad de adaptarse y moldearse a todos los gustos. Muy muy recomendable.",
-    name: "Lucía Martí G.",
-    source: "Google Reviews",
-  },
-  {
-    quote:
-      "Una maravilla. Gente joven con ilusión, bien formada, con buenas ideas y un gran gusto. Asesoramiento tanto a nivel de diseño como técnico, tratando de entender tus necesidades y ajustarse a tu presupuesto. Sin duda, un servicio integral de gran calidad, 100% recomendable.",
-    name: "Antonio A.",
-    source: "Google Reviews",
-  },
-  {
-    quote:
-      "Atención inmejorable desde el primer momento del proyecto. El equipo da importancia a tus prioridades y te hace disfrutar del proceso sin preocupaciones. 100% recomendable.",
-    name: "Sandra Pelufo M.",
-    source: "Google Reviews",
-  },
-];
+export type Testimonial = {
+  _id: string;
+  quote: string;
+  author: string;
+  source?: string;
+};
 
-export function Testimonials() {
+export function Testimonials({
+  testimonials,
+  title,
+}: {
+  testimonials: Testimonial[];
+  title?: string;
+}) {
   const [offset, setOffset] = useState(0);
-  const count = TESTIMONIALS.length;
+  const count = testimonials.length;
   const visible = Array.from(
     { length: 3 },
-    (_, i) => TESTIMONIALS[(i + offset) % count],
+    (_, i) => testimonials[(i + offset) % count],
   );
 
   return (
     <section className="py-block">
       <Container>
         <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Palabras de quiénes
-          <br />
-          lo han vivido
+          <Multiline text={title} />
         </h2>
 
         <div className="mt-title grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -66,7 +45,7 @@ export function Testimonials() {
               <p className="text-primary/80 mt-sm text-sm leading-relaxed">
                 “{testimonial.quote}”
               </p>
-              <p className="mt-sm text-sm font-medium">{testimonial.name}</p>
+              <p className="mt-sm text-sm font-medium">{testimonial.author}</p>
               <p className="text-primary/70 text-xs">{testimonial.source}</p>
             </div>
           ))}

@@ -95,6 +95,26 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "footerNavTitle",
+      title: "Rótulo de la columna de navegación",
+      type: "string",
+      group: "footer",
+    }),
+    defineField({
+      name: "footerContactTitle",
+      title: "Rótulo de la columna de contacto",
+      type: "string",
+      group: "footer",
+      description:
+        "La columna en sí no se edita aquí: la compone el pie con el correo, el teléfono y la dirección de arriba.",
+    }),
+    defineField({
+      name: "footerScheduleTitle",
+      title: "Rótulo de la columna de horario",
+      type: "string",
+      group: "footer",
+    }),
+    defineField({
       name: "footerColumns",
       title: "Columnas del pie",
       type: "array",

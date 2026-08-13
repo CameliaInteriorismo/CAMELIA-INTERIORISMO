@@ -20,6 +20,12 @@ export const testimonial = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "source",
+      title: "De dónde viene",
+      type: "string",
+      description: 'Se muestra bajo el nombre. Por ejemplo "Google Reviews".',
+    }),
+    defineField({
       name: "rating",
       title: "Estrellas",
       type: "number",

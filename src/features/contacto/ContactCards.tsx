@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
-import {
-  CONTACT,
-  MAPS_URL,
-  SOCIALS,
-  SOCIAL_URLS,
-} from "@/features/contacto/data";
+import { imageProps } from "@/sanity/lib/image";
+import type {
+  ContactCardData,
+  ContactDetails,
+  Social,
+} from "@/features/contacto/types";
 
 function CardAction({ href, label }: { href: string; label: string }) {
   return (
@@ -43,49 +43,73 @@ function Card({
   );
 }
 
-export function ContactCards() {
+export function ContactCards({
+  cards,
+  contact,
+  socials,
+}: {
+  cards: ContactCardData[];
+  contact: ContactDetails;
+  socials: Social[];
+}) {
+  // Las tarjetas se buscan por tipo, no por posición: así reordenarlas en
+  // Sanity no cambia qué dato pinta cada una.
+  const byKind = Object.fromEntries(
+    cards.map((card) => [card.kind, card]),
+  ) as Partial<Record<ContactCardData["kind"], ContactCardData>>;
   return (
     <section className="pt-title">
       <Container>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <Card title="Escríbenos">
-            <p className="text-primary/75 text-sm">{CONTACT.email}</p>
-            <CardAction href={`mailto:${CONTACT.email}`} label="Enviar ahora" />
+          <Card title={byKind.email?.title ?? ""}>
+            <p className="text-primary/75 text-sm">{contact.email}</p>
+            <CardAction
+              href={`mailto:${contact.email}`}
+              label={byKind.email?.actionLabel ?? ""}
+            />
           </Card>
 
-          <Card title="Llámanos">
-            <p className="text-primary/75 text-sm">{CONTACT.phone}</p>
-            <CardAction href={CONTACT.phoneHref} label="Llamar ahora" />
+          <Card title={byKind.phone?.title ?? ""}>
+            <p className="text-primary/75 text-sm">{contact.phone}</p>
+            <CardAction
+              href={contact.phoneHref}
+              label={byKind.phone?.actionLabel ?? ""}
+            />
           </Card>
 
-          <Card title="Visítanos">
+          <Card title={byKind.address?.title ?? ""}>
             <div className="text-primary/75 space-y-1 text-sm">
-              {CONTACT.addressLines.map((line) => (
+              {contact.addressLines.map((line) => (
                 <p key={line}>{line}</p>
               ))}
             </div>
-            <CardAction href={MAPS_URL} label="Ver ubicación" />
+            <CardAction
+              href={contact.mapsUrl}
+              label={byKind.address?.actionLabel ?? ""}
+            />
           </Card>
 
-          <Card title="Síguenos">
+          <Card title={byKind.social?.title ?? ""}>
             {/* Bare icons — no border, fill or container. Hover keeps the
                 same soft fade the other card actions use. */}
             <div className="flex items-center gap-4">
-              {SOCIALS.map(({ label, src }) => {
-                const href = SOCIAL_URLS[label];
-                const icon = (
+              {socials.map((social) => {
+                const href = social.url;
+                const image = imageProps(social.icon);
+                const label = social.label;
+                const icon = image ? (
                   <Image
-                    src={src}
+                    src={image.src}
                     alt=""
                     width={20}
                     height={20}
                     className="h-5 w-5"
                   />
-                );
+                ) : null;
                 // LinkedIn has no URL yet — shown, but not as a dead link.
                 return href ? (
                   <a
-                    key={label}
+                    key={social._key}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -95,7 +119,7 @@ export function ContactCards() {
                     {icon}
                   </a>
                 ) : (
-                  <span key={label} aria-hidden className="block">
+                  <span key={social._key} aria-hidden className="block">
                     {icon}
                   </span>
                 );

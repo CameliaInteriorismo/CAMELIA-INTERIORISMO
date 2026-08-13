@@ -35,6 +35,7 @@ export const structure: StructureResolver = (S) =>
               singleton(S, "blogPage", "Blog"),
               singleton(S, "contactPage", "Contacto"),
               singleton(S, "projectFormPage", "Formulario de proyecto"),
+              singleton(S, "confirmationPages", "Confirmación y gracias"),
             ]),
         ),
 

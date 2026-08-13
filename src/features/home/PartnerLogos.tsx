@@ -7,46 +7,40 @@ import { Marquee } from "@/components/ui/Marquee";
 // away from the edges so interior counters stayed intact. Order interleaves
 // wide wordmarks with compact marks so neither kind clumps together.
 /** The common slot every mark is fitted into. */
-const SLOT = "h-10 w-[140px] md:h-12 md:w-[170px]";
+/** Anchos del carrusel. Es diseño: la clave que elige cuál viene de Sanity. */
+const SLOTS = {
+  normal: "h-10 w-[140px] md:h-12 md:w-[170px]",
+  wide: "h-10 w-[180px] md:h-12 md:w-[220px]",
+  extraWide: "h-10 w-[220px] md:h-12 md:w-[270px]",
+} as const;
 
-const PARTNERS: { name: string; src: string; slot?: string }[] = [
-  { name: "Blum", src: "/assets/colaboradores/blum.png" },
-  { name: "Casamance", src: "/assets/colaboradores/casamance.png" },
-  { name: "Gessi", src: "/assets/colaboradores/gessi.png" },
-  { name: "Ramón Soler", src: "/assets/colaboradores/ramonsoler.png" },
-  {
-    name: "Maora Ceramic",
-    src: "/assets/colaboradores/maora.png",
-    // ~35% larger than the common slot, at the studio's request. It's a
-    // stacked lockup rather than a wordmark, so object-contain fits it to
-    // the slot's height and leaves it optically small beside the wide
-    // marks; the bigger box gives back the presence its proportions cost.
-    slot: "h-14 w-[190px] md:h-16 md:w-[230px]",
-  },
-  { name: "Falmec", src: "/assets/colaboradores/falmec.png" },
-  { name: "GRE Studio", src: "/assets/colaboradores/gre-studio.png" },
-  { name: "Asko", src: "/assets/colaboradores/asko.png" },
-  { name: "Corston", src: "/assets/colaboradores/corston.png" },
-  { name: "Coordonné", src: "/assets/colaboradores/coordonne.png" },
-];
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
-export function PartnerLogos() {
-  const logos = PARTNERS.map((partner) => (
+export type Partner = {
+  _id: string;
+  name: string;
+  logo?: SanityImageSource;
+  /** Ancho en el carrusel: algunos logos quedan diminutos con el normal. */
+  size?: "normal" | "wide" | "extraWide";
+};
+
+export function PartnerLogos({ partners }: { partners: Partner[] }) {
+  const logos = partners.map((partner) => (
     // Fixed slot + object-contain: the marks have wildly different aspect
     // ratios (a 1104x163 wordmark next to a 201x151 stacked mark), so
     // sizing each into a common box keeps them optically even instead of
     // letting the wide ones dominate. No card, border or shadow — just the
     // mark on the page background.
     <span
-      key={partner.name}
-      className={`relative block shrink-0 ${partner.slot ?? SLOT}`}
+      key={partner._id}
+      className={`relative block shrink-0 ${SLOTS[partner.size ?? "normal"]}`}
     >
       {/* Eager: the duplicated half of the track sits off-screen, and
           lazy-loading would leave it blank until it drifted in — visible
           as gaps in the band. The files are small, so loading all of them
           up front is cheaper than the pop. */}
       <Image
-        src={partner.src}
+        src={imageProps(partner.logo)?.src ?? ""}
         alt={partner.name}
         fill
         sizes="230px"

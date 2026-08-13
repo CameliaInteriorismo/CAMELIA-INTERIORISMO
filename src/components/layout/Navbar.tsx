@@ -18,8 +18,18 @@ import { CartIcon, MenuIcon } from "@/components/ui/icons";
 import { cn } from "@/utils/cn";
 import { useCartHasHydrated, useCartStore } from "@/stores/cartStore";
 import { useHeroStore } from "@/stores/heroStore";
+import type { LinkData } from "@/features/shared/types";
+import type { Social } from "@/features/contacto/types";
 
-export function Navbar() {
+export function Navbar({
+  navLinks,
+  cta,
+  socials,
+}: {
+  navLinks: LinkData[];
+  cta?: LinkData;
+  socials: Social[];
+}) {
   const [open, setOpen] = useState(false);
   // Renders inline for the very first paint (server + hydration, matching),
   // then re-parents into #navbar-root via a portal right after mount — the
@@ -215,9 +225,9 @@ export function Navbar() {
                     {/* Goes to the project brief flow, not the Contacto
                         page — the CTA's own wording is the first step of
                         that form (see FORMULARIO CONTACTO 1). */}
-                    <ButtonLink href="/cuentanos-tu-proyecto">
-                      CUÉNTANOS TU PROYECTO
-                    </ButtonLink>
+                    {cta && (
+                      <ButtonLink href={cta.href}>{cta.label}</ButtonLink>
+                    )}
                   </div>
                 )}
               </div>
@@ -236,6 +246,8 @@ export function Navbar() {
         {open && (
           <HamburgerMenu
             key="menu-panel"
+            links={navLinks}
+            socials={socials}
             onNavigate={() => setOpen(false)}
             onClose={() => setOpen(false)}
           />

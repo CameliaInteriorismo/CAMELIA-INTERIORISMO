@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { PAGE_TITLE_SCALE } from "@/components/ui/typography";
 import { cn } from "@/utils/cn";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
 /**
  * Unlike the other page heroes this one is *contained*, not full-bleed:
@@ -10,27 +11,37 @@ import { cn } from "@/utils/cn";
  * PageHeroBanner (which is 100dvh and edge to edge) — but it does reuse
  * PAGE_TITLE_SCALE, so the word still matches every other page title.
  */
-export function ContactHero() {
+export function ContactHero({
+  title,
+  image,
+  imagePosition,
+}: {
+  title?: string;
+  image?: SanityImageSource;
+  imagePosition?: string;
+}) {
+  const photo = imageProps(image);
   return (
     <section className="pt-title">
       <Container>
         <div className="relative aspect-[2/1] w-full overflow-hidden">
-          <Image
-            src="/assets/contacto/P Reels 8 JUL.jpg"
-            alt=""
-            aria-hidden
-            fill
-            priority
-            quality={90}
-            className="object-cover"
-            style={{ objectPosition: "center 45%" }}
-            sizes="(min-width: 1024px) 1120px, 100vw"
-          />
+          {photo && (
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              aria-hidden={!photo.alt}
+              fill
+              priority
+              className="object-cover"
+              style={{ objectPosition: imagePosition ?? "center" }}
+              sizes="(min-width: 1024px) 1120px, 100vw"
+            />
+          )}
           <div className="absolute inset-0 flex items-center justify-center">
             <h1
               className={cn("font-title text-primary px-6", PAGE_TITLE_SCALE)}
             >
-              Contacto
+              {title}
             </h1>
           </div>
         </div>

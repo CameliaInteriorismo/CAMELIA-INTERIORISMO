@@ -175,3 +175,187 @@ export const CART_PRODUCTS_QUERY = groq`
     _id, name, "slug": slug.current, price, description, image ${IMAGE}
   }
 `;
+
+// ----------------------------------------------------------------- páginas
+
+export const ESTUDIO_PAGE_QUERY = groq`
+  *[_id == "estudioPage"][0] {
+    title,
+    sections[] { _key, title, subtitle, paragraphs, image ${IMAGE} },
+    seo ${SEO}
+  }
+`;
+
+export const METODOLOGIA_PAGE_QUERY = groq`
+  *[_id == "metodologiaPage"][0] {
+    title,
+    heroImage ${IMAGE},
+    heroImagePosition,
+    processTitle,
+    process[] { _key, label, title, paragraphs, image ${IMAGE} },
+    experienceTitle,
+    experience[] { _key, title, paragraphs, imageRight, image ${IMAGE} },
+    seo ${SEO}
+  }
+`;
+
+export const SERVICIOS_PAGE_QUERY = groq`
+  *[_id == "serviciosPage"][0] {
+    title,
+    heroImage ${IMAGE},
+    heroImagePosition,
+    // Los servicios se resuelven por referencia: su texto e imagen se editan
+    // en el propio servicio, no aquí, así que no hay dos versiones.
+    "phases": phases[]-> { _id, title, longDescription, image ${IMAGE} },
+    accompanimentTitle,
+    accompaniment[] { _key, question, answer, image ${IMAGE} },
+    cta { title, text, button, image ${IMAGE} },
+    faqTitle,
+    faq[] { _key, question, answer },
+    seo ${SEO}
+  }
+`;
+
+export const HOME_PAGE_QUERY = groq`
+  *[_id == "homePage"][0] {
+    heroVideo,
+    heroImage ${IMAGE},
+    heroLogo ${IMAGE},
+    animatedPhrases,
+    servicesTitle,
+    servicesCta,
+    "services": services[]-> { _id, title, shortDescription, image ${IMAGE} },
+    detailTitle,
+    // El nombre y el enlace salen del proyecto; la foto es propia de la Home.
+    featuredProjects[] {
+      _key,
+      "name": project->name,
+      "slug": project->slug.current,
+      image ${IMAGE}
+    },
+    testimonialsTitle,
+    "testimonials": testimonials[]-> { _id, quote, author, source },
+    cta { title, text, button, image ${IMAGE} },
+    "partners": partners[]-> { _id, name, size, logo ${IMAGE} },
+    seo ${SEO}
+  }
+`;
+
+/** Cabecera e intro de las páginas de listado. */
+export const PROYECTOS_PAGE_QUERY = groq`
+  *[_id == "proyectosPage"][0] {
+    title, heroImage ${IMAGE}, heroImagePosition,
+    introTitle, introText,
+    cta { title, text, button, image ${IMAGE} },
+    seo ${SEO}
+  }
+`;
+
+/** Los datos globales: barra, pie, contacto y redes. */
+export const SITE_SETTINGS_QUERY = groq`
+  *[_id == "siteSettings"][0] {
+    siteName,
+    email, phone, phoneHref,
+    addressStreet, addressFloor, addressLocality,
+    openingHours,
+    navLinks[] { _key, label, href },
+    headerCta,
+    footerNavTitle, footerContactTitle, footerScheduleTitle,
+    footerColumns[] { _key, title, links[] { _key, label, href } },
+    footerLegalLinks[] { _key, label, href },
+    copyright,
+    socials[] { _key, label, url, "icon": icon ${IMAGE}, "iconMenu": iconMenu ${IMAGE} },
+    defaultSeo ${SEO}
+  }
+`;
+
+export const CONTACT_PAGE_QUERY = groq`
+  *[_id == "contactPage"][0] {
+    title,
+    heroImage ${IMAGE},
+    heroImagePosition,
+    cards[] { _key, kind, title, actionLabel },
+    mapTitle, mapLead, mapText, mapAddressLabel, mapActionLabel,
+    mapImage ${IMAGE},
+    seo ${SEO}
+  }
+`;
+
+/**
+ * Un documento legal completo.
+ *
+ * Se pide el árbol entero, con sub-apartados incluidos. La estructura del
+ * schema es la misma que ya sabe pintar LegalDocument.tsx —párrafos con
+ * enlaces, listas, tablas etiqueta/valor, líneas pegadas y sub-apartados—,
+ * así que no hay conversión de formato por medio y no se puede perder nada.
+ *
+ * Lo único que se traduce es el nombre del tipo: Sanity los llama
+ * "legalText", "legalList"… y el componente espera "text", "list"… Se hace
+ * aquí, en la consulta, para no tocar el renderizador.
+ */
+const BLOCK_TYPE = groq`
+  "type": select(
+    _type == "legalText" => "text",
+    _type == "legalList" => "list",
+    _type == "legalDetails" => "details",
+    _type == "legalLines" => "lines",
+    _type == "legalSubsection" => "subsection",
+    _type
+  )
+`;
+
+/** Los campos comunes. `items` va sin proyectar: en una lista son textos y
+ *  en un bloque de líneas son objetos, y proyectarlo rompería uno de los dos. */
+const LEGAL_BLOCK_FIELDS = groq`
+  _key,
+  ${BLOCK_TYPE},
+  paragraphs,
+  links[] { text, href },
+  items,
+  entries[] { label, value, href },
+  title
+`;
+
+export const LEGAL_DOCUMENT_QUERY = groq`
+  *[_type == "legalDocument" && slug.current == $slug][0] {
+    title,
+    lead,
+    sections[] {
+      _key, number, title,
+      blocks[] {
+        ${LEGAL_BLOCK_FIELDS},
+        // Los sub-apartados anidan un nivel más de los mismos bloques.
+        blocks[] { ${LEGAL_BLOCK_FIELDS} }
+      }
+    },
+    seo ${SEO}
+  }
+`;
+
+/**
+ * Los textos del formulario de proyecto. La estructura (tipo de pantalla,
+ * clave de cada respuesta, validación) vive en el código: aquí solo viaja lo
+ * que se lee. Ver features/formulario/mergeSteps.ts.
+ */
+export const PROJECT_FORM_QUERY = groq`
+  *[_id == "projectFormPage"][0] {
+    steps[] {
+      key, title, titleLines, paragraphs, help, helpBold, placeholder, cta,
+      options,
+      fieldLabels[] { name, label, placeholder },
+      groupLabels[] { name, label, options },
+      image ${IMAGE}
+    },
+    seo ${SEO}
+  }
+`;
+
+/** Las pantallas de cierre: confirmación del carrito y las dos de gracias. */
+export const CONFIRMATION_PAGES_QUERY = groq`
+  *[_id == "confirmationPages"][0] {
+    studioName,
+    studioHours,
+    cartThanks { title, text, backLabel },
+    formThanks { title, text, backLabel }
+  }
+`;

@@ -13,6 +13,10 @@
  * migración sobrescribe lo mismo en vez de duplicarlo. Las imágenes se suben
  * una sola vez: Sanity las deduplica por hash del fichero.
  *
+ * Las constantes de contenido se leen de content-backup/, no de los
+ * componentes: al conectar cada página a Sanity, su constante desaparece del
+ * componente. El backup es la única fuente estable, y por eso NO se borra.
+ *
  * El token sale del entorno. Nunca está en el código, y esto solo corre en tu
  * máquina — no forma parte de la web desplegada.
  */
@@ -260,9 +264,10 @@ console.log(
 
 // --- Servicios (primero: los proyectos y las páginas los referencian) ----
 const serviceTabs =
-  (await grab("src/features/home/ServiceTabs.tsx", "const SERVICE_TABS")) ?? [];
+  (await grab("content-backup/home_ServiceTabs.tsx", "const SERVICE_TABS")) ??
+  [];
 const phases =
-  (await grab("src/features/servicios/ProjectPhases.tsx", "const PHASES")) ??
+  (await grab("content-backup/servicios_ProjectPhases.tsx", "const PHASES")) ??
   [];
 
 const serviceIdByTitle = new Map();
@@ -434,7 +439,7 @@ for (const [i, post] of posts.entries()) {
 
 // --- Testimonios y marcas -------------------------------------------------
 const testimonials =
-  (await grab("src/features/home/Testimonials.tsx", "const TESTIMONIALS")) ??
+  (await grab("content-backup/home_Testimonials.tsx", "const TESTIMONIALS")) ??
   [];
 for (const [i, t] of testimonials.entries()) {
   push({
@@ -442,13 +447,14 @@ for (const [i, t] of testimonials.entries()) {
     _type: "testimonial",
     quote: t.quote,
     author: t.name ?? t.author,
+    source: t.source,
     rating: t.rating ?? 5,
     order: (i + 1) * 10,
   });
 }
 
 const partners =
-  (await grab("src/features/home/PartnerLogos.tsx", "const PARTNERS", {
+  (await grab("content-backup/home_PartnerLogos.tsx", "const PARTNERS", {
     SLOT: "h-10 w-[140px] md:h-12 md:w-[170px]",
   })) ?? [];
 for (const [i, p] of partners.entries()) {
@@ -506,7 +512,8 @@ push({
   addressStreet: street,
   addressFloor: floor,
   addressLocality: locality,
-  openingHours: ["Lunes a viernes:", "9:00 – 18:00"],
+  // Tres líneas, como en el pie.
+  openingHours: ["Lunes a viernes:", "9:00h - 13:30h", "16:00h - 19:00h"],
   navLinks: keyed(
     [
       ["Inicio", "/"],
@@ -536,6 +543,34 @@ push({
     "l",
   ),
   socials: keyed(socials, "s"),
+  // Las columnas del pie tal como están hoy. "Contacto" y "Horario" no son
+  // listas de enlaces: los pinta el propio pie a partir de los datos de
+  // arriba, así que aquí solo va la de Navegación, que sí lo es.
+  footerNavTitle: "Navegación",
+  footerContactTitle: "Contacto",
+  footerScheduleTitle: "Horario",
+  copyright: "Camelia Interiorismo. Todos los derechos reservados",
+  footerColumns: keyed(
+    [
+      {
+        _type: "footerColumn",
+        title: "Navegación",
+        links: keyed(
+          [
+            ["Inicio", "/"],
+            ["Estudio", "/estudio"],
+            ["Metodología", "/metodologia"],
+            ["Servicios", "/servicios"],
+            ["Proyectos", "/proyectos"],
+            ["Shop", "/tienda"],
+            ["Blog", "/blog"],
+          ].map(([label, href]) => ({ _type: "link", label, href })),
+          "fn",
+        ),
+      },
+    ],
+    "fc",
+  ),
 });
 
 // --- Textos legales -------------------------------------------------------
@@ -632,29 +667,59 @@ for (const [file, title, sectionsName, leadName] of legalFiles) {
 
 // --- Páginas --------------------------------------------------------------
 const phrases =
-  (await grab("src/features/home/AnimatedPhrase.tsx", "const PHRASES")) ?? [];
+  (await grab("content-backup/home_AnimatedPhrase.tsx", "const PHRASES")) ?? [];
 const detailImages =
-  (await grab("src/features/home/DetailGrid.tsx", "const DETAIL_IMAGES")) ?? [];
+  (await grab("content-backup/home_DetailGrid.tsx", "const DETAIL_IMAGES")) ??
+  [];
 
-const detailImgs = [];
-for (const d of detailImages) detailImgs.push(await img(d.src, d.alt));
+// La cuadrícula de la Home enlaza a proyectos, con una foto propia: los
+// ficheros de /assets/home/ son encuadres distintos a los del listado.
+const featured = [];
+for (const d of detailImages) {
+  featured.push({
+    _type: "featuredProject",
+    project: ref(`project-${d.slug}`),
+    image: await img(d.src, d.alt),
+  });
+}
 
 push({
   _id: "homePage",
   _type: "homePage",
   heroVideo:
     "https://res.cloudinary.com/uvofxvtg/video/upload/f_auto,q_auto,c_limit,w_1920/VIDEO_HOME_nozgqt.mov",
+  // El logotipo blanco que va centrado sobre el vídeo.
+  heroLogo: await img("/assets/logo/Camelia logo sin fondo blanco.png", "Camelia"),
   animatedPhrases: phrases,
   services: [...serviceIdByTitle.values()].map((id, i) => kref(id, i)),
-  detailImages: keyed(detailImgs.filter(Boolean), "d"),
+  featuredProjects: keyed(featured, "fp"),
   testimonials: testimonials.map((t, i) =>
     kref(`testimonial-${slugOf(t.name ?? t.author ?? `t${i}`)}`, i),
   ),
   partners: partners.map((p, i) => kref(`partner-${slugOf(p.name)}`, i)),
+  // Títulos y CTA copiados literalmente de los componentes de Home. El salto
+  // de línea de los que hoy llevan un <br> se conserva como \n; la web lo
+  // pinta igual (ver Testimonials, que ya partía "Palabras de quiénes").
+  servicesTitle: "Diseñamos espacios que cuentan historias",
+  servicesCta: {
+    _type: "link",
+    label: "SOBRE NUESTROS SERVICIOS",
+    href: "/servicios",
+  },
+  detailTitle: "Espacios construidos desde el detalle",
+  testimonialsTitle: "Palabras de quiénes\nlo han vivido",
+  cta: {
+    _type: "ctaBanner",
+    title: "¿Comenzamos tu proyecto?",
+    button: { _type: "link", label: "CONTÁCTANOS", href: "/contacto" },
+    image: await img("/assets/home/Banner 1 home.png", "-"),
+  },
 });
 
+// Desde el backup: AboutSections ya lee de Sanity y su constante ha
+// desaparecido del componente.
 const aboutSections =
-  (await grab("src/features/estudio/AboutSections.tsx", "const SECTIONS")) ??
+  (await grab("content-backup/estudio_AboutSections.tsx", "const SECTIONS")) ??
   [];
 const estudioSections = [];
 for (const s of aboutSections) {
@@ -662,7 +727,9 @@ for (const s of aboutSections) {
     _type: "aboutSection",
     title: s.title,
     subtitle: s.subtitle,
-    paragraphs: s.paragraphs,
+    // La clave en el componente es `body`, no `paragraphs`: leerla mal dejaba
+    // las tres secciones de Estudio sin una línea de texto.
+    paragraphs: s.body ?? s.paragraphs,
     image: await img(s.image, s.title),
   });
 }
@@ -675,12 +742,12 @@ push({
 
 const procesoTabs =
   (await grab(
-    "src/features/metodologia/ProcesoTabs.tsx",
+    "content-backup/metodologia_ProcesoTabs.tsx",
     "const PROCESO_TABS",
   )) ?? [];
 const experienceSteps =
   (await grab(
-    "src/features/metodologia/ExperienciaScroll.tsx",
+    "content-backup/metodologia_ExperienciaScroll.tsx",
     "const STEPS",
   )) ?? [];
 const proceso = [];
@@ -689,7 +756,8 @@ for (const t of procesoTabs)
     _type: "processStep",
     label: t.label,
     title: t.title,
-    paragraphs: t.paragraphs,
+    // `body` en el componente, no `paragraphs`.
+    paragraphs: t.body ?? t.paragraphs,
     image: await img(t.image, t.title),
   });
 const experiencia = [];
@@ -697,24 +765,28 @@ for (const s of experienceSteps)
   experiencia.push({
     _type: "experienceStep",
     title: s.title,
-    paragraphs: s.paragraphs,
+    paragraphs: s.body ?? s.paragraphs,
+    // Los pasos alternan el lado de la foto; es dato, no maquetación fija.
+    imageRight: s.imageRight ?? false,
     image: await img(s.image, s.title),
   });
 push({
   _id: "metodologiaPage",
   _type: "metodologiaPage",
   title: "Metodología",
+  processTitle: "El proceso",
+  experienceTitle: "La experiencia",
   process: keyed(proceso, "p"),
   experience: keyed(experiencia, "e"),
 });
 
 const accompaniment =
   (await grab(
-    "src/features/servicios/AccompanimentSection.tsx",
+    "content-backup/servicios_AccompanimentSection.tsx",
     "const ACCOMPANIMENT_ITEMS",
   )) ?? [];
 const faq =
-  (await grab("src/features/servicios/FaqSection.tsx", "const FAQ_ITEMS")) ??
+  (await grab("content-backup/servicios_FaqSection.tsx", "const FAQ_ITEMS")) ??
   [];
 const acc = [];
 for (const a of accompaniment)
@@ -728,6 +800,19 @@ push({
   _id: "serviciosPage",
   _type: "serviciosPage",
   title: "Servicios",
+  heroImage: await img("/assets/servicios/Servicio hero.jpg", "-"),
+  heroImagePosition: "center 58%",
+  accompanimentTitle: "Cómo podemos\nacompañarte",
+  faqTitle: "Antes de empezar\nel proyecto",
+  cta: {
+    _type: "ctaBanner",
+    title: "Hablemos de tu espacio",
+    text: "Cada proyecto parte de entender cómo vives, qué necesitas y cómo quieres sentir tu espacio. Estaremos encantados de escuchar tu idea y acompañarte en el proceso.",
+    // El botón de Servicios dice "¿COMENZAMOS?", no "CONTÁCTANOS" como los
+    // de Home y Proyectos.
+    button: { _type: "link", label: "¿COMENZAMOS?", href: "/contacto" },
+    image: await img("/assets/home/Banner 1 home.png", "-"),
+  },
   phases: [...serviceIdByTitle.values()].map((id, i) => kref(id, i)),
   accompaniment: keyed(acc, "a"),
   faq: keyed(
@@ -740,34 +825,69 @@ push({
   ),
 });
 
-push({ _id: "proyectosPage", _type: "proyectosPage", title: "Proyectos" });
-push({ _id: "tiendaPage", _type: "tiendaPage", title: "Shop" });
-push({ _id: "blogPage", _type: "blogPage", title: "Blog" });
+push({
+  _id: "proyectosPage",
+  _type: "proyectosPage",
+  title: "Proyectos",
+  heroImage: await img("/assets/proyectos/Proyectos hero.jpg", "-"),
+  heroImagePosition: "center 35%",
+  introTitle: "Espacios con\nidentidad propia",
+  introText:
+    "Diseñamos espacios que responden a quienes lo habitan, cuidando la distribución, la luz, los materiales y cada detalle desde una mirada coherente y duradera. Cada proyecto nace de entender cómo vive cada cliente para traducirlo en interiores equilibrados, funcionales y con identidad propia.",
+  cta: {
+    _type: "ctaBanner",
+    title: "¿Comenzamos tu proyecto?",
+    button: { _type: "link", label: "CONTÁCTANOS", href: "/contacto" },
+  },
+});
+push({
+  _id: "tiendaPage",
+  _type: "tiendaPage",
+  title: "Shop",
+  heroImage: await img("/assets/tienda/Shop hero.jpg", "-"),
+  heroImagePosition: "center 55%",
+});
+push({
+  _id: "blogPage",
+  _type: "blogPage",
+  title: "Blog",
+  heroImage: await img("/assets/blog/Hero blog.jpg", "-"),
+});
 push({
   _id: "contactPage",
   _type: "contactPage",
   title: "Contacto",
+  heroImage: await img("/assets/contacto/P Reels 8 JUL.jpg", "-"),
+  heroImagePosition: "center 45%",
+  mapTitle: "Ven a conocernos\nal estudio",
+  mapLead: "Nuestro espacio está en el corazón de Alzira.",
+  mapText:
+    "Si prefieres hablar de tu proyecto en persona, estaremos encantados de recibirte.",
+  mapImage: await img("/assets/contacto/Imagen mapa del estudio.jpg", "-"),
+  mapAddressLabel: "Dirección",
+  // Dos líneas, como en la tarjeta: "Abrir en / Google Maps".
+  mapActionLabel: "Abrir en\nGoogle Maps",
   cards: keyed(
     [
       {
         _type: "contactCard",
         kind: "email",
-        title: "ESCRÍBENOS",
+        title: "Escríbenos",
         actionLabel: "Enviar ahora",
       },
       {
         _type: "contactCard",
         kind: "phone",
-        title: "LLÁMANOS",
+        title: "Llámanos",
         actionLabel: "Llamar ahora",
       },
       {
         _type: "contactCard",
         kind: "address",
-        title: "VISÍTANOS",
+        title: "Visítanos",
         actionLabel: "Ver ubicación",
       },
-      { _type: "contactCard", kind: "social", title: "SÍGUENOS" },
+      { _type: "contactCard", kind: "social", title: "Síguenos" },
     ],
     "c",
   ),
@@ -820,6 +940,26 @@ push({
   _id: "projectFormPage",
   _type: "projectFormPage",
   steps: keyed(steps, "st"),
+});
+
+// --- Pantallas de confirmación y gracias -----------------------------------
+push({
+  _id: "confirmationPages",
+  _type: "confirmationPages",
+  studioName: "Camelia interiorismo",
+  studioHours: "Horario: L-V de 9:00 a 18:00",
+  cartThanks: {
+    _type: "thanksScreen",
+    title: "SOLICITUD ENVIADA CON ÉXITO",
+    text: "Gracias por confiar en Camelia. Estamos revisando tu selección y muy pronto contactaremos contigo para confirmar la disponibilidad de los productos y coordinar la entrega o la recogida en el estudio.",
+    backLabel: "Volver al inicio",
+  },
+  formThanks: {
+    _type: "thanksScreen",
+    title: "¡GRACIAS POR CONTACTAR CON CAMELIA!",
+    text: "Hemos recibido tu solicitud correctamente. Revisaremos la información y nos pondremos en contacto contigo lo antes posible para conocer mejor tu proyecto y preparar una propuesta adaptada a tus necesidades.",
+    backLabel: "Volver al inicio",
+  },
 });
 
 // =============================================================== resultado

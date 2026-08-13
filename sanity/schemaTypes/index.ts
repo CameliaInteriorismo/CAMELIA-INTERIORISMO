@@ -27,6 +27,7 @@ import {
 import { siteSettings } from "./singletons/siteSettings";
 import {
   blogPage,
+  confirmationPages,
   contactPage,
   estudioPage,
   formStep,
@@ -35,6 +36,7 @@ import {
   projectFormPage,
   proyectosPage,
   serviciosPage,
+  thanksScreen,
   tiendaPage,
 } from "./singletons/pages";
 
@@ -54,6 +56,7 @@ export const SINGLETON_TYPES = [
   "blogPage",
   "contactPage",
   "projectFormPage",
+  "confirmationPages",
 ] as const;
 
 export const schemaTypes: SchemaTypeDefinition[] = [
@@ -98,4 +101,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   contactPage,
   projectFormPage,
   formStep,
+  confirmationPages,
+  thanksScreen,
 ];

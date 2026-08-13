@@ -11,34 +11,28 @@ import { cn } from "@/utils/cn";
 // TODO(asset): solo "Decoración de espacios" tiene foto real (la única
 // expandida en Diseño/SERVICIOS.png) — las otras tres necesitan su imagen
 // definitiva del cliente.
-const ACCOMPANIMENT_ITEMS = [
-  {
-    question: "REFORMA INTEGRAL",
-    answer: "Contenido pendiente del cliente.",
-    image: null,
-  },
-  {
-    question: "REFORMA PARCIAL",
-    answer: "Contenido pendiente del cliente.",
-    image: null,
-  },
-  {
-    question: "OBRA NUEVA",
-    answer: "Contenido pendiente del cliente.",
-    image: null,
-  },
-  {
-    question: "DECORACIÓN DE ESPACIOS",
-    answer: "¿Ya tienes la casa hecha? La vestimos y le damos alma, sin obras.",
-    image: "/assets/servicios/acompanamiento.jpg",
-  },
-];
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
+import { Multiline } from "@/features/shared/MultilineText";
 
-export function AccompanimentSection() {
+export type AccompanimentItem = {
+  _key: string;
+  question: string;
+  answer: string;
+  image?: SanityImageSource;
+};
+
+export function AccompanimentSection({
+  items,
+  title,
+}: {
+  items: AccompanimentItem[];
+  title?: string;
+}) {
   // All closed on load; opening one closes whichever was open — a single
   // "radio button" accordion, not the independent multi-open FAQ style.
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const displayed = ACCOMPANIMENT_ITEMS[openIndex ?? 0];
+  const displayed = items[openIndex ?? 0];
+  const displayedImage = imageProps(displayed?.image);
 
   return (
     // pt-[80px]: ProjectPhases' last card already ends with its own 40px
@@ -47,9 +41,7 @@ export function AccompanimentSection() {
     <section className="pt-[80px] pb-[120px]">
       <Container>
         <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Cómo podemos
-          <br />
-          acompañarte
+          <Multiline text={title} />
         </h2>
 
         {/* 32px en vez de los 60px del ritmo título→contenido: las dos frases
@@ -69,13 +61,10 @@ export function AccompanimentSection() {
             </p>
 
             <div className="border-primary/15 mt-title border-t">
-              {ACCOMPANIMENT_ITEMS.map((item, index) => {
+              {items.map((item, index) => {
                 const open = index === openIndex;
                 return (
-                  <div
-                    key={item.question}
-                    className="border-primary/15 border-b"
-                  >
+                  <div key={item._key} className="border-primary/15 border-b">
                     <button
                       type="button"
                       onClick={() => setOpenIndex(open ? null : index)}
@@ -112,10 +101,10 @@ export function AccompanimentSection() {
 
           <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
             <div className={cn("relative aspect-[4/5] w-full overflow-hidden")}>
-              {displayed.image ? (
+              {displayedImage ? (
                 <Image
-                  src={displayed.image}
-                  alt={displayed.question}
+                  src={displayedImage.src}
+                  alt={displayedImage.alt || displayed.question}
                   fill
                   className="object-cover"
                   sizes="(min-width: 768px) 40vw, 100vw"
@@ -123,7 +112,7 @@ export function AccompanimentSection() {
               ) : (
                 <PlaceholderImage
                   aspectRatio="4 / 5"
-                  label={`Imagen ${displayed.question} — sin archivo en Diseño/`}
+                  label={`Imagen ${displayed?.question ?? ""} — sin foto`}
                   className="h-full w-full"
                 />
               )}

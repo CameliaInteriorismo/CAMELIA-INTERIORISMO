@@ -1,12 +1,5 @@
 import { Marquee } from "@/components/ui/Marquee";
 
-const PHRASES = [
-  "CREAMOS FORMAS DE VIVIR",
-  "CREAMOS ESPACIOS QUE ACOMPAÑAN",
-  "CREAMOS FORMAS DE HABITAR",
-  "CREAMOS EXPERIENCIAS",
-];
-
 /**
  * The calm, looping wordmark ticker that sits below the hero as its own
  * section. "Circular" per the brief means an endless loop, not a literal
@@ -14,11 +7,11 @@ const PHRASES = [
  * The loop itself now lives in the shared Marquee primitive, so the
  * request-sent screen reuses exactly this motion rather than copying it.
  */
-export function AnimatedPhrase() {
+export function AnimatedPhrase({ phrases }: { phrases: string[] }) {
   return (
     <div className="relative overflow-hidden py-10 md:py-14">
       <Marquee
-        items={PHRASES}
+        items={phrases}
         className="text-primary/15 font-title text-3xl md:text-4xl"
         separator={
           <span aria-hidden className="text-xl">

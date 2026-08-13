@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/features/blog/PageHeader";
-import { PostList } from "@/features/blog/PostList";
+import { PostList, type PostCard } from "@/features/blog/PostList";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { POSTS_QUERY } from "@/sanity/lib/queries";
+
+/** Igual que el resto: estática, con el webhook caducándola al publicar. */
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -8,11 +13,17 @@ export const metadata: Metadata = {
     "Camelia — reflexiones sobre interiorismo, materiales y formas de habitar.",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  // Un artículo publicado en Sanity entra aquí solo, ordenado por fecha.
+  const posts = await sanityFetch<PostCard[]>({
+    query: POSTS_QUERY,
+    tags: ["post"],
+  });
+
   return (
     <>
       <PageHeader />
-      <PostList />
+      <PostList posts={posts} />
     </>
   );
 }

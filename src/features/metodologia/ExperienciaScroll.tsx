@@ -13,53 +13,16 @@ import {
 import { Container, Grid } from "@/components/layout/Container";
 import { cn } from "@/utils/cn";
 
-const STEPS = [
-  {
-    title: "Empezar con confianza",
-    body: [
-      "Sabemos que iniciar un proyecto así no es una decisión menor. Por eso, desde el primer contacto, buscamos que todo sea claro, cercano y sin presión.",
-      "Nos interesa entenderte, pero también que tú entiendas cómo trabajamos y si encajamos. A partir de ahí empieza una relación que va más allá de lo puntual: un acompañamiento real durante todo el proceso.",
-    ],
-    image: "/assets/metodologia/experiencia-1-empezar.jpg",
-    imageRight: true,
-  },
-  {
-    title: "Conectar con la propuesta",
-    body: [
-      "Cada proyecto comienza escuchando. No solo qué necesitas, sino cómo vives, qué valoras y qué esperas de tu casa.",
-      "A partir de ahí, las decisiones dejan de ser una suma de opciones y pasan a tener un hilo conductor. Nuestro trabajo es ordenar todo eso para que el resultado tenga sentido y te represente de forma natural.",
-    ],
-    image: "/assets/metodologia/experiencia-2-conectar.jpg",
-    imageRight: false,
-  },
-  {
-    title: "Tomar decisiones sin desgaste",
-    body: [
-      "Uno de los mayores retos en una reforma es la cantidad de decisiones que hay que tomar.",
-      "Nuestro papel es filtrar, ordenar y proponerte soluciones que ya están pensadas. No se trata de que tengas que elegir constantemente, sino de que puedas avanzar con seguridad, sin dudas innecesarias.",
-    ],
-    image: "/assets/metodologia/experiencia-3-decisiones.jpg",
-    imageRight: true,
-  },
-  {
-    title: "Vivir el proceso con tranquilidad",
-    body: [
-      "Durante la obra, cuidamos especialmente la relación con el cliente. Sabemos que es una fase delicada, donde pueden aparecer incertidumbres.",
-      "Nos encargamos de coordinar todo, anticiparnos a los problemas y mantenerte informado de forma clara. Queremos que sientas que el proyecto está controlado y que puedes confiar en que todo va a avanzar como debe.",
-    ],
-    image: "/assets/metodologia/experiencia-4-vivir.jpg",
-    imageRight: false,
-  },
-  {
-    title: "Construir un resultado a medida",
-    body: [
-      "El final del proyecto no es solo una entrega, es el momento en el que todo empieza a tener sentido.",
-      "Buscamos que el resultado no solo esté bien resuelto, sino que encaje contigo, con tu forma de vivir y con el paso del tiempo. Un espacio que no necesite explicaciones y que se sienta natural desde el primer día.",
-    ],
-    image: "/assets/metodologia/experiencia-5-construir.jpg",
-    imageRight: true,
-  },
-];
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
+
+export type ExperienceStep = {
+  _key: string;
+  title: string;
+  paragraphs?: string[];
+  /** Los pasos alternan el lado de la foto; el dato viaja con el paso. */
+  imageRight?: boolean;
+  image?: SanityImageSource;
+};
 
 // How much of a block's own slice of the shared progress its unlock fade
 // ramps over — small, so it still reads as a discrete "unlock" rather than a
@@ -84,16 +47,18 @@ function ExperienciaRow({
   step,
   isFirst,
   index,
+  total,
   isActive,
   progress,
 }: {
-  step: (typeof STEPS)[number];
+  step: ExperienceStep;
   isFirst: boolean;
   index: number;
+  /** Cuántos pasos hay en total; antes se leía de la constante global. */
+  total: number;
   isActive: boolean;
   progress: MotionValue<number>;
 }) {
-  const total = STEPS.length;
   const unlockAt = index / total;
   const opacity = useTransform(
     progress,
@@ -113,7 +78,7 @@ function ExperienciaRow({
         <div>
           <h3 className="font-title text-primary text-2xl">{step.title}</h3>
           <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
-            {step.body.map((paragraph, i) => (
+            {(step.paragraphs ?? []).map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
           </div>
@@ -139,7 +104,7 @@ function ExperienciaRow({
       >
         <div className="relative aspect-[9/10] w-full overflow-hidden">
           <Image
-            src={step.image}
+            src={imageProps(step.image)?.src ?? ""}
             alt={step.title}
             fill
             className="object-cover"
@@ -151,10 +116,16 @@ function ExperienciaRow({
   );
 }
 
-export function ExperienciaScroll() {
+export function ExperienciaScroll({
+  steps,
+  title,
+}: {
+  steps: ExperienceStep[];
+  title?: string;
+}) {
   const stepsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const total = STEPS.length;
+  const total = steps.length;
 
   const { scrollYProgress } = useScroll({
     target: stepsRef,
@@ -186,7 +157,7 @@ export function ExperienciaScroll() {
     <section className="pt-[120px] pb-[100px]">
       <Container>
         <h2 className="font-title text-primary text-center text-3xl uppercase md:text-4xl">
-          La experiencia
+          {title}
         </h2>
         <p className="text-primary/75 mt-sm text-center text-sm leading-relaxed">
           Queremos que te sientas acompañado en cada fase del proyecto,
@@ -206,12 +177,13 @@ export function ExperienciaScroll() {
             </div>
           </Grid>
 
-          {STEPS.map((step, index) => (
+          {steps.map((step, index) => (
             <ExperienciaRow
               key={step.title}
               step={step}
               isFirst={index === 0}
               index={index}
+              total={total}
               isActive={index === activeIndex}
               progress={unlockProgress}
             />

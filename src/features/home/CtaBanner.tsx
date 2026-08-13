@@ -1,12 +1,15 @@
 import { Container } from "@/components/layout/Container";
 import { ButtonLink } from "@/components/ui/Button";
+import { urlFor } from "@/sanity/lib/image";
+import type { CtaBannerData } from "@/features/shared/types";
 
-export function CtaBanner() {
+export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
+  const background = cta?.image ? urlFor(cta.image).width(1920).url() : null;
   return (
     <section
       className="bg-auxiliary py-16"
       style={{
-        backgroundImage: "url('/assets/home/Banner 1 home.png')",
+        backgroundImage: background ? `url('${background}')` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -14,9 +17,11 @@ export function CtaBanner() {
       <Container>
         <div className="bg-background mx-auto flex max-w-3xl flex-col items-center gap-6 px-8 py-14 text-center">
           <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-            ¿Comenzamos tu proyecto?
+            {cta?.title}
           </h2>
-          <ButtonLink href="/contacto">CONTÁCTANOS</ButtonLink>
+          {cta?.button && (
+            <ButtonLink href={cta.button.href}>{cta.button.label}</ButtonLink>
+          )}
         </div>
       </Container>
     </section>

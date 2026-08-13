@@ -2,10 +2,29 @@ import Image from "next/image";
 import { Container, Grid } from "@/components/layout/Container";
 import { ArrowRightIcon, MapIcon, PinIcon } from "@/components/ui/icons";
 import { SECTION_TITLE_SCALE } from "@/components/ui/typography";
-import { CONTACT, MAPS_URL } from "@/features/contacto/data";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
+import { Multiline } from "@/features/shared/MultilineText";
+import type { ContactDetails } from "@/features/contacto/types";
 import { cn } from "@/utils/cn";
 
-export function StudioMap() {
+export function StudioMap({
+  title,
+  lead,
+  text,
+  image,
+  addressLabel,
+  actionLabel,
+  contact,
+}: {
+  title?: string;
+  lead?: string;
+  text?: string;
+  image?: SanityImageSource;
+  addressLabel?: string;
+  actionLabel?: string;
+  contact: ContactDetails;
+}) {
+  const map = imageProps(image);
   return (
     <section className="pt-[100px] pb-[100px]">
       <Container>
@@ -17,18 +36,13 @@ export function StudioMap() {
                 (see SECTION_TITLE_SCALE) — the reference sets this heading
                 deliberately below the hero title, on two lines. */}
             <h2 className={cn("font-title text-primary", SECTION_TITLE_SCALE)}>
-              Ven a conocernos
-              <br />
-              al estudio
+              <Multiline text={title} />
             </h2>
           </div>
           <div className="mt-block col-span-12 md:col-span-5 md:col-start-8 md:mt-0 md:text-right">
-            <p className="text-primary text-lg">
-              Nuestro espacio está en el corazón de Alzira.
-            </p>
+            <p className="text-primary text-lg">{lead}</p>
             <p className="text-primary/75 mt-sm text-sm leading-relaxed">
-              Si prefieres hablar de tu proyecto en persona, estaremos
-              encantados de recibirte.
+              {text}
             </p>
           </div>
         </Grid>
@@ -38,7 +52,7 @@ export function StudioMap() {
               stretched or cropped away from the framing it was drawn at. */}
           <div className="relative aspect-[1847/851] w-full overflow-hidden">
             <Image
-              src="/assets/contacto/Imagen mapa del estudio.jpg"
+              src={map?.src ?? ""}
               alt="Mapa de la ubicación del estudio en Alzira"
               fill
               className="object-cover"
@@ -60,7 +74,7 @@ export function StudioMap() {
               <div className="flex-1 p-10 sm:basis-[63%]">
                 <p className="text-primary flex items-center gap-2 text-sm">
                   <PinIcon className="h-4 w-4 shrink-0" />
-                  Dirección
+                  {addressLabel}
                 </p>
                 {/* 24px, not the 40px block rhythm: measured off the
                     reference, the label sits ~26px above the street lines.
@@ -68,14 +82,14 @@ export function StudioMap() {
                     below) so the whole card loses height rather than one
                     side going compact while the other holds it open. */}
                 <div className="text-primary/75 mt-sm space-y-1 text-sm">
-                  {CONTACT.mapCardLines.map((line) => (
+                  {contact.addressLines.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
                 </div>
               </div>
 
               <a
-                href={MAPS_URL}
+                href={contact.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border-primary/15 text-primary hover:text-primary/60 flex flex-col gap-5 border-t p-10 transition-colors duration-300 sm:basis-[37%] sm:border-t-0 sm:border-l"
@@ -83,9 +97,7 @@ export function StudioMap() {
                 <span className="flex items-start gap-2 text-sm">
                   <MapIcon className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>
-                    Abrir en
-                    <br />
-                    Google Maps
+                    <Multiline text={actionLabel} />
                   </span>
                 </span>
                 <ArrowRightIcon className="h-4 w-4" />

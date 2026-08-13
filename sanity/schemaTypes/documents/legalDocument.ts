@@ -93,10 +93,49 @@ export const legalSection = defineType({
   },
 });
 
+/**
+ * Comprueba que cada enlace embebido sigue encontrando su frase.
+ *
+ * El renderizador busca el texto del enlace LITERALMENTE dentro de los
+ * párrafos (ver withLinks en LegalDocument.tsx). Si alguien edita el párrafo
+ * y cambia una coma, la frase deja de encontrarse y el enlace desaparece sin
+ * que nadie se entere. Esta validación lo convierte en un error visible en el
+ * panel, antes de publicar.
+ */
+function validateInlineLinks(
+  block:
+    | {
+        paragraphs?: string[];
+        links?: { text?: string; href?: string }[];
+      }
+    | undefined,
+) {
+  const links = block?.links ?? [];
+  if (links.length === 0) return true;
+
+  const haystack = (block?.paragraphs ?? []).join("\n");
+  const orphans = links
+    .map((link) => link?.text)
+    .filter((text): text is string => Boolean(text))
+    .filter((text) => !haystack.includes(text));
+
+  if (orphans.length === 0) return true;
+
+  const list = orphans.map((text) => `«${text}»`).join(", ");
+  return (
+    `Estos enlaces ya no encuentran su frase en el texto: ${list}. ` +
+    "Corrige la frase del enlace para que coincida exactamente con el párrafo, " +
+    "o el enlace no se pintará."
+  );
+}
+
 export const legalText = defineType({
   name: "legalText",
   title: "Párrafos",
   type: "object",
+  // El aviso se pone en el bloque entero, no en cada enlace: la comprobación
+  // necesita ver los párrafos y los enlaces a la vez.
+  validation: (rule) => rule.custom(validateInlineLinks),
   fields: [
     defineField({ name: "paragraphs", title: "Párrafos", type: "paragraphs" }),
     defineField({
@@ -104,7 +143,7 @@ export const legalText = defineType({
       title: "Enlaces dentro del texto",
       type: "array",
       description:
-        "Para convertir una frase concreta en enlace sin partir el párrafo. Escribe el texto tal cual aparece arriba.",
+        "Para convertir una frase concreta en enlace sin partir el párrafo. La frase debe coincidir EXACTAMENTE con la del párrafo, tildes y puntuación incluidas: si no, el enlace no se pinta y el panel te avisará.",
       of: [
         defineArrayMember({
           type: "object",

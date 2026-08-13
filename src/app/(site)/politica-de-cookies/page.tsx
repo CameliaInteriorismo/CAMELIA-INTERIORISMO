@@ -1,21 +1,50 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { LegalPage } from "@/features/legal/LegalPage";
 import { LegalDocument } from "@/features/legal/LegalDocument";
-import {
-  COOKIES_LEAD,
-  COOKIES_SECTIONS,
-} from "@/features/legal/politica-de-cookies";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { LEGAL_DOCUMENT_QUERY } from "@/sanity/lib/queries";
+import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
+import type { LegalSection } from "@/features/legal/types";
 
-export const metadata: Metadata = {
+export const revalidate = 3600;
+
+const SLUG = "politica-de-cookies";
+
+type LegalDoc = {
+  title: string;
+  lead?: string[];
+  sections: LegalSection[];
+  seo?: SeoFields;
+};
+
+/** El SEO actual se mantiene como valor por defecto si Sanity no trae uno. */
+const FALLBACK = {
   title: "Política de cookies",
   description:
     "Política de cookies de CAMELIA — qué cookies usamos (técnicas, Google Analytics, Meta Pixel y Google Maps), cómo gestionar tu consentimiento y cómo eliminarlas.",
 };
 
-export default function PoliticaDeCookiesPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const doc = await sanityFetch<LegalDoc | null>({
+    query: LEGAL_DOCUMENT_QUERY,
+    params: { slug: SLUG },
+    tags: ["legalDocument"],
+  });
+  return metadataFrom(doc?.seo, FALLBACK);
+}
+
+export default async function Page() {
+  const doc = await sanityFetch<LegalDoc | null>({
+    query: LEGAL_DOCUMENT_QUERY,
+    params: { slug: SLUG },
+    tags: ["legalDocument"],
+  });
+  if (!doc) notFound();
+
   return (
-    <LegalPage title="Política de cookies">
-      <LegalDocument lead={COOKIES_LEAD} sections={COOKIES_SECTIONS} />
+    <LegalPage title={doc.title}>
+      <LegalDocument lead={doc.lead} sections={doc.sections} />
     </LegalPage>
   );
 }

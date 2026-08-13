@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import { RequestSent } from "@/features/carrito/RequestSent";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { CONFIRMATION_PAGES_QUERY } from "@/sanity/lib/queries";
+import type { ThanksContent } from "@/features/carrito/RequestSent";
+
+export const revalidate = 3600;
 
 // No `icons` override here on purpose: the browser favicon stays the
 // site-wide vino mark on every route without exception. The orange lockup
@@ -10,6 +15,10 @@ export const metadata: Metadata = {
   description: "Camelia — hemos recibido tu solicitud.",
 };
 
-export default function GraciasPage() {
-  return <RequestSent />;
+export default async function GraciasPage() {
+  const page = await sanityFetch<{ cartThanks?: ThanksContent } | null>({
+    query: CONFIRMATION_PAGES_QUERY,
+    tags: ["confirmationPages"],
+  });
+  return <RequestSent content={page?.cartThanks} />;
 }

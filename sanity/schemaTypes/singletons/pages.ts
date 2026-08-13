@@ -16,6 +16,20 @@ const seoField = defineField({
   type: "seo",
   group: "seo",
 });
+/**
+ * El encuadre de la cabecera. Es lo único de presentación que se expone,
+ * y con motivo: al cambiar la foto casi siempre hay que reajustar qué parte
+ * se ve, y obligar a tocar código para eso haría inútil poder cambiarla.
+ */
+const heroPositionField = defineField({
+  name: "heroImagePosition",
+  title: "Encuadre de la cabecera",
+  type: "string",
+  group: "content",
+  description:
+    'Qué parte de la foto se ve. "center 35%" sube el encuadre, "center 65%" lo baja. Vacío = centrado.',
+});
+
 const groups = [
   { name: "content", title: "Contenido", default: true },
   { name: "seo", title: "SEO" },
@@ -43,6 +57,14 @@ export const homePage = defineType({
       description: "Solo se usa si no hay vídeo.",
     }),
     defineField({
+      name: "heroLogo",
+      title: "Logotipo sobre la portada",
+      type: "imageWithAlt",
+      group: "content",
+      description:
+        "El logotipo blanco centrado sobre el vídeo. La animación que lo lleva hasta la barra al bajar es diseño y no cambia. Se dibuja dentro de una caja fija con «contain», así que una imagen de otra proporción se ajusta sin deformarse.",
+    }),
+    defineField({
       name: "animatedPhrases",
       title: "Frases del carrusel",
       type: "array",
@@ -67,24 +89,48 @@ export const homePage = defineType({
       of: [defineArrayMember({ type: "reference", to: [{ type: "service" }] })],
     }),
     defineField({
+      name: "servicesCta",
+      title: "Botón de la sección de servicios",
+      type: "link",
+      group: "content",
+    }),
+    defineField({
       name: "detailTitle",
       title: "Título de la cuadrícula de detalles",
       type: "string",
       group: "content",
     }),
     defineField({
-      name: "detailImages",
-      title: "Imágenes de la cuadrícula",
-      type: "array",
-      group: "content",
-      of: [defineArrayMember({ type: "imageWithAlt" })],
-    }),
-    defineField({
       name: "featuredProjects",
       title: "Proyectos destacados",
       type: "array",
       group: "content",
-      of: [defineArrayMember({ type: "reference", to: [{ type: "project" }] })],
+      description:
+        "La cuadrícula que enlaza a los proyectos. El nombre y el enlace salen del proyecto elegido; la foto es propia de la Home, porque aquí se usa un encuadre distinto al del listado de /proyectos.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "featuredProject",
+          fields: [
+            defineField({
+              name: "project",
+              title: "Proyecto",
+              type: "reference",
+              to: [{ type: "project" }],
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "image",
+              title: "Foto para la Home",
+              type: "imageWithAlt",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: "project.name", media: "image" },
+          },
+        }),
+      ],
     }),
     defineField({
       name: "testimonialsTitle",
@@ -273,6 +319,14 @@ export const metodologiaPage = defineType({
               validation: (rule) => rule.required(),
             }),
             defineField({
+              name: "imageRight",
+              title: "Foto a la derecha",
+              type: "boolean",
+              description:
+                "Los pasos alternan el lado de la foto. Márcalo o desmárcalo si al reordenarlos deja de alternar.",
+              initialValue: false,
+            }),
+            defineField({
               name: "paragraphs",
               title: "Texto",
               type: "paragraphs",
@@ -287,6 +341,7 @@ export const metodologiaPage = defineType({
         }),
       ],
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Metodología" }) },
@@ -400,6 +455,7 @@ export const serviciosPage = defineType({
         }),
       ],
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Servicios" }) },
@@ -442,6 +498,7 @@ export const proyectosPage = defineType({
       type: "ctaBanner",
       group: "content",
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Proyectos" }) },
@@ -472,6 +529,7 @@ export const tiendaPage = defineType({
       rows: 4,
       group: "content",
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Shop" }) },
@@ -502,6 +560,7 @@ export const blogPage = defineType({
       rows: 4,
       group: "content",
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Blog" }) },
@@ -575,10 +634,22 @@ export const contactPage = defineType({
       group: "content",
     }),
     defineField({
+      name: "mapLead",
+      title: "Frase destacada del mapa",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
       name: "mapText",
       title: "Texto del mapa",
       type: "text",
       rows: 3,
+      group: "content",
+    }),
+    defineField({
+      name: "mapAddressLabel",
+      title: "Rótulo de la dirección en la tarjeta",
+      type: "string",
       group: "content",
     }),
     defineField({
@@ -593,6 +664,7 @@ export const contactPage = defineType({
       type: "string",
       group: "content",
     }),
+    heroPositionField,
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Contacto" }) },
@@ -740,4 +812,64 @@ export const formStep = defineType({
       media,
     }),
   },
+});
+
+/**
+ * Las pantallas de cierre: confirmación de la solicitud del carrito y las dos
+ * de agradecimiento.
+ *
+ * Solo contenido. El carrito, el envío, los estados y la validación se quedan
+ * en el código: aquí no hay nada que pueda romper un flujo.
+ */
+export const confirmationPages = defineType({
+  name: "confirmationPages",
+  title: "Página · Confirmación y gracias",
+  type: "document",
+  groups,
+  fields: [
+    defineField({
+      name: "studioName",
+      title: "Nombre del estudio (recogida en tienda)",
+      type: "string",
+      group: "content",
+      description:
+        "El bloque que aparece al elegir «Recoger en el estudio». La dirección y el enlace de Maps salen de Ajustes del sitio.",
+    }),
+    defineField({
+      name: "studioHours",
+      title: "Horario (recogida en tienda)",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "cartThanks",
+      title: "Gracias · solicitud del Shop",
+      type: "thanksScreen",
+      group: "content",
+    }),
+    defineField({
+      name: "formThanks",
+      title: "Gracias · formulario de proyecto",
+      type: "thanksScreen",
+      group: "content",
+    }),
+    seoField,
+  ],
+  preview: { prepare: () => ({ title: "Página · Confirmación y gracias" }) },
+});
+
+export const thanksScreen = defineType({
+  name: "thanksScreen",
+  title: "Pantalla de gracias",
+  type: "object",
+  fields: [
+    defineField({ name: "title", title: "Titular", type: "string" }),
+    defineField({ name: "text", title: "Texto", type: "text", rows: 5 }),
+    defineField({
+      name: "backLabel",
+      title: "Texto del enlace de vuelta",
+      type: "string",
+    }),
+  ],
+  preview: { select: { title: "title", subtitle: "text" } },
 });

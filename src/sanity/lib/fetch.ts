@@ -27,7 +27,8 @@ export type SanityTag =
   | "tiendaPage"
   | "blogPage"
   | "contactPage"
-  | "projectFormPage";
+  | "projectFormPage"
+  | "confirmationPages";
 
 /**
  * La caché vive en la RUTA, no aquí.

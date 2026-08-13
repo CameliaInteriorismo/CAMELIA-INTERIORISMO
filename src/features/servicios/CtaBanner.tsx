@@ -1,12 +1,24 @@
 import { Container } from "@/components/layout/Container";
 import { ButtonLink } from "@/components/ui/Button";
+import { urlFor } from "@/sanity/lib/image";
+import type { CtaBannerData } from "@/features/shared/types";
 
-export function CtaBanner() {
+/**
+ * Banner de Servicios. El texto, el botón y la imagen de fondo vienen de
+ * Sanity; el marcado y las clases son los de siempre.
+ *
+ * La imagen va como `background-image` y no con `next/image` — igual que
+ * antes, porque la maquetación depende de `background-size: cover` sobre la
+ * sección entera, no de un elemento posicionado.
+ */
+export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
+  const background = cta?.image ? urlFor(cta.image).width(1920).url() : null;
+
   return (
     <section
       className="bg-auxiliary py-16"
       style={{
-        backgroundImage: "url('/assets/home/Banner 1 home.png')",
+        backgroundImage: background ? `url('${background}')` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -15,17 +27,19 @@ export function CtaBanner() {
         <div className="bg-background flex flex-col items-start gap-8 px-10 py-14 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-              Hablemos de tu espacio
+              {cta?.title}
             </h2>
-            <p className="text-primary/75 mt-sm max-w-xl text-sm leading-relaxed">
-              Cada proyecto parte de entender cómo vives, qué necesitas y cómo
-              quieres sentir tu espacio. Estaremos encantados de escuchar tu
-              idea y acompañarte en el proceso.
-            </p>
+            {cta?.text && (
+              <p className="text-primary/75 mt-sm max-w-xl text-sm leading-relaxed">
+                {cta.text}
+              </p>
+            )}
           </div>
-          <ButtonLink href="/contacto" className="shrink-0">
-            ¿COMENZAMOS?
-          </ButtonLink>
+          {cta?.button && (
+            <ButtonLink href={cta.button.href} className="shrink-0">
+              {cta.button.label}
+            </ButtonLink>
+          )}
         </div>
       </Container>
     </section>

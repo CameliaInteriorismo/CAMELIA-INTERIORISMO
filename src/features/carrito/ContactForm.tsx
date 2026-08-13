@@ -10,18 +10,8 @@ import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon, PinIcon } from "@/components/ui/icons";
 import { DeliveryModeToggle } from "@/features/carrito/DeliveryModeToggle";
-import { CONTACT, MAPS_URL } from "@/features/contacto/data";
+import type { ContactDetails } from "@/features/contacto/types";
 import { useCartStore } from "@/stores/cartStore";
-
-// Address and Maps link come from the shared contact data — this screen
-// used to carry its own copy of both, which is exactly how the site ended
-// up with three different versions of the studio's street.
-const STUDIO_NAME = "Camelia interiorismo";
-// Se recorre el array entero en vez de desestructurar: antes se tomaban dos
-// líneas fijas y, al pasar la dirección a tres, la localidad se perdía.
-const STUDIO_ADDRESS_LINES = CONTACT.addressLines;
-const STUDIO_HOURS = "Horario: L-V de 9:00 a 18:00";
-const STUDIO_MAPS_URL = MAPS_URL;
 
 const schema = z
   .object({
@@ -73,20 +63,31 @@ const Field = forwardRef<
   );
 });
 
-function PickupInfo() {
+/**
+ * El bloque que aparece al elegir "Recoger en el estudio". La dirección y el
+ * enlace a Maps salen de los ajustes globales — los mismos que pinta el pie —
+ * y el nombre y el horario, de la página de confirmación.
+ */
+function PickupInfo({
+  studio,
+  contact,
+}: {
+  studio?: StudioInfo;
+  contact: ContactDetails;
+}) {
   return (
     <div className="flex items-start gap-3">
       <PinIcon className="text-primary mt-1 h-4 w-4 shrink-0" />
       <div>
-        <p className="text-primary text-base">{STUDIO_NAME}</p>
+        <p className="text-primary text-base">{studio?.name}</p>
         <div className="text-primary/75 mt-2 space-y-1 text-sm">
-          {STUDIO_ADDRESS_LINES.map((line) => (
+          {contact.addressLines.map((line) => (
             <p key={line}>{line}</p>
           ))}
-          <p>{STUDIO_HOURS}</p>
+          <p>{studio?.hours}</p>
         </div>
         <a
-          href={STUDIO_MAPS_URL}
+          href={contact.mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary mt-3 inline-flex items-center gap-2 text-sm"
@@ -99,7 +100,15 @@ function PickupInfo() {
   );
 }
 
-export function ContactForm() {
+export type StudioInfo = { name?: string; hours?: string };
+
+export function ContactForm({
+  studio,
+  contact,
+}: {
+  studio?: StudioInfo;
+  contact: ContactDetails;
+}) {
   const router = useRouter();
   const setContactInfo = useCartStore((state) => state.setContactInfo);
   const setDeliveryMode = useCartStore((state) => state.setDeliveryMode);
@@ -249,7 +258,7 @@ export function ContactForm() {
                       </div>
                     ) : (
                       <div className="mt-block">
-                        <PickupInfo />
+                        <PickupInfo studio={studio} contact={contact} />
                       </div>
                     )}
                   </motion.div>

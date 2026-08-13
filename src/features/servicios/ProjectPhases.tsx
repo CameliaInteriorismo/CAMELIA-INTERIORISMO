@@ -13,41 +13,14 @@ import { cn } from "@/utils/cn";
 // dos fases parece estar intercambiado en el archivo original (las imágenes
 // sí encajan con su propia etiqueta). Reproducido tal cual hasta confirmar
 // con el cliente.
-const PHASES = [
-  {
-    number: "01",
-    title: "Interiorismo",
-    body: [
-      "Diseño con criterio, pensado para durar.",
-      "Desarrollamos proyectos de interiorismo para obra nueva y reforma, abordando el espacio desde una base técnica: distribución, iluminación, instalaciones, materiales y carpintería.",
-      "Entendemos el diseño como algo que debe sostenerse en el tiempo, tanto en lo funcional como en lo estético. Por eso cada decisión responde a un criterio, no a una tendencia puntual.",
-      "El proceso parte de conocer bien al cliente —cómo vive, qué necesita y qué le representa— para traducirlo en un proyecto coherente, bien resuelto y ejecutable.",
-    ],
-    image: "/assets/servicios/Interiorismo.jpg",
-  },
-  {
-    number: "02",
-    title: "Ejecución y supervisión de obra",
-    body: [
-      "Selección cuidada, sin elementos arbitrarios.",
-      "Definimos y seleccionamos todos los elementos que completan el espacio: mobiliario, iluminación decorativa, textiles y piezas auxiliares.",
-      "No entendemos la decoración como algo añadido al final, sino como parte del proyecto. Cada pieza se elige por cómo encaja en el conjunto, evitando decisiones aisladas o puramente estéticas.",
-      "También nos encargamos del suministro y montaje si el cliente lo desea, para que el resultado final mantenga el nivel de exigencia del proyecto.",
-    ],
-    image: "/assets/servicios/Ejecucion y supervision.jpg",
-  },
-  {
-    number: "03",
-    title: "Decoración",
-    body: [
-      "Rigor en obra, sin intermediarios ni improvisaciones.",
-      "Ejecutamos los proyectos con industriales de confianza y bajo la supervisión directa del estudio. Esto nos permite mantener el control real de la obra y asegurar que lo proyectado se construya correctamente.",
-      "Coordinamos todos los oficios, resolvemos incidencias y hacemos seguimiento continuo. Además, realizamos reuniones periódicas en obra contigo para que estés al tanto de cada fase.",
-      "Solo ejecutamos proyectos diseñados por nosotros. Es la única forma de garantizar coherencia y responsabilidad en el resultado final.",
-    ],
-    image: "/assets/servicios/Decoracion.jpg",
-  },
-];
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
+
+export type ServicePhase = {
+  _id: string;
+  title: string;
+  longDescription?: string[];
+  image?: SanityImageSource;
+};
 
 /** Width of a collapsed spine, and the gap between panels. */
 const SPINE_W = 72;
@@ -78,7 +51,7 @@ const DURATION = 600;
  * full-width bar that expands downward, the ordinary accordion a phone
  * expects.
  */
-export function ProjectPhases() {
+export function ProjectPhases({ phases }: { phases: ServicePhase[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const reduceMotion = useReducedMotion();
@@ -99,7 +72,7 @@ export function ProjectPhases() {
     return () => observer.disconnect();
   }, []);
 
-  const collapsed = PHASES.length - 1;
+  const collapsed = phases.length - 1;
   const openWidth = Math.max(
     0,
     rowWidth - collapsed * SPINE_W - collapsed * GAP,
@@ -118,14 +91,14 @@ export function ProjectPhases() {
           className="mt-title flex flex-col md:flex-row"
           style={{ gap: `${GAP}px` }}
         >
-          {PHASES.map((phase, index) => {
+          {phases.map((phase, index) => {
             const open = index === activeIndex;
             const panelId = `${baseId}-panel-${index}`;
             const tabId = `${baseId}-tab-${index}`;
 
             return (
               <div
-                key={phase.number}
+                key={phase._id}
                 className="relative overflow-hidden md:h-[var(--panel-h)] md:shrink-0"
                 style={
                   {
@@ -157,7 +130,7 @@ export function ProjectPhases() {
                   style={{ transitionDuration: `${duration}ms` }}
                 >
                   <span className="font-title text-xl leading-none">
-                    {phase.number}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                   {/* Vertical only from md up — on a phone the bar is
                       horizontal and the title reads normally. */}
@@ -191,10 +164,10 @@ export function ProjectPhases() {
                   <div className="flex h-full flex-col gap-8 p-6 md:flex-row md:items-stretch md:gap-10 md:p-10">
                     <div className="md:flex md:w-1/2 md:flex-col md:justify-center">
                       <h3 className="font-title text-primary/25 text-2xl uppercase">
-                        {phase.number}. {phase.title}
+                        {String(index + 1).padStart(2, "0")}. {phase.title}
                       </h3>
                       <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
-                        {phase.body.map((paragraph, i) => (
+                        {(phase.longDescription ?? []).map((paragraph, i) => (
                           <p key={i}>{paragraph}</p>
                         ))}
                       </div>
@@ -202,7 +175,7 @@ export function ProjectPhases() {
 
                     <div className="relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full md:w-1/2">
                       <Image
-                        src={phase.image}
+                        src={imageProps(phase.image)?.src ?? ""}
                         alt={phase.title}
                         fill
                         className="object-cover"

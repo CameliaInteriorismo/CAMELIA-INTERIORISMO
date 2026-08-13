@@ -5,18 +5,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/layout/Container";
-import { SOCIALS_MENU, SOCIAL_URLS } from "@/features/contacto/data";
-
-const NAV_LINKS = [
-  { label: "Inicio", href: "/" },
-  { label: "Estudio", href: "/estudio" },
-  { label: "Metodología", href: "/metodologia" },
-  { label: "Servicios", href: "/servicios" },
-  { label: "Proyectos", href: "/proyectos" },
-  { label: "Shop", href: "/tienda" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contacto", href: "/contacto" },
-];
+import { imageProps } from "@/sanity/lib/image";
+import type { LinkData } from "@/features/shared/types";
+import type { Social } from "@/features/contacto/types";
 
 // The panel drops in from above and retreats the same way. 0.6s rather than
 // the earlier 0.45: the contents now reveal *inside* this window, and the
@@ -63,9 +54,13 @@ const itemVariants: Variants = {
 };
 
 export function HamburgerMenu({
+  links,
+  socials,
   onNavigate,
   onClose,
 }: {
+  links: LinkData[];
+  socials: Social[];
   onNavigate: () => void;
   onClose: () => void;
 }) {
@@ -159,7 +154,7 @@ export function HamburgerMenu({
               los iconos, el conjunto tiene que caber sin scroll incluso en
               una pantalla de portátil corta. */}
           <nav className="flex flex-col items-end gap-3 py-6">
-            {NAV_LINKS.map((link, i) => (
+            {links.map((link, i) => (
               // +1 because the wordmark above is the first in the sequence.
               <motion.div key={link.href} {...item(i + 1)}>
                 <Link
@@ -178,12 +173,14 @@ export function HamburgerMenu({
           {/* Cierra la cadena, justo detrás del último enlace. pb-10 en vez
               de pb-16 para no forzar el alto total. */}
           <motion.div
-            {...item(NAV_LINKS.length + 1)}
+            {...item(links.length + 1)}
             className="flex shrink-0 justify-end gap-5 pb-10"
           >
-            {SOCIALS_MENU.map(({ label, src }) => {
-              const href = SOCIAL_URLS[label];
-              const icon = (
+            {socials.map((social) => {
+              const label = social.label;
+              const href = social.url;
+              const src = imageProps(social.iconMenu)?.src;
+              const icon = src ? (
                 <Image
                   src={src}
                   alt=""
@@ -191,12 +188,12 @@ export function HamburgerMenu({
                   height={24}
                   className="h-6 w-6"
                 />
-              );
+              ) : null;
               // No URL yet (LinkedIn): render the mark, but not as a link —
               // an anchor to "#" looks clickable and goes nowhere.
               return href ? (
                 <a
-                  key={label}
+                  key={social._key}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -206,7 +203,7 @@ export function HamburgerMenu({
                   {icon}
                 </a>
               ) : (
-                <span key={label} aria-hidden className="block h-6 w-6">
+                <span key={social._key} aria-hidden className="block h-6 w-6">
                   {icon}
                 </span>
               );

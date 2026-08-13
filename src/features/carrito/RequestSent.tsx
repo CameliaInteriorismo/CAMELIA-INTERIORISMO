@@ -26,7 +26,13 @@ const PHRASE_ROWS = [
   },
 ];
 
-export function RequestSent() {
+export type ThanksContent = {
+  title?: string;
+  text?: string;
+  backLabel?: string;
+};
+
+export function RequestSent({ content }: { content?: ThanksContent }) {
   return (
     // Vino fills the whole viewport even when the content is short, so
     // there's never a cream strip under the fold.
@@ -62,7 +68,7 @@ export function RequestSent() {
                 sits closer in weight to the wordmark above it rather than
                 dominating the composition. */}
             <h1 className="font-title text-secondary text-lg uppercase md:text-xl">
-              SOLICITUD ENVIADA CON ÉXITO
+              {content?.title}
             </h1>
 
             <Image
@@ -75,10 +81,7 @@ export function RequestSent() {
             />
 
             <p className="text-secondary/90 mt-block text-sm leading-relaxed">
-              Gracias por confiar en Camelia. Estamos revisando tu selección y
-              muy pronto contactaremos contigo para confirmar la disponibilidad
-              de los productos y coordinar la entrega o la recogida en el
-              estudio.
+              {content?.text}
             </p>
 
             {/* Subtle hover: the underline deepens from half to full
@@ -98,7 +101,7 @@ export function RequestSent() {
               href="/"
               className="text-secondary border-secondary/40 hover:border-secondary mt-title mx-auto block w-fit border-b pb-1 text-sm whitespace-nowrap transition-colors duration-300"
             >
-              Volver al inicio
+              {content?.backLabel}
             </Link>
           </div>
         </Container>

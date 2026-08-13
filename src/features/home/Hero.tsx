@@ -7,16 +7,7 @@ import { createHeroScrollTimeline } from "@/animations/gsap/heroScrollTimeline";
 import { VideoBackground } from "@/components/ui/VideoBackground";
 import { useHeroStore } from "@/stores/heroStore";
 
-// Servido desde Cloudinary: f_auto elige el códec según el navegador (webm o
-// mp4, aunque el original sea .mov) y q_auto ajusta la compresión, de modo que
-// el hero deja de arrastrar el fichero original completo desde public/.
-//
-// c_limit,w_1920 es un techo, no un reescalado: solo actúa si el máster supera
-// los 1920px de ancho, y nunca recorta (c_limit conserva la proporción). Este
-// vídeo mide 1288px, así que hoy no hace nada — está para que sustituir el
-// máster por uno en 4K no dispare el peso sin que nadie se entere.
-const HERO_VIDEO =
-  "https://res.cloudinary.com/uvofxvtg/video/upload/f_auto,q_auto,c_limit,w_1920/VIDEO_HOME_nozgqt.mov";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
 const REVEAL_THRESHOLD = 0.85;
 // Below this scroll progress through the hero's own height, the hero is
@@ -25,7 +16,24 @@ const REVEAL_THRESHOLD = 0.85;
 // bottom edge leaves the viewport ("el Hero desaparece").
 const HERO_ACTIVE_END = 0.999;
 
-export function Hero() {
+/**
+ * El logotipo que queda centrado sobre la portada. Si Sanity no trae ninguno
+ * se usa el fichero de siempre, para que la portada nunca se quede sin marca.
+ */
+const LOGO_FALLBACK = "/assets/logo/Camelia logo sin fondo blanco.png";
+
+export function Hero({
+  video,
+  image,
+  logo,
+}: {
+  /** URL de Cloudinary. Si existe, manda sobre la imagen. */
+  video?: string;
+  image?: SanityImageSource;
+  logo?: SanityImageSource;
+}) {
+  const photo = imageProps(image);
+  const brand = imageProps(logo);
   const heroRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const setLogoRevealed = useHeroStore((state) => state.setLogoRevealed);
@@ -90,7 +98,19 @@ export function Hero() {
 
   return (
     <div ref={heroRef} className="relative h-dvh w-full">
-      <VideoBackground src={HERO_VIDEO} />
+      {video ? (
+        <VideoBackground src={video} />
+      ) : photo ? (
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          aria-hidden={!photo.alt}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+      ) : null}
       <div
         ref={logoRef}
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -100,8 +120,8 @@ export function Hero() {
         }}
       >
         <Image
-          src="/assets/logo/Camelia logo sin fondo blanco.png"
-          alt="Camelia"
+          src={brand?.src ?? LOGO_FALLBACK}
+          alt={brand?.alt || "Camelia"}
           fill
           priority
           className="object-contain"

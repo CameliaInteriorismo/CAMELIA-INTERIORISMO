@@ -4,18 +4,39 @@ import { ButtonLink } from "@/components/ui/Button";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { ARTICLE_TITLE_SCALE } from "@/components/ui/typography";
-import { getAdjacentPosts, type BlogPost } from "@/features/blog/data";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 import { cn } from "@/utils/cn";
 
-function PairImage({ src, label }: { src?: string; label: string }) {
+export type PostNeighbour = { title: string; slug: string } | null;
+
+export type Post = {
+  title: string;
+  titleLines?: string[];
+  slug: string;
+  subtitle?: string;
+  leadImage?: SanityImageSource;
+  body?: unknown[];
+};
+
+function PairImage({
+  source,
+  label,
+}: {
+  source?: SanityImageSource;
+  label: string;
+}) {
+  const image = imageProps(source);
   return (
     <div className="relative aspect-[8/7] w-full overflow-hidden">
-      {src ? (
+      {image ? (
         <Image
-          src={src}
-          alt=""
-          aria-hidden
+          src={image.src}
+          alt={image.alt}
+          aria-hidden={!image.alt}
           fill
+          placeholder={image.blurDataURL ? "blur" : undefined}
+          blurDataURL={image.blurDataURL}
           className="object-cover"
           sizes="(min-width: 768px) 50vw, 100vw"
         />
@@ -30,38 +51,93 @@ function PairImage({ src, label }: { src?: string; label: string }) {
   );
 }
 
-export function PostArticle({ post }: { post: BlogPost }) {
-  const { previous, next } = getAdjacentPosts(post.slug);
+/**
+ * El cuerpo del artículo, pintado con las mismas clases que antes.
+ *
+ * Los párrafos van dentro de un bloque con `space-y-6`, igual que el array
+ * de bloques de texto original; las parejas de imágenes conservan su rejilla
+ * de dos columnas y su proporción 8/7.
+ */
+function bodyComponents(title: string): PortableTextComponents {
+  return {
+    block: {
+      // El ritmo original: 40px antes de un grupo de párrafos y 24px entre
+      // párrafos seguidos. Antes lo daba un <div> con space-y-6 envolviendo
+      // cada grupo; Portable Text emite los párrafos sueltos, así que el
+      // segundo y siguientes se reconocen con `p+&` y recuperan sus 24px.
+      normal: ({ children }) => (
+        <p className="text-primary/75 mt-block text-sm leading-relaxed [p+&]:mt-6">
+          {children}
+        </p>
+      ),
+    },
+    marks: {
+      link: ({ children, value }) => (
+        <a href={value?.href} className="underline underline-offset-4">
+          {children}
+        </a>
+      ),
+    },
+    types: {
+      galleryPair: ({ value }) => (
+        <div className="mt-title grid gap-8 md:grid-cols-2">
+          <PairImage source={value?.left} label={`${title} — foto 1`} />
+          <PairImage source={value?.right} label={`${title} — foto 2`} />
+        </div>
+      ),
+      gallerySingle: ({ value }) => (
+        <div className="mt-title">
+          <PairImage source={value?.image} label={`${title} — foto`} />
+        </div>
+      ),
+    },
+  };
+}
+
+export function PostArticle({
+  post,
+  previous,
+  next,
+}: {
+  post: Post;
+  previous?: PostNeighbour;
+  next?: PostNeighbour;
+}) {
+  const lead = imageProps(post.leadImage);
 
   return (
     <article className="pt-title pb-[100px]">
       <Container>
         {/* One step below the hero scale — see ARTICLE_TITLE_SCALE. */}
         <h1 className={cn("font-title text-primary", ARTICLE_TITLE_SCALE)}>
-          {post.titleLines.map((line, i) => (
-            <span key={i} className="block">
-              {line}
-            </span>
-          ))}
+          {(post.titleLines?.length ? post.titleLines : [post.title]).map(
+            (line, i) => (
+              <span key={i} className="block">
+                {line}
+              </span>
+            ),
+          )}
         </h1>
 
         {/* Lead image runs the full content width at roughly 2:1, per the
             reference — wider and shallower than the gallery pairs below. */}
         <div className="mt-title relative aspect-[2/1] w-full overflow-hidden">
-          {post.leadImage ? (
+          {lead ? (
             <Image
-              src={post.leadImage}
-              alt=""
-              aria-hidden
+              src={lead.src}
+              alt={lead.alt}
+              aria-hidden={!lead.alt}
               fill
               priority
+              placeholder={lead.blurDataURL ? "blur" : undefined}
+              blurDataURL={lead.blurDataURL}
               className="object-cover"
               sizes="(min-width: 1024px) 1120px, 100vw"
             />
           ) : (
             <PlaceholderImage
               aspectRatio="2 / 1"
-              label={`${post.title} — foto principal sin Diseño/`}
+              label={`${post.title} — foto principal`}
               className="absolute inset-0 h-full w-full"
             />
           )}
@@ -73,28 +149,11 @@ export function PostArticle({ post }: { post: BlogPost }) {
           </h2>
         )}
 
-        {post.body.map((block, index) =>
-          block.type === "text" ? (
-            <div
-              key={index}
-              className="text-primary/75 mt-block space-y-6 text-sm leading-relaxed"
-            >
-              {block.paragraphs.map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
-          ) : (
-            <div key={index} className="mt-title grid gap-8 md:grid-cols-2">
-              <PairImage
-                src={block.images[0]}
-                label={`${post.title} — foto 1 sin Diseño/`}
-              />
-              <PairImage
-                src={block.images[1]}
-                label={`${post.title} — foto 2 sin Diseño/`}
-              />
-            </div>
-          ),
+        {post.body && (
+          <PortableText
+            value={post.body as never}
+            components={bodyComponents(post.title)}
+          />
         )}
 
         {/* Always two controls, one per side, so the row stays balanced

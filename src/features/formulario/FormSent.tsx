@@ -24,7 +24,13 @@ const PHRASE_ROWS = [
   },
 ];
 
-export function FormSent() {
+export type ThanksContent = {
+  title?: string;
+  text?: string;
+  backLabel?: string;
+};
+
+export function FormSent({ content }: { content?: ThanksContent }) {
   return (
     <div className="bg-primary flex min-h-dvh flex-col">
       <header className="border-secondary/15 border-b">
@@ -52,7 +58,7 @@ export function FormSent() {
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="font-title text-secondary text-lg uppercase md:text-xl">
-              ¡GRACIAS POR CONTACTAR CON CAMELIA!
+              {content?.title}
             </h1>
 
             <Image
@@ -66,17 +72,14 @@ export function FormSent() {
             />
 
             <p className="text-secondary/90 mt-block text-sm leading-relaxed">
-              Hemos recibido tu solicitud correctamente. Revisaremos la
-              información y nos pondremos en contacto contigo lo antes posible
-              para conocer mejor tu proyecto y preparar una propuesta adaptada a
-              tus necesidades.
+              {content?.text}
             </p>
 
             <Link
               href="/"
               className="text-secondary border-secondary/40 hover:border-secondary mt-title mx-auto block w-fit border-b pb-1 text-sm whitespace-nowrap transition-colors duration-300"
             >
-              Volver al inicio
+              {content?.backLabel}
             </Link>
           </div>
         </Container>
