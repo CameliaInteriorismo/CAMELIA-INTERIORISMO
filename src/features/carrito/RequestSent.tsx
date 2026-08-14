@@ -67,7 +67,7 @@ export function RequestSent({ content }: { content?: ThanksContent }) {
             {/* Still the page's headline, but pulled back to 20px so it
                 sits closer in weight to the wordmark above it rather than
                 dominating the composition. */}
-            <h1 className="font-title text-secondary text-lg uppercase md:text-xl">
+            <h1 className="font-title text-secondary text-lg md:text-xl">
               {content?.title}
             </h1>
 

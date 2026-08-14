@@ -100,7 +100,7 @@ export function ProductsGrid({
     <section className="pt-[100px] pb-[100px]">
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-6">
-          <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+          <h2 className="font-title text-primary text-3xl md:text-4xl">
             <Multiline text={copy.gridTitle ?? "Nuestros\nproductos"} />
           </h2>
           <div className="flex items-center gap-4">

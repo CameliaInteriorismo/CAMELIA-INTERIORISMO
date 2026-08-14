@@ -68,7 +68,7 @@ export function ProjectHeroTitle({
           Sits close to the true viewport edge, not Container's wide inset —
           matches the reference composition. */}
       <div className="absolute inset-x-0 bottom-12 z-10 px-6 sm:px-10">
-        <h1 className="font-title text-background m-0 text-4xl uppercase sm:text-5xl md:text-6xl">
+        <h1 className="font-title text-background m-0 text-4xl sm:text-5xl md:text-6xl">
           Proyecto {name}
         </h1>
       </div>

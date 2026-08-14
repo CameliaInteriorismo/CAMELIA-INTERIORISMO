@@ -17,7 +17,7 @@ export function RelatedProducts({
   return (
     <section className="mt-title">
       <Container>
-        <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-3xl md:text-4xl">
           {copy.relatedTitle ?? "Productos relacionados"}
         </h2>
         <div className="mt-title grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">

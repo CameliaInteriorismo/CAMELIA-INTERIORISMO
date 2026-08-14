@@ -25,7 +25,7 @@ export function DetailGrid({
   return (
     <section className="py-[60px]">
       <Container>
-        <h2 className="font-title text-primary max-w-2xl text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
           {title}
         </h2>
         <div className="mt-title grid grid-cols-1 gap-8 md:grid-cols-2">

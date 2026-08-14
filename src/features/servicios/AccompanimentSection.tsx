@@ -40,7 +40,7 @@ export function AccompanimentSection({
     // total gap from "Cada proyecto, a medida" to this heading.
     <section className="pt-[80px] pb-[120px]">
       <Container>
-        <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 

@@ -39,7 +39,7 @@ export function Testimonials({
   return (
     <section className="py-block">
       <Container>
-        <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 

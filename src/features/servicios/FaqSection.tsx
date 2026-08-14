@@ -14,7 +14,7 @@ export function FaqSection({
   return (
     <section className="pt-[120px] pb-[120px]">
       <Container>
-        <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 

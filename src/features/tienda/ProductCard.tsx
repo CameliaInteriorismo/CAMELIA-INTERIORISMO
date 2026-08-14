@@ -63,9 +63,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
       </div>
 
       <div className="mt-3 flex items-baseline justify-between gap-4">
-        <h3 className="font-title text-primary text-lg uppercase">
-          {product.name}
-        </h3>
+        <h3 className="font-title text-primary text-lg">{product.name}</h3>
         {product.price !== undefined && (
           <p className="text-primary shrink-0 text-base">{product.price} €</p>
         )}

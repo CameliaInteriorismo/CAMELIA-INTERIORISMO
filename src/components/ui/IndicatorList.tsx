@@ -64,7 +64,7 @@ export function IndicatorList({
             </h2>
             <p
               className={cn(
-                "mt-2 text-xs tracking-wide uppercase transition-opacity duration-500",
+                "mt-2 text-xs tracking-wide transition-opacity duration-500",
                 active
                   ? "text-primary/70 opacity-100"
                   : "text-primary/70 opacity-50",

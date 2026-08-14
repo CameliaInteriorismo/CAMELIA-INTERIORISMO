@@ -92,7 +92,7 @@ export function ProductHero({
                 {product.category}
               </p>
             )}
-            <h1 className="font-title text-primary mt-1 text-3xl uppercase md:text-4xl">
+            <h1 className="font-title text-primary mt-1 text-3xl md:text-4xl">
               {product.name}
             </h1>
 

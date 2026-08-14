@@ -197,7 +197,7 @@ export function LegalDocument({
                   24px, which would break it in two. Small, but the display
                   face, the uppercase and the solid vino against the body's
                   75% keep it plainly a heading. */}
-              <h2 className="font-title text-primary text-lg uppercase md:text-xl">
+              <h2 className="font-title text-primary text-lg md:text-xl">
                 {section.number}. {section.title}
               </h2>
 

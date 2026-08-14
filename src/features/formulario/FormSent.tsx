@@ -57,7 +57,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
       <main className="flex flex-1 items-center justify-center py-[100px]">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
-            <h1 className="font-title text-secondary text-lg uppercase md:text-xl">
+            <h1 className="font-title text-secondary text-lg md:text-xl">
               {content?.title}
             </h1>
 

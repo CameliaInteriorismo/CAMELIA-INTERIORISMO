@@ -35,9 +35,7 @@ function Card({
     // than the outer padding (gap-sm rather than gap-block) so the card
     // stays compact without crowding the text; width is untouched.
     <div className="border-primary/25 gap-sm flex h-full flex-col border px-6 py-6">
-      <h2 className="font-title text-primary text-sm tracking-wide uppercase">
-        {title}
-      </h2>
+      <h2 className="font-title text-primary text-sm tracking-wide">{title}</h2>
       {children}
     </div>
   );

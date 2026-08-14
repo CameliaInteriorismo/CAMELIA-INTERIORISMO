@@ -92,7 +92,7 @@ export function ProjectPhases({
   return (
     <section className="pt-[100px] pb-[40px]">
       <Container>
-        <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={introTitle ?? "Diseño de interiores integral"} />
         </h2>
         {introText && (
@@ -100,7 +100,7 @@ export function ProjectPhases({
             {introText}
           </p>
         )}
-        <h3 className="font-title text-primary mt-title text-2xl uppercase md:text-3xl">
+        <h3 className="font-title text-primary mt-title text-2xl md:text-3xl">
           <Multiline text={title ?? "Fases de un proyecto Camelia"} />
         </h3>
 

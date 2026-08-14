@@ -16,7 +16,7 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
     >
       <Container>
         <div className="bg-background mx-auto flex max-w-3xl flex-col items-center gap-6 px-8 py-14 text-center">
-          <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
+          <h2 className="font-title text-primary text-3xl md:text-4xl">
             {cta?.title}
           </h2>
           {cta?.button && (

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Hero } from "@/features/home/Hero";
-import { AnimatedPhrase } from "@/features/home/AnimatedPhrase";
 import { ServiceTabs, type HomeService } from "@/features/home/ServiceTabs";
 import { DetailGrid, type FeaturedProject } from "@/features/home/DetailGrid";
 import { Testimonials, type Testimonial } from "@/features/home/Testimonials";
@@ -18,7 +17,6 @@ type HomePage = {
   heroVideo?: string;
   heroImage?: SanityImageSource;
   heroLogo?: SanityImageSource;
-  animatedPhrases?: string[];
   servicesTitle?: string;
   servicesCta?: LinkData;
   services?: HomeService[];
@@ -66,7 +64,6 @@ export default async function Home() {
         image={page?.heroImage}
         logo={page?.heroLogo}
       />
-      <AnimatedPhrase phrases={page?.animatedPhrases ?? []} />
       <ServiceTabs
         services={page?.services ?? []}
         title={page?.servicesTitle}

@@ -54,9 +54,7 @@ export function CartLineItem({
       </div>
 
       <div className="mt-block col-span-12 md:col-span-7 md:col-start-6 md:mt-0 md:flex md:flex-col md:justify-center">
-        <h2 className="font-title text-primary text-2xl uppercase">
-          {item.title}
-        </h2>
+        <h2 className="font-title text-primary text-2xl">{item.title}</h2>
 
         {product?.description && (
           <p className="text-primary/75 mt-sm text-sm leading-relaxed">

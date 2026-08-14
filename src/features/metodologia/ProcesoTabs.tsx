@@ -44,7 +44,7 @@ export function ProcesoTabs({
   return (
     <section className="pt-[80px]">
       <Container>
-        <h2 className="font-title text-primary text-center text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
           {title}
         </h2>
 

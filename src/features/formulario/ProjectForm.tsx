@@ -291,7 +291,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       {/* ~60px at desktop, matching the reference — one
                           step under the hero scale, which at 72px broke
                           "Hablemos de" onto a second line. */}
-                      <h1 className="font-title text-primary text-3xl uppercase sm:text-4xl md:text-5xl lg:text-6xl">
+                      <h1 className="font-title text-primary text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                         {step.title.map((line) => (
                           <span key={line} className="block">
                             {line}

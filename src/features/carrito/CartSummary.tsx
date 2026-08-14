@@ -25,7 +25,7 @@ export function CartSummary({
     return (
       <section className="pt-title pb-[100px]">
         <Container>
-          <h1 className="font-title text-primary text-3xl uppercase md:text-4xl">
+          <h1 className="font-title text-primary text-3xl md:text-4xl">
             Resumen del pedido
           </h1>
           <p className="text-primary/75 mt-block text-sm">
@@ -42,7 +42,7 @@ export function CartSummary({
   return (
     <section className="pt-title pb-[100px]">
       <Container>
-        <h1 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h1 className="font-title text-primary text-3xl md:text-4xl">
           {copy.title ?? "Resumen del pedido"}
         </h1>
 

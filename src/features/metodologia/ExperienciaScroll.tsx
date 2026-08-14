@@ -157,7 +157,7 @@ export function ExperienciaScroll({
   return (
     <section className="pt-[120px] pb-[100px]">
       <Container>
-        <h2 className="font-title text-primary text-center text-3xl uppercase md:text-4xl">
+        <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
           {title}
         </h2>
         <p className="text-primary/75 mt-sm text-center text-sm leading-relaxed">

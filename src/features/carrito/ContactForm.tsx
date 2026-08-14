@@ -167,7 +167,7 @@ export function ContactForm({
   return (
     <section className="pt-title pb-[100px]">
       <Container>
-        <h1 className="font-title text-primary text-3xl uppercase md:text-4xl">
+        <h1 className="font-title text-primary text-3xl md:text-4xl">
           {copy.title ?? "Información de contacto"}
         </h1>
 
