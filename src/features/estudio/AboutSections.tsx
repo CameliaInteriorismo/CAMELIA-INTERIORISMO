@@ -83,11 +83,16 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
             {/* Los tramos con subtítulo mandan; si un bloque solo tiene el
                 texto del formato anterior, se pinta como antes y no se pierde.
 
-                El aire va donde toca: `space-y-md` entre los párrafos de un
+                El aire va donde toca: `space-y-sm` (24px) entre los párrafos de un
                 mismo tramo, `mt-2` entre el subtítulo y su primer párrafo —van
-                juntos, son la misma idea— y `mt-block` entre un tramo y el
-                siguiente, para que "Nuestra historia" y "Nuestra filosofía" se
-                lean como dos bloques y no como un texto seguido. */}
+                juntos, son la misma idea— y `mt-block` (40px) entre un tramo y
+                el siguiente.
+
+                Los párrafos van a 24 y no a 32 porque a 32 quedaban casi tan
+                separados como los propios tramos, y el texto se leía como
+                fragmentos sueltos en vez de como una unidad. La distancia
+                entre "Nuestra historia" y "Nuestra filosofía" no se toca: es
+                la que hace ver que empieza otra parte. */}
             <div className="text-primary/80 mt-title text-sm leading-relaxed">
               {blocks.map((block, index) => (
                 <div
@@ -99,7 +104,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                       {block.heading}
                     </h3>
                   )}
-                  <div className={cn("space-y-md", block.heading && "mt-2")}>
+                  <div className={cn("space-y-sm", block.heading && "mt-2")}>
                     {(block.paragraphs ?? []).map((paragraph, i) => (
                       <p key={i}>{paragraph}</p>
                     ))}
