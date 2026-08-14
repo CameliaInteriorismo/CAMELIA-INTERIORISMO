@@ -238,14 +238,22 @@ export const HOME_PAGE_QUERY = groq`
     animatedPhrases,
     servicesTitle,
     servicesCta,
-    "services": services[]-> { _id, title, shortDescription, image ${IMAGE} },
+    "services": services[]-> {
+      _id, title, shortDescription,
+      "image": homeImage ${IMAGE}
+    },
     detailTitle,
     // El nombre y el enlace salen del proyecto; la foto es propia de la Home.
-    featuredProjects[] {
-      _key,
-      "name": project->name,
-      "slug": project->slug.current,
-      image ${IMAGE}
+    // Los destacados salen solos de los proyectos marcados como tales: la
+    // fuente de verdad es el campo del proyecto, no una lista aparte que
+    // había que mantener a mano y podía discrepar de él —y discrepaba.
+    "featuredProjects": *[
+      _type == "project" && featured == true && defined(slug.current)
+    ] | order(order asc) {
+      "_key": _id,
+      name,
+      "slug": slug.current,
+      "image": homeImage ${IMAGE}
     },
     testimonialsTitle,
     // Las ocultas se descartan aquí, no en el componente: una reseña retirada

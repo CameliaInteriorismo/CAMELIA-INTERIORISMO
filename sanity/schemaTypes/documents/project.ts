@@ -91,6 +91,15 @@ export const project = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "homeImage",
+      title: "Foto para la Home",
+      type: "imageWithAlt",
+      group: "media",
+      description:
+        "La que sale en la cuadrícula de destacados de la Home. Es un campo aparte de la del listado porque ahí se usa otro encuadre; cambiar una no toca la otra.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "heroVideo",
       title: "Vídeo de cabecera",
       type: "url",
@@ -149,10 +158,11 @@ export const project = defineType({
 
     defineField({
       name: "featured",
-      title: "Destacado",
+      title: "Destacado en la Home",
       type: "boolean",
       group: "content",
-      description: "Los destacados son los que puede mostrar la Home.",
+      description:
+        "Al marcarlo, el proyecto entra solo en la cuadrícula de la Home, con su «Foto para la Home». Al desmarcarlo, sale. No hay que tocar nada en Inicio.",
       initialValue: false,
     }),
     defineField({

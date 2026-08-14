@@ -9,7 +9,12 @@ import {
 } from "@/features/proyecto-detalle/ProjectGallery";
 import { CtaBanner } from "@/features/proyectos/CtaBanner";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries";
+import {
+  PROJECT_QUERY,
+  PROJECT_SLUGS_QUERY,
+  PROYECTOS_PAGE_QUERY,
+} from "@/sanity/lib/queries";
+import type { CtaBannerData } from "@/features/shared/types";
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 import type { SeoFields } from "@/sanity/lib/seo";
 import { metadataFrom } from "@/sanity/lib/seo";
@@ -94,11 +99,20 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = await sanityFetch<Project | null>({
-    query: PROJECT_QUERY,
-    params: { slug },
-    tags: ["project"],
-  });
+  // El banner de cierre es el mismo componente que en /proyectos y ya lo
+  // era; lo que faltaba era su contenido, que vive en la página de listado.
+  // Sin él la ficha lo pintaba vacío.
+  const [project, page] = await Promise.all([
+    sanityFetch<Project | null>({
+      query: PROJECT_QUERY,
+      params: { slug },
+      tags: ["project"],
+    }),
+    sanityFetch<{ cta?: CtaBannerData } | null>({
+      query: PROYECTOS_PAGE_QUERY,
+      tags: ["proyectosPage"],
+    }),
+  ]);
   if (!project) notFound();
 
   return (
@@ -115,7 +129,7 @@ export default async function ProjectDetailPage({
       />
       <ProjectIntro paragraphs={project.paragraphs ?? []} />
       <ProjectGallery gallery={project.gallery} />
-      <CtaBanner />
+      <CtaBanner cta={page?.cta} />
     </>
   );
 }

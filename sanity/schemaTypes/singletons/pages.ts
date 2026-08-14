@@ -102,36 +102,13 @@ export const homePage = defineType({
       group: "content",
     }),
     defineField({
-      name: "featuredProjects",
+      name: "featuredNote",
       title: "Proyectos destacados",
-      type: "array",
+      type: "string",
       group: "content",
+      readOnly: true,
       description:
-        "La cuadrícula que enlaza a los proyectos. El nombre y el enlace salen del proyecto elegido; la foto es propia de la Home, porque aquí se usa un encuadre distinto al del listado de /proyectos.",
-      of: [
-        defineArrayMember({
-          type: "object",
-          name: "featuredProject",
-          fields: [
-            defineField({
-              name: "project",
-              title: "Proyecto",
-              type: "reference",
-              to: [{ type: "project" }],
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "image",
-              title: "Foto para la Home",
-              type: "imageWithAlt",
-              validation: (rule) => rule.required(),
-            }),
-          ],
-          preview: {
-            select: { title: "project.name", media: "image" },
-          },
-        }),
-      ],
+        "Ya no se eligen aquí. La cuadrícula de la Home la forman los proyectos marcados como «Destacado en la Home», en su propio documento y con su «Foto para la Home». Marcar o desmarcar allí basta.",
     }),
     defineField({
       name: "testimonialsTitle",

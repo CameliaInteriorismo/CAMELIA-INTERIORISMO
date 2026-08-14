@@ -48,9 +48,17 @@ export const service = defineType({
     }),
     defineField({
       name: "image",
-      title: "Imagen",
+      title: "Imagen en Servicios",
       type: "imageWithAlt",
-      description: "Acompaña a la pestaña en la Home y al panel de /servicios.",
+      description: "La del panel de /servicios.",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "homeImage",
+      title: "Imagen en la Home",
+      type: "imageWithAlt",
+      description:
+        "La de la pestaña en la Home. Es un campo aparte para que cambiarla no toque la de /servicios: las dos secciones enseñan el servicio con encuadres distintos.",
       validation: (rule) => rule.required(),
     }),
     defineField({
