@@ -51,6 +51,7 @@ export const service = defineType({
       title: "Imagen",
       type: "imageWithAlt",
       description: "Acompaña a la pestaña en la Home y al panel de /servicios.",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "order",

@@ -54,9 +54,16 @@ export const link = defineType({
 });
 
 /**
- * Bloque de banner con título, texto opcional, botón e imagen de fondo.
- * Es la forma exacta del CtaBanner que se repite en Home, Servicios y
- * Proyectos con distinto contenido.
+ * Banner CON foto de fondo: el de Home y el de Servicios.
+ *
+ * La imagen es obligatoria porque el diseño de esos dos reserva la banda
+ * entera para una fotografía; sin ella el bloque queda sobre el color plano
+ * del fondo y se lee como un error, no como una variante.
+ *
+ * El de /proyectos NO usa este tipo: su fondo es un patrón de rayas hecho con
+ * CSS y nunca ha llevado imagen (ver ctaBannerPlain, y proyectos/CtaBanner.tsx,
+ * que ni siquiera lee el campo). Por eso son dos tipos y no uno con la imagen
+ * opcional: así cada variante exige exactamente lo que su diseño necesita.
  */
 export const ctaBanner = defineType({
   name: "ctaBanner",
@@ -75,9 +82,32 @@ export const ctaBanner = defineType({
       name: "image",
       title: "Imagen de fondo",
       type: "imageWithAlt",
+      validation: (rule) => rule.required(),
     }),
   ],
   preview: { select: { title: "title", media: "image" } },
+});
+
+/**
+ * Banner SIN foto: el de /proyectos, cuyo fondo es un patrón de rayas
+ * generado con CSS. No tiene campo de imagen porque no hay recuadro que
+ * rellenar — no es una foto que falte.
+ */
+export const ctaBannerPlain = defineType({
+  name: "ctaBannerPlain",
+  title: "Banner de llamada a la acción (sin foto)",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Título",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({ name: "text", title: "Texto", type: "text", rows: 3 }),
+    defineField({ name: "button", title: "Botón", type: "link" }),
+  ],
+  preview: { select: { title: "title" } },
 });
 
 /**

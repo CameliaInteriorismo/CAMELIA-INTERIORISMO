@@ -123,6 +123,7 @@ export const post = defineType({
       group: "media",
       description:
         "La grande que abre la ficha. Puede ser distinta a la del listado.",
+      validation: (rule) => rule.required(),
     }),
 
     defineField({ name: "seo", title: "SEO", type: "seo", group: "seo" }),

@@ -689,7 +689,10 @@ push({
   heroVideo:
     "https://res.cloudinary.com/uvofxvtg/video/upload/f_auto,q_auto,c_limit,w_1920/VIDEO_HOME_nozgqt.mov",
   // El logotipo blanco que va centrado sobre el vídeo.
-  heroLogo: await img("/assets/logo/Camelia logo sin fondo blanco.png", "Camelia"),
+  heroLogo: await img(
+    "/assets/logo/Camelia logo sin fondo blanco.png",
+    "Camelia",
+  ),
   animatedPhrases: phrases,
   services: [...serviceIdByTitle.values()].map((id, i) => kref(id, i)),
   featuredProjects: keyed(featured, "fp"),
@@ -834,8 +837,10 @@ push({
   introTitle: "Espacios con\nidentidad propia",
   introText:
     "Diseñamos espacios que responden a quienes lo habitan, cuidando la distribución, la luz, los materiales y cada detalle desde una mirada coherente y duradera. Cada proyecto nace de entender cómo vive cada cliente para traducirlo en interiores equilibrados, funcionales y con identidad propia.",
+  // El banner de /proyectos no lleva foto: su fondo es un patrón de rayas
+  // hecho con CSS. Por eso usa el tipo sin campo de imagen.
   cta: {
-    _type: "ctaBanner",
+    _type: "ctaBannerPlain",
     title: "¿Comenzamos tu proyecto?",
     button: { _type: "link", label: "CONTÁCTANOS", href: "/contacto" },
   },
@@ -962,6 +967,38 @@ push({
   },
 });
 
+/**
+ * Quita de un documento toda propiedad cuyo valor sea null o undefined.
+ *
+ * `img()` devuelve null cuando el fichero no existe, y eso es correcto: hay
+ * huecos de imagen que la web deja a propósito vacíos. Lo que NO puede pasar
+ * es que ese null llegue a Sanity: un campo declarado como `imageWithAlt` con
+ * valor null hace que el panel lo marque como valor inválido en vez de como
+ * campo vacío. La diferencia entre "sin imagen" y "con una imagen rota" es
+ * justo esa, y se resuelve no escribiendo la propiedad.
+ *
+ * Se aplica a TODOS los documentos antes de escribirlos, en lugar de parchear
+ * los 34 sitios donde se llama a img(): así tampoco reaparece al añadir uno
+ * nuevo.
+ *
+ * `false` y `0` se conservan: son valores legítimos (`available: false`,
+ * `imageRight: false`).
+ */
+function dropEmpty(value) {
+  if (Array.isArray(value)) {
+    return value.filter((v) => v !== null && v !== undefined).map(dropEmpty);
+  }
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) {
+      if (v === null || v === undefined) continue;
+      out[k] = dropEmpty(v);
+    }
+    return out;
+  }
+  return value;
+}
+
 // =============================================================== resultado
 
 const byType = {};
@@ -994,6 +1031,6 @@ if (DRY) {
 // Una sola transacción: o entra todo o no entra nada, para que el dataset no
 // se quede a medias si algo falla por el camino.
 const tx = client.transaction();
-for (const doc of docs) tx.createOrReplace(doc);
+for (const doc of docs) tx.createOrReplace(dropEmpty(doc));
 await tx.commit();
 console.log(`\nListo. ${docs.length} documentos en Sanity.`);

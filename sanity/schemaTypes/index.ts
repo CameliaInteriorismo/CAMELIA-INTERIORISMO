@@ -3,6 +3,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import { seo } from "./objects/seo";
 import {
   ctaBanner,
+  ctaBannerPlain,
   imageWithAlt,
   link,
   paragraphs,
@@ -65,6 +66,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   imageWithAlt,
   link,
   ctaBanner,
+  ctaBannerPlain,
   richText,
   paragraphs,
 

@@ -63,6 +63,7 @@ export const homePage = defineType({
       group: "content",
       description:
         "El logotipo blanco centrado sobre el vídeo. La animación que lo lleva hasta la barra al bajar es diseño y no cambia. Se dibuja dentro de una caja fija con «contain», así que una imagen de otra proporción se ajusta sin deformarse.",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "animatedPhrases",
@@ -216,6 +217,7 @@ export const estudioPage = defineType({
               name: "image",
               title: "Imagen",
               type: "imageWithAlt",
+              validation: (rule) => rule.required(),
             }),
           ],
           preview: {
@@ -246,6 +248,7 @@ export const metodologiaPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "processTitle",
@@ -286,6 +289,7 @@ export const metodologiaPage = defineType({
               name: "image",
               title: "Imagen",
               type: "imageWithAlt",
+              validation: (rule) => rule.required(),
             }),
           ],
           preview: {
@@ -335,6 +339,7 @@ export const metodologiaPage = defineType({
               name: "image",
               title: "Imagen",
               type: "imageWithAlt",
+              validation: (rule) => rule.required(),
             }),
           ],
           preview: { select: { title: "title", media: "image" } },
@@ -364,6 +369,7 @@ export const serviciosPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "phases",
@@ -407,6 +413,7 @@ export const serviciosPage = defineType({
               name: "image",
               title: "Imagen",
               type: "imageWithAlt",
+              validation: (rule) => rule.required(),
             }),
           ],
           preview: {
@@ -478,6 +485,7 @@ export const proyectosPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "introTitle",
@@ -495,7 +503,9 @@ export const proyectosPage = defineType({
     defineField({
       name: "cta",
       title: "Banner final",
-      type: "ctaBanner",
+      description:
+        "Su fondo es un patrón de rayas hecho con CSS, no una foto: por eso no tiene campo de imagen.",
+      type: "ctaBannerPlain",
       group: "content",
     }),
     heroPositionField,
@@ -521,6 +531,7 @@ export const tiendaPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "introText",
@@ -552,6 +563,7 @@ export const blogPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "introText",
@@ -583,6 +595,7 @@ export const contactPage = defineType({
       title: "Imagen de cabecera",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "cards",
@@ -657,6 +670,7 @@ export const contactPage = defineType({
       title: "Imagen del mapa",
       type: "imageWithAlt",
       group: "content",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "mapActionLabel",
@@ -802,7 +816,12 @@ export const formStep = defineType({
         }),
       ],
     }),
-    defineField({ name: "image", title: "Imagen", type: "imageWithAlt" }),
+    defineField({
+      name: "image",
+      title: "Imagen",
+      type: "imageWithAlt",
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "title", key: "key", media: "image" },
