@@ -4,26 +4,49 @@ import { useMemo, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { Dropdown } from "@/features/tienda/Dropdown";
 import { ProductCard } from "@/features/tienda/ProductCard";
-import type { ProductCardData } from "@/features/tienda/types";
+import { Multiline } from "@/features/shared/MultilineText";
+import type { ProductCardData, ShopCopy } from "@/features/tienda/types";
 
 type SortOption =
   "destacados" | "recientes" | "precio-asc" | "precio-desc" | "nombre-asc";
 
-const SORT_OPTIONS: { label: string; value: SortOption }[] = [
-  { label: "Destacados", value: "destacados" },
-  { label: "Más recientes", value: "recientes" },
-  { label: "Precio: menor a mayor", value: "precio-asc" },
-  { label: "Precio: mayor a menor", value: "precio-desc" },
-  { label: "Nombre A–Z", value: "nombre-asc" },
+// El criterio de cada opción lo decide el código; de Sanity viene solo su
+// texto. Estos son los de reserva, por si alguien vacía uno en el panel.
+const SORT_FALLBACKS: Record<SortOption, string> = {
+  destacados: "Destacados",
+  recientes: "Más recientes",
+  "precio-asc": "Precio: menor a mayor",
+  "precio-desc": "Precio: mayor a menor",
+  "nombre-asc": "Nombre A–Z",
+};
+
+const SORT_ORDER: SortOption[] = [
+  "destacados",
+  "recientes",
+  "precio-asc",
+  "precio-desc",
+  "nombre-asc",
 ];
 
 export function ProductsGrid({
   products: all,
+  copy = {},
 }: {
   products: ProductCardData[];
+  copy?: ShopCopy;
 }) {
   const [category, setCategory] = useState<string | null>(null);
   const [sort, setSort] = useState<SortOption | null>(null);
+
+  const sortOptions = SORT_ORDER.map((value) => ({
+    value,
+    label:
+      copy.sortOptions?.[
+        value.replace(/-(.)/g, (_, c: string) =>
+          c.toUpperCase(),
+        ) as keyof NonNullable<ShopCopy["sortOptions"]>
+      ] ?? SORT_FALLBACKS[value],
+  }));
 
   // Options come from whatever categories the products actually carry —
   // never a hardcoded list — so this grows on its own as real products
@@ -78,20 +101,18 @@ export function ProductsGrid({
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-6">
           <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-            Nuestros
-            <br />
-            productos
+            <Multiline text={copy.gridTitle ?? "Nuestros\nproductos"} />
           </h2>
           <div className="flex items-center gap-4">
             <Dropdown
-              label="Tipo de producto"
+              label={copy.filterLabel ?? "Tipo de producto"}
               options={categoryOptions}
               value={category}
               onChange={setCategory}
             />
             <Dropdown
-              label="Ordenar"
-              options={SORT_OPTIONS}
+              label={copy.sortLabel ?? "Ordenar"}
+              options={sortOptions}
               value={sort}
               onChange={(v) => setSort(v as SortOption | null)}
             />

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Grid } from "@/components/layout/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
+import type { CartCopy } from "@/features/carrito/types";
 import type { ProductCardData } from "@/features/tienda/types";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/utils/formatPrice";
@@ -19,9 +20,11 @@ import type { CartItem } from "@/types/cart";
 export function CartLineItem({
   item,
   product,
+  copy = {},
 }: {
   item: CartItem;
   product?: ProductCardData & { description?: string };
+  copy?: CartCopy;
 }) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const updateNotes = useCartStore((state) => state.updateNotes);
@@ -64,13 +67,17 @@ export function CartLineItem({
         {product?.price !== undefined && (
           <p className="text-primary mt-sm text-base">
             {formatPrice(product.price * item.quantity)}{" "}
-            <span className="text-primary/60 text-xs italic">IVA incluido</span>
+            <span className="text-primary/60 text-xs italic">
+              {copy.taxNote ?? "IVA incluido"}
+            </span>
           </p>
         )}
 
         <div className="mt-title flex flex-wrap items-start gap-10">
           <div>
-            <p className="text-primary mb-2 text-sm">Cantidad</p>
+            <p className="text-primary mb-2 text-sm">
+              {copy.quantityLabel ?? "Cantidad"}
+            </p>
             {/* min=0 (not the stepper's default 1): reaching 0 is the
                 only way to remove a line — there's no separate delete
                 button — and cartStore.updateQuantity drops the item at
@@ -83,12 +90,14 @@ export function CartLineItem({
             />
           </div>
           <div className="min-w-64 flex-1">
-            <p className="text-primary mb-2 text-sm">Observaciones</p>
+            <p className="text-primary mb-2 text-sm">
+              {copy.notesLabel ?? "Observaciones"}
+            </p>
             <input
               type="text"
               value={item.notes ?? ""}
               onChange={(event) => updateNotes(item.id, event.target.value)}
-              placeholder="Texto"
+              placeholder={copy.notesPlaceholder ?? "Texto"}
               className="border-primary/30 text-primary placeholder:text-primary/40 h-11 w-full border px-4 text-sm"
             />
           </div>

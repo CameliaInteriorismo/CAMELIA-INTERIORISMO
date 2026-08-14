@@ -108,6 +108,7 @@ export function Hero({
           fill
           priority
           className="object-cover"
+          style={{ objectPosition: photo.objectPosition }}
           sizes="100vw"
         />
       ) : null}

@@ -1,3 +1,4 @@
+import type { DeliveryCopy } from "@/features/carrito/types";
 import type { DeliveryMode } from "@/types/cart";
 
 /**
@@ -12,16 +13,20 @@ import type { DeliveryMode } from "@/types/cart";
 export function DeliveryModeToggle({
   value,
   onChange,
+  copy = {},
 }: {
   value: DeliveryMode | null;
   onChange: (mode: DeliveryMode) => void;
+  copy?: DeliveryCopy;
 }) {
   return (
     <div>
-      <h2 className="font-title text-primary text-2xl">Método de entrega</h2>
+      <h2 className="font-title text-primary text-2xl">
+        {copy.title ?? "Método de entrega"}
+      </h2>
       <div className="mt-block">
         <p className="text-primary/75 mb-2 text-sm">
-          Selecciona cómo prefieres recibir tu pedido
+          {copy.subtitle ?? "Selecciona cómo prefieres recibir tu pedido"}
         </p>
         <div className="flex h-11 flex-wrap items-center gap-x-8 gap-y-2">
           <label className="flex cursor-pointer items-center gap-2">
@@ -32,7 +37,9 @@ export function DeliveryModeToggle({
               onChange={() => onChange("domicilio")}
               className="accent-primary h-4 w-4"
             />
-            <span className="text-primary text-sm">Entrega a domicilio</span>
+            <span className="text-primary text-sm">
+              {copy.homeLabel ?? "Entrega a domicilio"}
+            </span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -42,7 +49,9 @@ export function DeliveryModeToggle({
               onChange={() => onChange("recogida")}
               className="accent-primary h-4 w-4"
             />
-            <span className="text-primary text-sm">Recoger en el estudio</span>
+            <span className="text-primary text-sm">
+              {copy.pickupLabel ?? "Recoger en el estudio"}
+            </span>
           </label>
         </div>
       </div>

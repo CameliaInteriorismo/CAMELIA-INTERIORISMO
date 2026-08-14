@@ -108,6 +108,7 @@ function ExperienciaRow({
             alt={step.title}
             fill
             className="object-cover"
+            style={{ objectPosition: imageProps(step.image)?.objectPosition }}
             sizes="(min-width: 768px) 40vw, 100vw"
           />
         </div>

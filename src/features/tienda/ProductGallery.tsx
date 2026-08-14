@@ -28,6 +28,7 @@ export function ProductGallery({ product }: { product: Product }) {
                   placeholder={image.blurDataURL ? "blur" : undefined}
                   blurDataURL={image.blurDataURL}
                   className="object-cover"
+                  style={{ objectPosition: image.objectPosition }}
                   sizes="(min-width: 768px) 50vw, 100vw"
                 />
               </div>

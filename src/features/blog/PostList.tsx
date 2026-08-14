@@ -59,6 +59,7 @@ export function PostList({ posts }: { posts: PostCard[] }) {
                           placeholder={image.blurDataURL ? "blur" : undefined}
                           blurDataURL={image.blurDataURL}
                           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                          style={{ objectPosition: image.objectPosition }}
                           sizes="(min-width: 768px) 33vw, 100vw"
                         />
                       ) : (

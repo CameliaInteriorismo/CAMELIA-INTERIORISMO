@@ -3,9 +3,13 @@ import { notFound } from "next/navigation";
 import { ProductHero } from "@/features/tienda/ProductHero";
 import { ProductGallery } from "@/features/tienda/ProductGallery";
 import { RelatedProducts } from "@/features/tienda/RelatedProducts";
-import type { Product } from "@/features/tienda/types";
+import type { Product, ShopCopy } from "@/features/tienda/types";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { PRODUCT_QUERY, PRODUCT_SLUGS_QUERY } from "@/sanity/lib/queries";
+import {
+  PRODUCT_QUERY,
+  PRODUCT_SLUGS_QUERY,
+  TIENDA_PAGE_QUERY,
+} from "@/sanity/lib/queries";
 import { imageProps } from "@/sanity/lib/image";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
 
@@ -60,11 +64,17 @@ export default async function ProductPage({
   // La consulta filtra por disponibilidad, así que una pieza desmarcada
   // devuelve null y aquí acaba en 404: deja de ser accesible por URL, aunque
   // el documento siga intacto en Sanity.
-  const product = await sanityFetch<ProductPageData | null>({
-    query: PRODUCT_QUERY,
-    params: { slug },
-    tags: ["product"],
-  });
+  const [product, copy] = await Promise.all([
+    sanityFetch<ProductPageData | null>({
+      query: PRODUCT_QUERY,
+      params: { slug },
+      tags: ["product"],
+    }),
+    sanityFetch<ShopCopy | null>({
+      query: TIENDA_PAGE_QUERY,
+      tags: ["tiendaPage"],
+    }),
+  ]);
   if (!product) notFound();
 
   return (
@@ -72,9 +82,9 @@ export default async function ProductPage({
     // before the footer is always exactly 100px regardless of which of
     // Gallery/Info/Related actually render for this product.
     <div className="pb-[100px]">
-      <ProductHero product={product} />
+      <ProductHero product={product} copy={copy ?? {}} />
       <ProductGallery product={product} />
-      <RelatedProducts product={product} />
+      <RelatedProducts product={product} copy={copy ?? {}} />
     </div>
   );
 }

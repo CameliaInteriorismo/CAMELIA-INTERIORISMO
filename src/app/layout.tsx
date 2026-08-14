@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { NavigationLoader } from "@/components/layout/NavigationLoader";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import "@/styles/globals.css";
 
 const arizonaFlare = localFont({
@@ -29,11 +31,23 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({
+/**
+ * El aviso de carga es lo único que este layout necesita de Sanity, y por eso
+ * la consulta se pide aquí: el indicador vive fuera de (site), así que no
+ * puede recibirlo por props desde allí. Next deduplica esta consulta con la
+ * que ya hace (site)/layout en el mismo render, de modo que no supone una
+ * segunda ida a Sanity.
+ */
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await sanityFetch<{ loadingLabel?: string } | null>({
+    query: SITE_SETTINGS_QUERY,
+    tags: ["siteSettings"],
+  });
+
   return (
     <html
       lang="es"
@@ -46,7 +60,7 @@ export default function RootLayout({
         <div id="navbar-root" />
         {children}
         {/* Above everything, including the navbar — see NavigationLoader. */}
-        <NavigationLoader />
+        <NavigationLoader label={settings?.loadingLabel} />
         {/* Banner, preferences panel, and the analytics/marketing tags that
             only mount once they're consented to. Here rather than in the
             (site) layout so it also covers the form and the confirmation

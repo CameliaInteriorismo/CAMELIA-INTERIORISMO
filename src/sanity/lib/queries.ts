@@ -5,8 +5,17 @@ import { groq } from "next-sanity";
  * fichero: dimensiones (para que next/image reserve el hueco y la página no
  * dé saltos) y lqip (el difuminado de carga, gratis).
  */
+/**
+ * Lo que la web necesita de una imagen.
+ *
+ * `crop` y `hotspot` viajan a propósito: son el recorte y el punto de interés
+ * que se ajustan en el Studio. Sin ellos aquí, ajustarlos en el panel no
+ * cambiaba nada en la web, porque el dato nunca llegaba a salir de Sanity.
+ */
 const IMAGE = groq`{
   alt,
+  crop,
+  hotspot,
   asset->{ _id, metadata { lqip, dimensions } }
 }`;
 
@@ -92,7 +101,7 @@ export const PRODUCT_QUERY = groq`
     "category": category->title,
     image ${IMAGE},
     gallery[] ${IMAGE},
-    finishes[] { _key, name, color, image ${IMAGE} },
+    finishes[] { _key, name, color, images[] ${IMAGE} },
     details,
     seo ${SEO},
     // Piezas de la misma categoría, sin incluirse a sí misma.
@@ -260,6 +269,8 @@ export const SITE_SETTINGS_QUERY = groq`
     openingHours,
     navLinks[] { _key, label, href },
     headerCta,
+    menuLabel, cartLabel, loadingLabel,
+    footerTagline,
     footerNavTitle, footerContactTitle, footerScheduleTitle,
     footerColumns[] { _key, title, links[] { _key, label, href } },
     footerLegalLinks[] { _key, label, href },
@@ -353,9 +364,49 @@ export const PROJECT_FORM_QUERY = groq`
 /** Las pantallas de cierre: confirmación del carrito y las dos de gracias. */
 export const CONFIRMATION_PAGES_QUERY = groq`
   *[_id == "confirmationPages"][0] {
+    title,
+    orderDataTitle,
+    fieldLabels { name, taxId, email, phone, address, postalCode, city, province },
+    delivery { title, subtitle, homeLabel, pickupLabel },
+    shippingNote,
+    submitLabel,
     studioName,
     studioHours,
+    studioNote,
+    studioDirections { label, href },
     cartThanks { title, text, backLabel },
     formThanks { title, text, backLabel }
+  }
+`;
+
+/** Los rótulos de /carrito. Solo texto: el carrito en sí vive en el cliente. */
+export const CART_PAGE_QUERY = groq`
+  *[_id == "cartPage"][0] {
+    title,
+    taxNote,
+    quantityLabel,
+    notesLabel,
+    notesPlaceholder,
+    continueLabel,
+    emptyText,
+    emptyActionLabel
+  }
+`;
+
+/** Cabecera y rótulos del Shop. */
+export const TIENDA_PAGE_QUERY = groq`
+  *[_id == "tiendaPage"][0] {
+    title,
+    heroImage ${IMAGE},
+    heroImagePosition,
+    gridTitle,
+    filterLabel,
+    sortLabel,
+    sortOptions { destacados, recientes, precioAsc, precioDesc, nombreAsc },
+    taxNote,
+    addToCartLabel,
+    addedLabel,
+    relatedTitle,
+    detailLabels { detallesDeLaPieza, materialesYMedidas, envioYEntrega }
   }
 `;

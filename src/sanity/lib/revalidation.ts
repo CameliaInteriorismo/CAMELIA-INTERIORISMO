@@ -66,6 +66,8 @@ const MAP: Record<string, Revalidation> = {
     paths: [page("/cuentanos-tu-proyecto")],
   },
 
+  cartPage: { tags: ["cartPage"], paths: [page("/carrito")] },
+
   confirmationPages: {
     tags: ["confirmationPages"],
     paths: [
@@ -111,6 +113,7 @@ const SITE_SETTINGS: Revalidation = {
     "blogPage",
     "contactPage",
     "projectFormPage",
+    "cartPage",
     "confirmationPages",
   ],
   paths: [{ path: "/", type: "layout" }],

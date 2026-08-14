@@ -518,7 +518,11 @@ export const tiendaPage = defineType({
   name: "tiendaPage",
   title: "Página · Shop",
   type: "document",
-  groups,
+  groups: [
+    { name: "content", title: "Contenido", default: true },
+    { name: "labels", title: "Rótulos" },
+    { name: "seo", title: "SEO" },
+  ],
   fields: [
     defineField({
       name: "title",
@@ -541,9 +545,202 @@ export const tiendaPage = defineType({
       group: "content",
     }),
     heroPositionField,
+    defineField({
+      name: "gridTitle",
+      title: "Título de la cuadrícula",
+      type: "text",
+      rows: 2,
+      group: "content",
+      description:
+        'El titular sobre los productos. Cada salto de línea que escribas se respeta: hoy son dos, "Nuestros" y "productos".',
+    }),
+    defineField({
+      name: "filterLabel",
+      title: "Rótulo del filtro de categoría",
+      type: "string",
+      group: "labels",
+      description:
+        "Las categorías que ofrece el desplegable salen solas de los productos; esto es solo su rótulo.",
+    }),
+    defineField({
+      name: "sortLabel",
+      title: "Rótulo del desplegable de orden",
+      type: "string",
+      group: "labels",
+    }),
+    defineField({
+      name: "sortOptions",
+      title: "Opciones de ordenación",
+      type: "sortOptionLabels",
+      group: "labels",
+      description:
+        "Solo el texto de cada opción. Cómo ordena cada una lo decide el código.",
+    }),
+    defineField({
+      name: "taxNote",
+      title: "Nota junto al precio",
+      type: "string",
+      group: "labels",
+      description: 'Lo que hoy dice "IVA incluido", en la ficha del producto.',
+    }),
+    defineField({
+      name: "addToCartLabel",
+      title: "Botón de añadir al carrito",
+      type: "string",
+      group: "labels",
+      description:
+        "Solo el texto. Lo que hace el botón al pulsarlo sigue en el código.",
+    }),
+    defineField({
+      name: "addedLabel",
+      title: "Botón tras añadir",
+      type: "string",
+      group: "labels",
+      description:
+        'Lo que dice el botón el instante posterior a pulsarlo. Hoy "AÑADIDO".',
+    }),
+    defineField({
+      name: "relatedTitle",
+      title: "Rótulo de productos relacionados",
+      type: "string",
+      group: "labels",
+    }),
+    defineField({
+      name: "detailLabels",
+      title: "Rótulos de los desplegables de la ficha",
+      type: "productDetailLabels",
+      group: "labels",
+    }),
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Shop" }) },
+});
+
+/**
+ * Los rótulos de los tres desplegables de la ficha de producto.
+ *
+ * Claves fijas, no lista abierta: cada uno se corresponde con un campo
+ * concreto del producto, así que añadir un cuarto rótulo aquí no pintaría
+ * nada y quitar uno dejaría su contenido sin título.
+ */
+export const productDetailLabels = defineType({
+  name: "productDetailLabels",
+  title: "Rótulos de la ficha",
+  type: "object",
+  fields: [
+    defineField({
+      name: "detallesDeLaPieza",
+      title: "Detalles de la pieza",
+      type: "string",
+    }),
+    defineField({
+      name: "materialesYMedidas",
+      title: "Materiales y medidas",
+      type: "string",
+    }),
+    defineField({
+      name: "envioYEntrega",
+      title: "Envío y entrega",
+      type: "string",
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Rótulos de la ficha" }) },
+});
+
+/** El texto de cada criterio de ordenación del Shop. El criterio, no. */
+export const sortOptionLabels = defineType({
+  name: "sortOptionLabels",
+  title: "Opciones de ordenación",
+  type: "object",
+  fields: [
+    defineField({ name: "destacados", title: "Destacados", type: "string" }),
+    defineField({ name: "recientes", title: "Más recientes", type: "string" }),
+    defineField({
+      name: "precioAsc",
+      title: "Precio: menor a mayor",
+      type: "string",
+    }),
+    defineField({
+      name: "precioDesc",
+      title: "Precio: mayor a menor",
+      type: "string",
+    }),
+    defineField({ name: "nombreAsc", title: "Nombre A–Z", type: "string" }),
+  ],
+  preview: { prepare: () => ({ title: "Opciones de ordenación" }) },
+});
+
+/**
+ * Los rótulos de /carrito.
+ *
+ * Solo texto: las cantidades, los precios y el contenido del carrito los pone
+ * el visitante, y el destino de los botones es una ruta fija.
+ */
+export const cartPage = defineType({
+  name: "cartPage",
+  title: "Página · Carrito",
+  type: "document",
+  groups: [
+    { name: "content", title: "Resumen", default: true },
+    { name: "empty", title: "Carrito vacío" },
+  ],
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titular",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "taxNote",
+      title: "Nota junto al precio",
+      type: "string",
+      group: "content",
+      description: 'Lo que hoy dice "IVA incluido".',
+    }),
+    defineField({
+      name: "quantityLabel",
+      title: "Rótulo de la cantidad",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "notesLabel",
+      title: "Rótulo de las observaciones",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "notesPlaceholder",
+      title: "Texto guía de las observaciones",
+      type: "string",
+      group: "content",
+      description:
+        "El gris que se ve dentro del recuadro mientras está vacío. No se envía.",
+    }),
+    defineField({
+      name: "continueLabel",
+      title: "Botón de continuar",
+      type: "string",
+      group: "content",
+      description:
+        "Solo el texto. El botón sigue llevando a la pantalla de confirmación.",
+    }),
+    defineField({
+      name: "emptyText",
+      title: "Mensaje de carrito vacío",
+      type: "string",
+      group: "empty",
+    }),
+    defineField({
+      name: "emptyActionLabel",
+      title: "Botón de carrito vacío",
+      type: "string",
+      group: "empty",
+      description: "Solo el texto. El botón sigue llevando al Shop.",
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Página · Carrito" }) },
 });
 
 export const blogPage = defineType({
@@ -824,9 +1021,16 @@ export const formStep = defineType({
     }),
   ],
   preview: {
-    select: { title: "title", key: "key", media: "image" },
-    prepare: ({ title, key, media }) => ({
-      title: title || key,
+    // El paso de bienvenida no tiene `title` sino `titleLines`, así que sin
+    // esto la lista mostraba su clave técnica ("intro-0") en vez del titular.
+    select: {
+      title: "title",
+      titleLines: "titleLines",
+      key: "key",
+      media: "image",
+    },
+    prepare: ({ title, titleLines, key, media }) => ({
+      title: title || titleLines?.join(" ") || key,
       subtitle: key,
       media,
     }),
@@ -844,13 +1048,59 @@ export const confirmationPages = defineType({
   name: "confirmationPages",
   title: "Página · Confirmación y gracias",
   type: "document",
-  groups,
+  groups: [
+    { name: "content", title: "Confirmación", default: true },
+    { name: "pickup", title: "Recogida en el estudio" },
+    { name: "thanks", title: "Pantallas de gracias" },
+    { name: "seo", title: "SEO" },
+  ],
   fields: [
+    defineField({
+      name: "title",
+      title: "Titular",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "orderDataTitle",
+      title: "Rótulo de la columna de datos",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "fieldLabels",
+      title: "Rótulos de los campos",
+      type: "orderFieldLabels",
+      group: "content",
+      description:
+        "Solo el texto que se ve. La clave interna de cada campo y sus validaciones siguen en el código: cambiar un rótulo aquí no puede romper el formulario.",
+    }),
+    defineField({
+      name: "delivery",
+      title: "Método de entrega",
+      type: "deliveryLabels",
+      group: "content",
+    }),
+    defineField({
+      name: "shippingNote",
+      title: "Aviso de gastos de envío",
+      type: "text",
+      rows: 3,
+      group: "content",
+      description: "Aparece bajo los campos de la entrega a domicilio.",
+    }),
+    defineField({
+      name: "submitLabel",
+      title: "Botón de envío",
+      type: "string",
+      group: "content",
+      description: "Solo el texto. Lo que hace el botón no cambia.",
+    }),
     defineField({
       name: "studioName",
       title: "Nombre del estudio (recogida en tienda)",
       type: "string",
-      group: "content",
+      group: "pickup",
       description:
         "El bloque que aparece al elegir «Recoger en el estudio». La dirección y el enlace de Maps salen de Ajustes del sitio.",
     }),
@@ -858,23 +1108,117 @@ export const confirmationPages = defineType({
       name: "studioHours",
       title: "Horario (recogida en tienda)",
       type: "string",
-      group: "content",
+      group: "pickup",
+    }),
+    defineField({
+      name: "studioNote",
+      title: "Instrucciones adicionales",
+      type: "text",
+      rows: 3,
+      group: "pickup",
+      description: "Opcional. Si lo dejas vacío no aparece nada.",
+    }),
+    defineField({
+      name: "studioDirections",
+      title: "Cómo llegar",
+      type: "directionsLink",
+      group: "pickup",
     }),
     defineField({
       name: "cartThanks",
       title: "Gracias · solicitud del Shop",
       type: "thanksScreen",
-      group: "content",
+      group: "thanks",
     }),
     defineField({
       name: "formThanks",
       title: "Gracias · formulario de proyecto",
       type: "thanksScreen",
-      group: "content",
+      group: "thanks",
     }),
     seoField,
   ],
   preview: { prepare: () => ({ title: "Página · Confirmación y gracias" }) },
+});
+
+/**
+ * Cómo llegar: el enlace bajo el bloque de recogida en el estudio.
+ *
+ * No reutiliza `link` porque aquí el destino es opcional: dejándolo vacío cae
+ * en el enlace de Maps que los ajustes globales ya calculan a partir de la
+ * dirección del estudio, y así no hay dos direcciones que desincronizar.
+ */
+export const directionsLink = defineType({
+  name: "directionsLink",
+  title: "Cómo llegar",
+  type: "object",
+  fields: [
+    defineField({ name: "label", title: "Texto del enlace", type: "string" }),
+    defineField({
+      name: "href",
+      title: "Destino",
+      type: "url",
+      description:
+        "Opcional. Vacío = se usa el enlace de Google Maps de la dirección del estudio, en Ajustes del sitio.",
+      validation: (rule) => rule.uri({ scheme: ["http", "https"] }),
+    }),
+  ],
+  preview: { select: { title: "label", subtitle: "href" } },
+});
+
+/**
+ * Los rótulos del formulario de confirmación, uno por campo.
+ *
+ * Van como objeto de claves fijas y no como array editable: el formulario
+ * tiene exactamente estos campos, los fija Zod, y una lista abierta invitaría
+ * a añadir rótulos que no pintan nada o a borrar el de un campo que sí existe.
+ */
+export const orderFieldLabels = defineType({
+  name: "orderFieldLabels",
+  title: "Rótulos de los campos",
+  type: "object",
+  options: { columns: 2 },
+  fields: [
+    defineField({ name: "name", title: "Nombre y apellidos", type: "string" }),
+    defineField({ name: "taxId", title: "DNI/NIE o NIF", type: "string" }),
+    defineField({ name: "email", title: "Correo electrónico", type: "string" }),
+    defineField({ name: "phone", title: "Teléfono", type: "string" }),
+    defineField({ name: "address", title: "Dirección", type: "string" }),
+    defineField({
+      name: "postalCode",
+      title: "Código postal",
+      type: "string",
+    }),
+    defineField({ name: "city", title: "Ciudad", type: "string" }),
+    defineField({ name: "province", title: "Provincia", type: "string" }),
+  ],
+  preview: { prepare: () => ({ title: "Rótulos de los campos" }) },
+});
+
+/**
+ * El selector de entrega. Los identificadores internos ("domicilio" y
+ * "recogida") no están aquí a propósito: los fija el código y son lo que
+ * guarda el carrito. Aquí solo viaja el texto de cada opción.
+ */
+export const deliveryLabels = defineType({
+  name: "deliveryLabels",
+  title: "Método de entrega",
+  type: "object",
+  fields: [
+    defineField({ name: "title", title: "Rótulo", type: "string" }),
+    defineField({ name: "subtitle", title: "Frase de apoyo", type: "string" }),
+    defineField({
+      name: "homeLabel",
+      title: "Opción de entrega a domicilio",
+      type: "string",
+    }),
+    defineField({
+      name: "pickupLabel",
+      title: "Opción de recogida en el estudio",
+      type: "string",
+    }),
+  ],
+  preview: { select: { title: "title", subtitle: "subtitle" } },
 });
 
 export const thanksScreen = defineType({

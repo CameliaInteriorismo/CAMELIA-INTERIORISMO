@@ -162,7 +162,17 @@ export const product = defineType({
   },
 });
 
-/** Un acabado seleccionable: nombre, muestra de color y foto opcional. */
+/**
+ * Un acabado seleccionable: nombre, muestra de color y sus fotos.
+ *
+ * Las fotos cuelgan del acabado, no del producto: así cada imagen queda
+ * atada al acabado que retrata y no hay forma de perder esa relación, que
+ * es justo lo que pasaría con una galería suelta a nivel de producto.
+ *
+ * La ficha de hoy enseña una sola foto por acabado —la primera—, pero el
+ * array admite las que hagan falta. Las demás quedan guardadas y asociadas,
+ * listas para cuando la ficha crezca, sin volver a tocar el modelo.
+ */
 export const productFinish = defineType({
   name: "productFinish",
   title: "Acabado",
@@ -190,14 +200,21 @@ export const productFinish = defineType({
           .error("Escribe un color en formato #rrggbb, por ejemplo #3f5232."),
     }),
     defineField({
-      name: "image",
-      title: "Foto de este acabado",
-      type: "imageWithAlt",
+      name: "images",
+      title: "Fotos de este acabado",
+      type: "array",
       description:
-        "Opcional. Sin ella, al elegir este acabado se mantiene la imagen principal.",
+        "Fotos de este acabado en concreto. La primera es la que se ve en la " +
+        "ficha al elegirlo; arrástralas para cambiar cuál va primera. Las " +
+        "demás quedan guardadas para más adelante. Sin ninguna foto, al " +
+        "elegir el acabado se mantiene la imagen principal del producto.",
+      of: [defineArrayMember({ type: "imageWithAlt" })],
+      options: { layout: "grid" },
     }),
   ],
-  preview: { select: { title: "name", subtitle: "color", media: "image" } },
+  preview: {
+    select: { title: "name", subtitle: "color", media: "images.0" },
+  },
 });
 
 /**

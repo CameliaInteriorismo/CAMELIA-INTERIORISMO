@@ -24,14 +24,38 @@ export function urlFor(source: Image) {
  */
 export type SanityImageSource = Image & {
   alt?: string;
+  /** El recorte y el punto de interés que se fijan en el Studio. */
+  crop?: { top: number; bottom: number; left: number; right: number };
+  hotspot?: { x: number; y: number; height: number; width: number };
   asset?: {
     _ref?: string;
+    _id?: string;
     metadata?: {
       lqip?: string;
       dimensions?: { width: number; height: number };
     };
   };
 };
+
+/**
+ * El punto de interés del Studio, como `object-position` de CSS.
+ *
+ * Los recuadros del diseño tienen una proporción fija y las fotos se pintan
+ * con `object-cover`, que por defecto recorta por el centro. Eso es lo que
+ * hacía inútil mover el punto de interés en el panel: la foto llegaba
+ * entera y el navegador siempre se quedaba con el centro.
+ *
+ * Se traduce a porcentajes en vez de pedirle a Sanity una imagen ya recortada
+ * porque así el recuadro, su proporción y el `object-cover` del diseño se
+ * quedan exactamente como están: lo único que cambia es QUÉ parte de la foto
+ * queda a la vista. Sin punto de interés definido se devuelve `undefined` y
+ * el navegador sigue centrando, que es el comportamiento de siempre.
+ */
+function objectPositionFrom(source: SanityImageSource): string | undefined {
+  const { x, y } = source.hotspot ?? {};
+  if (typeof x !== "number" || typeof y !== "number") return undefined;
+  return `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`;
+}
 
 export function imageProps(source: SanityImageSource | undefined | null) {
   if (!source?.asset) return null;
@@ -42,5 +66,6 @@ export function imageProps(source: SanityImageSource | undefined | null) {
     height: dimensions?.height ?? 1200,
     blurDataURL: source.asset.metadata?.lqip,
     alt: source.alt ?? "",
+    objectPosition: objectPositionFrom(source),
   };
 }

@@ -107,6 +107,7 @@ export function AccompanimentSection({
                   alt={displayedImage.alt || displayed.question}
                   fill
                   className="object-cover"
+                  style={{ objectPosition: displayedImage.objectPosition }}
                   sizes="(min-width: 768px) 40vw, 100vw"
                 />
               ) : (

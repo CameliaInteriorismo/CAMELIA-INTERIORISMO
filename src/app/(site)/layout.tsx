@@ -16,6 +16,9 @@ export const revalidate = 3600;
 type SiteSettings = Parameters<typeof toContactDetails>[0] & {
   navLinks?: LinkData[];
   headerCta?: LinkData;
+  menuLabel?: string;
+  cartLabel?: string;
+  footerTagline?: string;
   footerNavTitle?: string;
   footerContactTitle?: string;
   footerScheduleTitle?: string;
@@ -42,10 +45,17 @@ export default async function SiteLayout({
 
   return (
     <>
-      <Navbar navLinks={navLinks} cta={settings.headerCta} socials={socials} />
+      <Navbar
+        navLinks={navLinks}
+        cta={settings.headerCta}
+        socials={socials}
+        menuLabel={settings.menuLabel}
+        cartLabel={settings.cartLabel}
+      />
       <main className="flex-1">{children}</main>
       <Footer
         data={{
+          tagline: settings.footerTagline,
           navTitle: settings.footerNavTitle,
           // La columna de navegación del pie es su propia lista: puede tener
           // menos entradas que el menú (hoy no lleva Contacto).

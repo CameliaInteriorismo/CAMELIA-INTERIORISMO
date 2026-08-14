@@ -4,12 +4,15 @@ import { Container } from "@/components/layout/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { CartLineItem } from "@/features/carrito/CartLineItem";
 import { useCartHasHydrated, useCartStore } from "@/stores/cartStore";
+import type { CartCopy } from "@/features/carrito/types";
 import type { ProductCardData } from "@/features/tienda/types";
 
 export function CartSummary({
   products = [],
+  copy = {},
 }: {
   products?: (ProductCardData & { description?: string })[];
+  copy?: CartCopy;
 }) {
   const items = useCartStore((state) => state.items);
   const hasHydrated = useCartHasHydrated();
@@ -40,7 +43,7 @@ export function CartSummary({
     <section className="pt-title pb-[100px]">
       <Container>
         <h1 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Resumen del pedido
+          {copy.title ?? "Resumen del pedido"}
         </h1>
 
         {/* 72px por línea en vez de 60: con la foto a ~340px las filas
@@ -51,6 +54,7 @@ export function CartSummary({
               <CartLineItem
                 item={item}
                 product={products.find((p) => p.slug === item.slug)}
+                copy={copy}
               />
             </div>
           ))}
@@ -63,7 +67,7 @@ export function CartSummary({
           href="/carrito/confirmacion"
           className="mt-[72px] w-full md:h-14"
         >
-          CONTINUAR
+          {copy.continueLabel ?? "CONTINUAR"}
         </ButtonLink>
       </Container>
     </section>

@@ -179,6 +179,10 @@ export function ProjectPhases({ phases }: { phases: ServicePhase[] }) {
                         alt={phase.title}
                         fill
                         className="object-cover"
+                        style={{
+                          objectPosition: imageProps(phase.image)
+                            ?.objectPosition,
+                        }}
                         sizes="(min-width: 768px) 40vw, 100vw"
                       />
                     </div>

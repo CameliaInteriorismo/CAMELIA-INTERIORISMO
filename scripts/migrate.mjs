@@ -364,11 +364,16 @@ for (const p of products) {
 for (const [i, p] of products.entries()) {
   const finishes = [];
   for (const f of p.finishes ?? []) {
+    // Las fotos del acabado van en lista. Los data.ts traen como mucho una,
+    // así que aquí sale una lista de uno; el array existe para que el panel
+    // pueda añadir las demás sin volver a tocar el modelo. Sin foto no se
+    // escribe la propiedad: un array vacío y "sin fotos" son lo mismo.
+    const photo = await img(f.image, f.name);
     finishes.push({
       _type: "productFinish",
       name: f.name,
       color: f.color,
-      image: await img(f.image, f.name),
+      images: photo ? keyed([photo], "fi") : undefined,
     });
   }
   const gallery = [];
@@ -488,17 +493,27 @@ const [street, floor, locality] = CONTACT.addressLines ?? [];
 const SOCIALS = literal(contactSrc, "export const SOCIALS") ?? [];
 const SOCIALS_MENU = literal(contactSrc, "export const SOCIALS_MENU") ?? [];
 const socials = [];
+// Los iconos de redes son `image` a secas, no `imageWithAlt`, y con motivo:
+// la web los pinta con alt="" porque el nombre accesible del enlace ya lo da
+// su aria-label, y anunciar "Instagram" dos veces seguidas es peor que no
+// anunciarlo. Escribirles un alt dejaba en Sanity un campo que su schema no
+// declara y que el panel marca como desconocido, así que se quita.
+const plain = (image) => {
+  if (!image) return undefined;
+  const { alt, ...rest } = image;
+  void alt;
+  return rest;
+};
+
 for (const [label, url] of Object.entries(SOCIAL_URLS)) {
   socials.push({
     _type: "social",
     label,
     url: url ?? undefined,
-    icon:
-      (await img(SOCIALS.find((s) => s.label === label)?.src, label)) ??
-      undefined,
-    iconMenu:
-      (await img(SOCIALS_MENU.find((s) => s.label === label)?.src, label)) ??
-      undefined,
+    icon: plain(await img(SOCIALS.find((s) => s.label === label)?.src, label)),
+    iconMenu: plain(
+      await img(SOCIALS_MENU.find((s) => s.label === label)?.src, label),
+    ),
   });
 }
 
@@ -532,6 +547,11 @@ push({
     label: "CUÉNTANOS TU PROYECTO",
     href: "/cuentanos-tu-proyecto",
   },
+  menuLabel: "Menu",
+  cartLabel: "Carrito",
+  loadingLabel: "Cargando...",
+  footerTagline:
+    "Estudio de interiorismo en Valencia. Diseñamos espacios pensados para habitarse, vivirse y sentirse propios.",
   footerLegalLinks: keyed(
     [
       ["Aviso Legal", "/aviso-legal"],
@@ -851,6 +871,41 @@ push({
   title: "Shop",
   heroImage: await img("/assets/tienda/Shop hero.jpg", "-"),
   heroImagePosition: "center 55%",
+  gridTitle: "Nuestros\nproductos",
+  filterLabel: "Tipo de producto",
+  sortLabel: "Ordenar",
+  sortOptions: {
+    _type: "sortOptionLabels",
+    destacados: "Destacados",
+    recientes: "Más recientes",
+    precioAsc: "Precio: menor a mayor",
+    precioDesc: "Precio: mayor a menor",
+    nombreAsc: "Nombre A–Z",
+  },
+  taxNote: "IVA incluido",
+  addToCartLabel: "AÑADIR AL CARRITO",
+  addedLabel: "AÑADIDO",
+  relatedTitle: "Productos relacionados",
+  detailLabels: {
+    _type: "productDetailLabels",
+    detallesDeLaPieza: "DETALLES DE LA PIEZA",
+    materialesYMedidas: "MATERIALES Y MEDIDAS",
+    envioYEntrega: "ENVÍO Y ENTREGA",
+  },
+});
+
+// --- Rótulos del carrito ---------------------------------------------------
+push({
+  _id: "cartPage",
+  _type: "cartPage",
+  title: "Resumen del pedido",
+  taxNote: "IVA incluido",
+  quantityLabel: "Cantidad",
+  notesLabel: "Observaciones",
+  notesPlaceholder: "Texto",
+  continueLabel: "CONTINUAR",
+  emptyText: "Tu carrito está vacío.",
+  emptyActionLabel: "Ver productos",
 });
 push({
   _id: "blogPage",
@@ -938,7 +993,14 @@ for (const [i, s] of formSteps.entries()) {
           `g${i}`,
         )
       : undefined,
-    image: await img(s.image, s.title),
+    // `title` del paso de bienvenida es un ARRAY de líneas, no un texto:
+    // pasarlo tal cual dejaba el texto alternativo como array y Sanity lo
+    // marcaba como valor inválido («Expected String, got Array»), además de
+    // pintarlo con una coma en medio. Se une en una frase.
+    image: await img(
+      s.image,
+      Array.isArray(s.title) ? s.title.join(" ") : s.title,
+    ),
   });
 }
 push({
@@ -951,8 +1013,34 @@ push({
 push({
   _id: "confirmationPages",
   _type: "confirmationPages",
+  title: "Información de contacto",
+  orderDataTitle: "Datos del pedido",
+  fieldLabels: {
+    _type: "orderFieldLabels",
+    name: "Nombre y apellidos o empresa",
+    taxId: "DNI/NIE o NIF",
+    email: "Correo electrónico",
+    phone: "Teléfono",
+    address: "Dirección",
+    postalCode: "Código postal",
+    city: "Ciudad",
+    province: "Provincia",
+  },
+  delivery: {
+    _type: "deliveryLabels",
+    title: "Método de entrega",
+    subtitle: "Selecciona cómo prefieres recibir tu pedido",
+    homeLabel: "Entrega a domicilio",
+    pickupLabel: "Recoger en el estudio",
+  },
+  shippingNote:
+    "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo.",
+  submitLabel: "TRAMITAR PEDIDO",
   studioName: "Camelia interiorismo",
   studioHours: "Horario: L-V de 9:00 a 18:00",
+  // Sin destino propio: cae en el enlace de Maps que se calcula a partir de
+  // la dirección del estudio, que ya vive en los ajustes globales.
+  studioDirections: { _type: "directionsLink", label: "Cómo llegar" },
   cartThanks: {
     _type: "thanksScreen",
     title: "SOLICITUD ENVIADA CON ÉXITO",

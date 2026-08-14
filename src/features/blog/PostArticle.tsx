@@ -38,6 +38,7 @@ function PairImage({
           placeholder={image.blurDataURL ? "blur" : undefined}
           blurDataURL={image.blurDataURL}
           className="object-cover"
+          style={{ objectPosition: image.objectPosition }}
           sizes="(min-width: 768px) 50vw, 100vw"
         />
       ) : (
@@ -132,6 +133,7 @@ export function PostArticle({
               placeholder={lead.blurDataURL ? "blur" : undefined}
               blurDataURL={lead.blurDataURL}
               className="object-cover"
+              style={{ objectPosition: lead.objectPosition }}
               sizes="(min-width: 1024px) 1120px, 100vw"
             />
           ) : (

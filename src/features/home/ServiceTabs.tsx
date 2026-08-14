@@ -50,6 +50,9 @@ export function ServiceTabs({
                 alt={current?.title ?? ""}
                 fill
                 className="object-cover"
+                style={{
+                  objectPosition: imageProps(current?.image)?.objectPosition,
+                }}
                 sizes="(min-width: 768px) 50vw, 100vw"
               />
             </div>

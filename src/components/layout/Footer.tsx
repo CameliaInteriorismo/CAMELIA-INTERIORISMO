@@ -11,6 +11,7 @@ import type { LinkData } from "@/features/shared/types";
 // navigating (see ConsentSettingsLink), which is why it isn't in this list.
 
 export type FooterData = {
+  tagline?: string;
   navTitle?: string;
   navLinks: LinkData[];
   contactTitle?: string;
@@ -48,8 +49,8 @@ export function Footer({ data }: { data: FooterData }) {
               className="h-6 w-auto"
             />
             <p className="mt-4 max-w-xs text-sm leading-relaxed font-light">
-              Estudio de interiorismo en Valencia. Diseñamos espacios pensados
-              para habitarse, vivirse y sentirse propios.
+              {data.tagline ??
+                "Estudio de interiorismo en Valencia. Diseñamos espacios pensados para habitarse, vivirse y sentirse propios."}
             </p>
             <div className="mt-6 flex gap-4">
               {data.socials.map((social) => {

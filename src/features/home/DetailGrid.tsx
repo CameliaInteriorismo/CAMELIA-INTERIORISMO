@@ -45,6 +45,7 @@ export function DetailGrid({
                   placeholder={image.blurDataURL ? "blur" : undefined}
                   blurDataURL={image.blurDataURL}
                   className="object-cover"
+                  style={{ objectPosition: image.objectPosition }}
                   sizes="(min-width: 768px) 50vw, 100vw"
                 />
                 <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/30" />

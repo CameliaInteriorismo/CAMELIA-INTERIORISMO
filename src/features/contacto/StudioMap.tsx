@@ -56,6 +56,7 @@ export function StudioMap({
               alt="Mapa de la ubicación del estudio en Alzira"
               fill
               className="object-cover"
+              style={{ objectPosition: map?.objectPosition }}
               sizes="(min-width: 1024px) 1120px, 100vw"
             />
           </div>

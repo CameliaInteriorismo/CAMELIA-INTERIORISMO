@@ -93,7 +93,38 @@ export const siteSettings = defineType({
       type: "link",
       group: "nav",
     }),
+    defineField({
+      name: "menuLabel",
+      title: "Rótulo del menú",
+      type: "string",
+      group: "nav",
+      description: 'El texto junto al icono de las tres rayas. Hoy "Menu".',
+    }),
+    defineField({
+      name: "cartLabel",
+      title: "Nombre del icono del carrito",
+      type: "string",
+      group: "nav",
+      description:
+        "No se ve en pantalla: es lo que anuncia un lector de pantalla al llegar al icono. El número de artículos lo pone el carrito.",
+    }),
+    defineField({
+      name: "loadingLabel",
+      title: "Aviso de carga",
+      type: "string",
+      group: "nav",
+      description:
+        "Se ve un instante al cambiar de página cuando la carga se alarga.",
+    }),
 
+    defineField({
+      name: "footerTagline",
+      title: "Eslogan del pie",
+      type: "text",
+      rows: 3,
+      group: "footer",
+      description: "El párrafo bajo el logotipo, en la primera columna.",
+    }),
     defineField({
       name: "footerNavTitle",
       title: "Rótulo de la columna de navegación",
@@ -176,16 +207,22 @@ export const siteSettings = defineType({
               validation: (rule) => rule.required(),
             }),
             defineField({ name: "url", title: "URL", type: "url" }),
+            // Sin texto alternativo a propósito: la web los pinta con
+            // alt="" porque quien navega con lector de pantalla ya oye el
+            // nombre de la red en el enlace que los envuelve. Un alt aquí
+            // haría que se anunciara dos veces.
             defineField({
               name: "icon",
               title: "Icono para el pie",
               type: "image",
+              validation: (rule) => rule.required(),
             }),
             defineField({
               name: "iconMenu",
               title: "Icono para el menú",
               type: "image",
               description: "La versión clara, sobre fondo vino.",
+              validation: (rule) => rule.required(),
             }),
           ],
           preview: {

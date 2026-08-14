@@ -10,6 +10,7 @@ import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon, PinIcon } from "@/components/ui/icons";
 import { DeliveryModeToggle } from "@/features/carrito/DeliveryModeToggle";
+import type { ConfirmationCopy } from "@/features/carrito/types";
 import type { ContactDetails } from "@/features/contacto/types";
 import { useCartStore } from "@/stores/cartStore";
 
@@ -64,35 +65,46 @@ const Field = forwardRef<
 });
 
 /**
- * El bloque que aparece al elegir "Recoger en el estudio". La dirección y el
- * enlace a Maps salen de los ajustes globales — los mismos que pinta el pie —
- * y el nombre y el horario, de la página de confirmación.
+ * El bloque que aparece al elegir "Recoger en el estudio".
+ *
+ * La dirección NO se escribe aquí ni en la página de confirmación: sale de
+ * los ajustes globales, los mismos que pintan el pie y /contacto. Así el
+ * estudio tiene una sola dirección en todo el sitio y no hay forma de que
+ * dos copias se queden distintas.
+ *
+ * "Cómo llegar" acepta un destino propio en Sanity por si algún día apunta a
+ * otro sitio; vacío, cae en el enlace de Maps que ya se calcula a partir de
+ * esa misma dirección.
  */
 function PickupInfo({
-  studio,
+  copy,
   contact,
 }: {
-  studio?: StudioInfo;
+  copy: ConfirmationCopy;
   contact: ContactDetails;
 }) {
+  const directions = copy.studioDirections;
   return (
     <div className="flex items-start gap-3">
       <PinIcon className="text-primary mt-1 h-4 w-4 shrink-0" />
       <div>
-        <p className="text-primary text-base">{studio?.name}</p>
+        <p className="text-primary text-base">{copy.studioName}</p>
         <div className="text-primary/75 mt-2 space-y-1 text-sm">
           {contact.addressLines.map((line) => (
             <p key={line}>{line}</p>
           ))}
-          <p>{studio?.hours}</p>
+          <p>{copy.studioHours}</p>
         </div>
+        {copy.studioNote && (
+          <p className="text-primary/75 mt-2 text-sm">{copy.studioNote}</p>
+        )}
         <a
-          href={contact.mapsUrl}
+          href={directions?.href || contact.mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary mt-3 inline-flex items-center gap-2 text-sm"
         >
-          Cómo llegar
+          {directions?.label ?? "Cómo llegar"}
           <ArrowRightIcon className="h-3 w-3" />
         </a>
       </div>
@@ -100,15 +112,18 @@ function PickupInfo({
   );
 }
 
-export type StudioInfo = { name?: string; hours?: string };
-
 export function ContactForm({
-  studio,
+  copy = {},
   contact,
 }: {
-  studio?: StudioInfo;
+  copy?: ConfirmationCopy;
   contact: ContactDetails;
 }) {
+  // Los rótulos son solo texto. Las claves con las que se registra cada
+  // campo ("name", "taxId"...) y el esquema de Zod de arriba no se tocan:
+  // cambiar un rótulo en Sanity no puede alterar qué se valida ni qué se
+  // guarda.
+  const labels = copy.fieldLabels ?? {};
   const router = useRouter();
   const setContactInfo = useCartStore((state) => state.setContactInfo);
   const setDeliveryMode = useCartStore((state) => state.setDeliveryMode);
@@ -147,35 +162,35 @@ export function ContactForm({
     <section className="pt-title pb-[100px]">
       <Container>
         <h1 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Información de contacto
+          {copy.title ?? "Información de contacto"}
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-title">
           <Grid>
             <div className="col-span-12 md:col-span-5">
               <h2 className="font-title text-primary text-2xl">
-                Datos del pedido
+                {copy.orderDataTitle ?? "Datos del pedido"}
               </h2>
 
               <div className="mt-block space-y-block">
                 <Field
-                  label="Nombre y apellidos o empresa"
+                  label={labels.name ?? "Nombre y apellidos o empresa"}
                   error={errors.name?.message}
                   {...register("name")}
                 />
                 <Field
-                  label="DNI/NIE o NIF"
+                  label={labels.taxId ?? "DNI/NIE o NIF"}
                   error={errors.taxId?.message}
                   {...register("taxId")}
                 />
                 <Field
-                  label="Correo electrónico"
+                  label={labels.email ?? "Correo electrónico"}
                   type="email"
                   error={errors.email?.message}
                   {...register("email")}
                 />
                 <Field
-                  label="Teléfono"
+                  label={labels.phone ?? "Teléfono"}
                   type="tel"
                   error={errors.phone?.message}
                   {...register("phone")}
@@ -189,6 +204,7 @@ export function ContactForm({
                 onChange={(mode) =>
                   setValue("deliveryMode", mode, { shouldValidate: true })
                 }
+                copy={copy.delivery}
               />
               {errors.deliveryMode && (
                 <p className="text-secondary mt-2 text-xs">
@@ -221,7 +237,7 @@ export function ContactForm({
                       // with Teléfono.
                       <div className="mt-block space-y-block">
                         <Field
-                          label="Dirección"
+                          label={labels.address ?? "Dirección"}
                           error={errors.address?.message}
                           {...register("address")}
                         />
@@ -232,33 +248,32 @@ export function ContactForm({
                         <div className="grid grid-cols-3 gap-8">
                           <div className="col-span-1">
                             <Field
-                              label="Código postal"
+                              label={labels.postalCode ?? "Código postal"}
                               error={errors.postalCode?.message}
                               {...register("postalCode")}
                             />
                           </div>
                           <div className="col-span-2">
                             <Field
-                              label="Ciudad"
+                              label={labels.city ?? "Ciudad"}
                               error={errors.city?.message}
                               {...register("city")}
                             />
                           </div>
                         </div>
                         <Field
-                          label="Provincia"
+                          label={labels.province ?? "Provincia"}
                           error={errors.province?.message}
                           {...register("province")}
                         />
                         <p className="text-primary/60 text-xs">
-                          *Una vez recibamos tu solicitud, calcularemos los
-                          gastos de envío y te enviaremos el presupuesto
-                          completo.
+                          {copy.shippingNote ??
+                            "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
                         </p>
                       </div>
                     ) : (
                       <div className="mt-block">
-                        <PickupInfo studio={studio} contact={contact} />
+                        <PickupInfo copy={copy} contact={contact} />
                       </div>
                     )}
                   </motion.div>
@@ -268,7 +283,7 @@ export function ContactForm({
           </Grid>
 
           <Button type="submit" className="mt-title w-full">
-            TRAMITAR PEDIDO
+            {copy.submitLabel ?? "TRAMITAR PEDIDO"}
           </Button>
         </form>
       </Container>

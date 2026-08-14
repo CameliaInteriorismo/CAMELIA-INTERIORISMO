@@ -1,8 +1,14 @@
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/features/tienda/ProductCard";
-import type { Product } from "@/features/tienda/types";
+import type { Product, ShopCopy } from "@/features/tienda/types";
 
-export function RelatedProducts({ product }: { product: Product }) {
+export function RelatedProducts({
+  product,
+  copy = {},
+}: {
+  product: Product;
+  copy?: ShopCopy;
+}) {
   // Las resuelve la propia consulta GROQ (misma categoría, sin incluirse a
   // sí misma y ya filtradas por disponibilidad).
   const related = product.related ?? [];
@@ -12,7 +18,7 @@ export function RelatedProducts({ product }: { product: Product }) {
     <section className="mt-title">
       <Container>
         <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Productos relacionados
+          {copy.relatedTitle ?? "Productos relacionados"}
         </h2>
         <div className="mt-title grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           {related.map((item) => (

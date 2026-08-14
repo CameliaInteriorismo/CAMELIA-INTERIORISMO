@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/features/tienda/PageHeader";
 import { ProductsGrid } from "@/features/tienda/ProductsGrid";
-import type { ProductCardData } from "@/features/tienda/types";
+import type { ProductCardData, ShopCopy } from "@/features/tienda/types";
+import type { SanityImageSource } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { PRODUCTS_QUERY } from "@/sanity/lib/queries";
+import { PRODUCTS_QUERY, TIENDA_PAGE_QUERY } from "@/sanity/lib/queries";
 
 /**
  * La página se sirve ya renderizada y se rehace, como mucho, una vez por
@@ -22,15 +23,29 @@ export const metadata: Metadata = {
 export default async function TiendaPage() {
   // La consulta ya descarta las piezas marcadas como no disponibles, así que
   // desmarcar "Disponible" en Sanity las retira del listado sin borrarlas.
-  const products = await sanityFetch<ProductCardData[]>({
-    query: PRODUCTS_QUERY,
-    tags: ["product"],
-  });
+  const [products, page] = await Promise.all([
+    sanityFetch<ProductCardData[]>({
+      query: PRODUCTS_QUERY,
+      tags: ["product"],
+    }),
+    sanityFetch<
+      | (ShopCopy & {
+          title?: string;
+          heroImage?: SanityImageSource;
+          heroImagePosition?: string;
+        })
+      | null
+    >({ query: TIENDA_PAGE_QUERY, tags: ["tiendaPage"] }),
+  ]);
 
   return (
     <>
-      <PageHeader />
-      <ProductsGrid products={products} />
+      <PageHeader
+        title={page?.title}
+        image={page?.heroImage}
+        imagePosition={page?.heroImagePosition}
+      />
+      <ProductsGrid products={products} copy={page ?? {}} />
     </>
   );
 }

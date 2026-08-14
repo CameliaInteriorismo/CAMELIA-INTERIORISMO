@@ -39,7 +39,7 @@ const MAX_VISIBLE_MS = 8000;
  * for internal link clicks to know a navigation started, and clears itself
  * when `usePathname()` reports the new route has committed.
  */
-export function NavigationLoader() {
+export function NavigationLoader({ label }: { label?: string }) {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -176,7 +176,9 @@ export function NavigationLoader() {
               className="h-7 w-auto"
             />
           </motion.div>
-          <p className="text-primary/70 text-sm tracking-wide">Cargando...</p>
+          <p className="text-primary/70 text-sm tracking-wide">
+            {label ?? "Cargando..."}
+          </p>
         </motion.div>
       )}
     </AnimatePresence>

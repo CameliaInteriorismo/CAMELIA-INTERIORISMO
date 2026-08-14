@@ -25,10 +25,14 @@ export function Navbar({
   navLinks,
   cta,
   socials,
+  menuLabel,
+  cartLabel,
 }: {
   navLinks: LinkData[];
   cta?: LinkData;
   socials: Social[];
+  menuLabel?: string;
+  cartLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   // Renders inline for the very first paint (server + hydration, matching),
@@ -169,7 +173,7 @@ export function Navbar({
                 {/* TODO(mobile): sin referencia de Figma para mobile; el texto
                   "Menu" se oculta bajo sm para no chocar con el logo
                   centrado — el icono por sí solo ya es reconocible. */}
-                <span className="hidden sm:inline">Menu</span>
+                <span className="hidden sm:inline">{menuLabel ?? "Menu"}</span>
               </button>
             )}
 
@@ -198,7 +202,7 @@ export function Navbar({
                 {showCart && (
                   <Link
                     href="/carrito"
-                    aria-label="Carrito"
+                    aria-label={cartLabel ?? "Carrito"}
                     // Área de pulsación de 44px alrededor del icono, como el
                     // resto de controles de la barra; el -mr compensa ese
                     // acolchado para que el icono siga alineado al margen.

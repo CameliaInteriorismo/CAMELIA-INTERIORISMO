@@ -1,9 +1,10 @@
 import { Accordion, type AccordionItem } from "@/components/ui/Accordion";
-import type { Product } from "@/features/tienda/types";
+import type { Product, ShopCopy } from "@/features/tienda/types";
 
-// Literal caps (not a CSS transform) — matches how every other all-caps
-// label on the site (e.g. "CUÉNTANOS TU PROYECTO") is written directly,
-// keeping the shared Accordion itself free of a case opinion.
+// Los rótulos vienen de Sanity; estos son solo el texto de reserva por si
+// alguien los vacía en el panel. En mayúsculas literales, no con una
+// transformación de CSS: así se escriben todos los rótulos del sitio, y el
+// Accordion compartido se queda sin opinión sobre las mayúsculas.
 const DETAIL_LABELS: Record<keyof NonNullable<Product["details"]>, string> = {
   detallesDeLaPieza: "DETALLES DE LA PIEZA",
   materialesYMedidas: "MATERIALES Y MEDIDAS",
@@ -13,11 +14,17 @@ const DETAIL_LABELS: Record<keyof NonNullable<Product["details"]>, string> = {
 // Embedded directly in ProductHero's right column, beside the image —
 // not a standalone section below the fold. Only fields with real content
 // become accordion items.
-export function ProductInfo({ product }: { product: Product }) {
+export function ProductInfo({
+  product,
+  copy = {},
+}: {
+  product: Product;
+  copy?: ShopCopy;
+}) {
   const items: AccordionItem[] = Object.entries(DETAIL_LABELS)
     .filter(([key]) => product.details?.[key as keyof typeof DETAIL_LABELS])
     .map(([key, label]) => ({
-      question: label,
+      question: copy.detailLabels?.[key as keyof typeof DETAIL_LABELS] ?? label,
       answer: product.details![key as keyof typeof DETAIL_LABELS]!,
     }));
 

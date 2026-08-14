@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
   const finish = product.finishes?.[finishIndex];
   // Un acabado sin foto propia mantiene la imagen base de la pieza, en vez
   // de dejar el hueco vacío al seleccionarlo.
-  const activeImage = imageProps(finish?.image ?? product.image);
+  const activeImage = imageProps(finish?.images?.[0] ?? product.image);
 
   return (
     <Link href={`/tienda/${product.slug}`} className="group block">
@@ -36,6 +36,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 placeholder={activeImage.blurDataURL ? "blur" : undefined}
                 blurDataURL={activeImage.blurDataURL}
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                style={{ objectPosition: activeImage.objectPosition }}
                 sizes="(min-width: 640px) 50vw, 100vw"
               />
             </motion.div>

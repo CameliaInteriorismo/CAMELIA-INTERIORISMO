@@ -52,6 +52,7 @@ export function ProjectHeroTitle({
           placeholder={hero.blurDataURL ? "blur" : undefined}
           blurDataURL={hero.blurDataURL}
           className="object-cover"
+          style={{ objectPosition: hero.objectPosition }}
           sizes="100vw"
         />
       ) : (

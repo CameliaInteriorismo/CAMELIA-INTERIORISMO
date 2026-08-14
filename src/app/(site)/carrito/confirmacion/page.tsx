@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ContactForm, type StudioInfo } from "@/features/carrito/ContactForm";
+import { ContactForm } from "@/features/carrito/ContactForm";
+import type { ConfirmationCopy } from "@/features/carrito/types";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   CONFIRMATION_PAGES_QUERY,
@@ -14,11 +15,9 @@ export const metadata: Metadata = {
   description: "Camelia Shop — información de contacto y método de entrega.",
 };
 
-type Confirmation = { studioName?: string; studioHours?: string };
-
 export default async function ConfirmacionPage() {
   const [confirmation, settings] = await Promise.all([
-    sanityFetch<Confirmation | null>({
+    sanityFetch<ConfirmationCopy | null>({
       query: CONFIRMATION_PAGES_QUERY,
       tags: ["confirmationPages"],
     }),
@@ -29,12 +28,12 @@ export default async function ConfirmacionPage() {
   ]);
   if (!settings) return null;
 
-  const studio: StudioInfo = {
-    name: confirmation?.studioName,
-    hours: confirmation?.studioHours,
-  };
-
   // Solo cambia de dónde salen los textos: el formulario, su validación y el
   // envío siguen exactamente igual.
-  return <ContactForm studio={studio} contact={toContactDetails(settings)} />;
+  return (
+    <ContactForm
+      copy={confirmation ?? {}}
+      contact={toContactDetails(settings)}
+    />
+  );
 }

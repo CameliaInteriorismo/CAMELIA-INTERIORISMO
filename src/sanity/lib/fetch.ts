@@ -28,6 +28,7 @@ export type SanityTag =
   | "blogPage"
   | "contactPage"
   | "projectFormPage"
+  | "cartPage"
   | "confirmationPages";
 
 /**

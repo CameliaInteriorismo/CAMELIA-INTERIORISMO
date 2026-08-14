@@ -9,11 +9,17 @@ import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { FinishSwatch } from "@/features/tienda/FinishSwatches";
 import { ProductInfo } from "@/features/tienda/ProductInfo";
-import type { Product } from "@/features/tienda/types";
+import type { Product, ShopCopy } from "@/features/tienda/types";
 import { imageProps } from "@/sanity/lib/image";
 import { useCartStore } from "@/stores/cartStore";
 
-export function ProductHero({ product }: { product: Product }) {
+export function ProductHero({
+  product,
+  copy = {},
+}: {
+  product: Product;
+  copy?: ShopCopy;
+}) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [finishIndex, setFinishIndex] = useState(0);
@@ -21,7 +27,7 @@ export function ProductHero({ product }: { product: Product }) {
 
   const finish = product.finishes?.[finishIndex];
   // Un acabado sin foto propia mantiene la imagen base de la pieza.
-  const activeImage = imageProps(finish?.image ?? product.image);
+  const activeImage = imageProps(finish?.images?.[0] ?? product.image);
 
   function handleAddToCart() {
     addItem({
@@ -65,6 +71,7 @@ export function ProductHero({ product }: { product: Product }) {
                       placeholder={activeImage.blurDataURL ? "blur" : undefined}
                       blurDataURL={activeImage.blurDataURL}
                       className="object-cover"
+                      style={{ objectPosition: activeImage.objectPosition }}
                       sizes="(min-width: 768px) 50vw, 100vw"
                     />
                   </motion.div>
@@ -92,7 +99,9 @@ export function ProductHero({ product }: { product: Product }) {
             {product.price !== undefined && (
               <div className="mt-sm">
                 <p className="text-primary text-xl">{product.price} €</p>
-                <p className="text-primary/60 text-xs italic">IVA incluido</p>
+                <p className="text-primary/60 text-xs italic">
+                  {copy.taxNote ?? "IVA incluido"}
+                </p>
               </div>
             )}
 
@@ -129,11 +138,13 @@ export function ProductHero({ product }: { product: Product }) {
             <div className="mt-block flex items-center gap-4">
               <QuantityStepper value={quantity} onChange={setQuantity} />
               <Button onClick={handleAddToCart} className="flex-1">
-                {added ? "AÑADIDO" : "AÑADIR AL CARRITO"}
+                {added
+                  ? (copy.addedLabel ?? "AÑADIDO")
+                  : (copy.addToCartLabel ?? "AÑADIR AL CARRITO")}
               </Button>
             </div>
 
-            <ProductInfo product={product} />
+            <ProductInfo product={product} copy={copy} />
           </div>
         </Grid>
       </Container>
