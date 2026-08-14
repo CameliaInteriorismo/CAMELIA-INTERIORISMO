@@ -88,8 +88,15 @@ export function Navbar({
   // is already the same cream as the navbar's solid state — so it stays
   // permanently transparent instead, letting that background show through
   // directly rather than painting an identical color on top of it.
+  //
+  // La barra solo flota sobre la foto en las FICHAS de proyecto, que son la
+  // excepción: su portada está pensada para verse entera de borde a borde.
+  // En el resto la barra va en crema y la portada empieza justo debajo (ver
+  // PageHeroBanner y home/Hero), para que la barra no le coma un trozo.
+  const isProjectDetail =
+    pathname.startsWith("/proyectos/") && pathname !== "/proyectos";
   const transparentNav =
-    ((hasHero && heroActive) || alwaysFixed) && !open && !isShop;
+    ((isProjectDetail && heroActive) || alwaysFixed) && !open && !isShop;
 
   // Estudio-only auto-hide: slides the header up out of view on scroll
   // down, back in on scroll up. Never engages while the menu is open, so

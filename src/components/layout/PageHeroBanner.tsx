@@ -53,7 +53,15 @@ export function PageHeroBanner({
   }, [setHeroActive]);
 
   return (
-    <section ref={ref} className="relative h-dvh w-full overflow-hidden">
+    // La portada arranca bajo la barra —80px, su alto— y descuenta ese mismo
+    // alto del viewport, así que sigue llegando justo al borde inferior de la
+    // pantalla. Antes empezaba en el 0 y la barra, ahora en crema, le tapaba
+    // la franja de arriba. El recorte y el punto focal no cambian: la foto
+    // sigue con `object-cover` sobre la misma caja, solo que desplazada.
+    <section
+      ref={ref}
+      className="relative mt-20 h-[calc(100dvh-80px)] w-full overflow-hidden"
+    >
       {image ? (
         <Image
           src={image}

@@ -6,9 +6,11 @@
  * Kept as a shared constant rather than repeated per component so the
  * scale physically cannot drift between pages: change it here and every
  * page title moves together.
+ *
+ * Solo escala: la capitalización la decide el texto que se escriba en Sanity,
+ * no el CSS. Forzar mayúsculas aquí hacía imposible fijarla desde el panel.
  */
-export const PAGE_TITLE_SCALE =
-  "text-3xl uppercase sm:text-4xl md:text-6xl lg:text-7xl";
+export const PAGE_TITLE_SCALE = "text-3xl sm:text-4xl md:text-6xl lg:text-7xl";
 
 /**
  * A step down from PAGE_TITLE_SCALE for the blog ficha headline: it still
@@ -16,7 +18,7 @@ export const PAGE_TITLE_SCALE =
  * lead image beneath it than the full hero scale did (which overwhelmed
  * them at 72px).
  */
-export const ARTICLE_TITLE_SCALE = "text-3xl uppercase sm:text-4xl md:text-5xl";
+export const ARTICLE_TITLE_SCALE = "text-3xl sm:text-4xl md:text-5xl";
 
 /**
  * In-page section headings that carry a page title's weight without being
@@ -27,7 +29,7 @@ export const ARTICLE_TITLE_SCALE = "text-3xl uppercase sm:text-4xl md:text-5xl";
  * hero's 72px the same line runs 727px and breaks onto a third line.
  */
 export const SECTION_TITLE_SCALE =
-  "text-3xl uppercase sm:text-4xl md:text-[40px] lg:text-[45px]";
+  "text-3xl sm:text-4xl md:text-[40px] lg:text-[45px]";
 
 /**
  * The H1 on the legal pages (Aviso Legal, Política de Privacidad, Cookies,
@@ -40,5 +42,4 @@ export const SECTION_TITLE_SCALE =
  * for a longer title later — and still reads as the page's title against
  * the 24px clause headings and 14px body below it.
  */
-export const LEGAL_TITLE_SCALE =
-  "text-2xl uppercase sm:text-3xl md:text-[40px]";
+export const LEGAL_TITLE_SCALE = "text-2xl sm:text-3xl md:text-[40px]";

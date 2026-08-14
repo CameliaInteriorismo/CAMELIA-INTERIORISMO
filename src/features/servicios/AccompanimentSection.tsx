@@ -68,7 +68,7 @@ export function AccompanimentSection({
                     <button
                       type="button"
                       onClick={() => setOpenIndex(open ? null : index)}
-                      className="flex w-full items-center justify-between gap-8 py-6 text-left"
+                      className="flex w-full items-center justify-between gap-8 py-8 text-left"
                     >
                       <span className="font-title text-primary text-xl">
                         {item.question}
@@ -87,7 +87,7 @@ export function AccompanimentSection({
                           }}
                           className="overflow-hidden"
                         >
-                          <p className="text-primary pb-6 text-sm leading-relaxed">
+                          <p className="text-primary pb-8 text-sm leading-relaxed">
                             {item.answer}
                           </p>
                         </motion.div>

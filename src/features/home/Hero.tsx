@@ -97,7 +97,11 @@ export function Hero({
   }, [setLogoRevealed, setHeroActive]);
 
   return (
-    <div ref={heroRef} className="relative h-dvh w-full">
+    // Igual que en las cabeceras de sección: arranca bajo la barra y descuenta
+    // su alto, para que la barra en crema no le tape la franja de arriba. La
+    // animación del logotipo no se resiente: su ScrollTrigger mide contra este
+    // mismo elemento ("top top" / "bottom top"), no contra el viewport.
+    <div ref={heroRef} className="relative mt-20 h-[calc(100dvh-80px)] w-full">
       {video ? (
         <VideoBackground src={video} />
       ) : photo ? (
