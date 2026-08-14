@@ -10,7 +10,12 @@ import {
   richText,
 } from "./objects/shared";
 
-import { galleryPair, gallerySingle, project } from "./documents/project";
+import {
+  galleryBlock,
+  galleryPair,
+  gallerySingle,
+  project,
+} from "./documents/project";
 import { product, productCategory, productFinish } from "./documents/product";
 import { post } from "./documents/post";
 import { service } from "./documents/service";
@@ -82,6 +87,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   project,
   gallerySingle,
   galleryPair,
+  galleryBlock,
   product,
   productFinish,
   productCategory,

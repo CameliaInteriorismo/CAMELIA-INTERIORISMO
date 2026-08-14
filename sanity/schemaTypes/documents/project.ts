@@ -97,7 +97,15 @@ export const project = defineType({
       group: "media",
       description:
         "La que sale en la cuadrícula de destacados de la Home. Es un campo aparte de la del listado porque ahí se usa otro encuadre; cambiar una no toca la otra.",
-      validation: (rule) => rule.required(),
+      // Obligatoria solo si el proyecto está destacado: el recuadro de la
+      // Home únicamente existe para esos. Exigirla a todos marcaría como
+      // incompletos proyectos que están perfectamente terminados.
+      validation: (rule) =>
+        rule.custom((value, context) =>
+          (context.document as { featured?: boolean })?.featured && !value
+            ? "Un proyecto destacado necesita su foto para la Home."
+            : true,
+        ),
     }),
     defineField({
       name: "heroVideo",
@@ -115,47 +123,14 @@ export const project = defineType({
       description: "Se usa solo si no hay vídeo.",
     }),
     defineField({
-      name: "gallery",
+      name: "galleryBlocks",
       title: "Galería",
-      type: "object",
+      type: "array",
       group: "media",
       description:
-        "Seis posiciones fijas, en el orden que marca el diseño de la ficha. Las que dejes vacías conservan su hueco: rellénalas cuando tengas la foto y aparecerá en su sitio, sin tocar la maquetación.",
-      options: { collapsible: true, collapsed: false },
-      fields: [
-        defineField({
-          name: "imageA",
-          title: "1 · Ancho completo",
-          type: "imageWithAlt",
-        }),
-        defineField({
-          name: "pair1Left",
-          title: "2 · Pareja — izquierda",
-          type: "imageWithAlt",
-        }),
-        defineField({
-          name: "pair1Right",
-          title: "3 · Pareja — derecha",
-          type: "imageWithAlt",
-        }),
-        defineField({
-          name: "imageB",
-          title: "4 · Ancho completo",
-          type: "imageWithAlt",
-        }),
-        defineField({
-          name: "pair2Left",
-          title: "5 · Pareja — izquierda",
-          type: "imageWithAlt",
-        }),
-        defineField({
-          name: "pair2Right",
-          title: "6 · Pareja — derecha",
-          type: "imageWithAlt",
-        }),
-      ],
+        "Cada bloque es siempre la misma composición: una foto apaisada arriba y dos verticales debajo. Añade tantos bloques como necesites; así todos los proyectos se ven igual. Un hueco que dejes vacío conserva su sitio en la página.",
+      of: [defineArrayMember({ type: "galleryBlock" })],
     }),
-
     defineField({
       name: "featured",
       title: "Destacado en la Home",
@@ -236,5 +211,33 @@ export const galleryPair = defineType({
       subtitle,
       media,
     }),
+  },
+});
+
+/** Un bloque de galería: una apaisada arriba y dos verticales debajo. */
+export const galleryBlock = defineType({
+  name: "galleryBlock",
+  title: "Bloque de galería",
+  type: "object",
+  fields: [
+    defineField({
+      name: "horizontal",
+      title: "Foto apaisada (arriba)",
+      type: "imageWithAlt",
+    }),
+    defineField({
+      name: "vertical1",
+      title: "Vertical izquierda",
+      type: "imageWithAlt",
+    }),
+    defineField({
+      name: "vertical2",
+      title: "Vertical derecha",
+      type: "imageWithAlt",
+    }),
+  ],
+  preview: {
+    select: { media: "horizontal" },
+    prepare: ({ media }) => ({ title: "Bloque de galería", media }),
   },
 });

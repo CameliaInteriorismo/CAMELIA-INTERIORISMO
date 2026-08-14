@@ -5,7 +5,7 @@ import { ProjectInfo } from "@/features/proyecto-detalle/ProjectInfo";
 import { ProjectIntro } from "@/features/proyecto-detalle/ProjectIntro";
 import {
   ProjectGallery,
-  type ProjectGalleryImages,
+  type ProjectGalleryBlock,
 } from "@/features/proyecto-detalle/ProjectGallery";
 import { CtaBanner } from "@/features/proyectos/CtaBanner";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -29,7 +29,7 @@ type Project = {
   paragraphs?: string[];
   heroVideo?: string;
   heroImage?: SanityImageSource;
-  gallery?: ProjectGalleryImages;
+  galleryBlocks?: ProjectGalleryBlock[];
   seo?: SeoFields;
 };
 
@@ -128,7 +128,7 @@ export default async function ProjectDetailPage({
         services={project.services ?? []}
       />
       <ProjectIntro paragraphs={project.paragraphs ?? []} />
-      <ProjectGallery gallery={project.gallery} />
+      <ProjectGallery blocks={project.galleryBlocks} />
       <CtaBanner cta={page?.cta} />
     </>
   );

@@ -4,19 +4,17 @@ import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
 /**
- * Las seis posiciones de la galería, fijas y en el orden del diseño.
+ * Un bloque de la galería: una apaisada arriba y dos verticales debajo.
  *
- * Son posiciones de la composición, no una lista variable: una posición sin
- * foto conserva su hueco, igual que antes, y al subir la imagen desde Sanity
- * aparece en su sitio sin que cambie la maquetación.
+ * Se repite tantas veces como bloques tenga el proyecto, siempre con esta
+ * misma composición, de modo que todos los proyectos se ven igual por muchas
+ * fotos que tengan. Un hueco sin foto conserva su sitio, igual que antes.
  */
-export type ProjectGalleryImages = {
-  imageA?: SanityImageSource;
-  pair1Left?: SanityImageSource;
-  pair1Right?: SanityImageSource;
-  imageB?: SanityImageSource;
-  pair2Left?: SanityImageSource;
-  pair2Right?: SanityImageSource;
+export type ProjectGalleryBlock = {
+  _key?: string;
+  horizontal?: SanityImageSource;
+  vertical1?: SanityImageSource;
+  vertical2?: SanityImageSource;
 };
 
 function FullImage({
@@ -87,41 +85,31 @@ function PairImage({
   );
 }
 
-export function ProjectGallery({
-  gallery,
-}: {
-  gallery?: ProjectGalleryImages;
-}) {
-  const g = gallery ?? {};
+export function ProjectGallery({ blocks }: { blocks?: ProjectGalleryBlock[] }) {
+  const list = blocks ?? [];
+  if (list.length === 0) return null;
 
   return (
     <section className="mt-block pb-[100px]">
       <Container className="space-y-8">
-        <FullImage source={g.imageA} label="Galería — posición 1 sin imagen" />
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <PairImage
-            source={g.pair1Left}
-            label="Galería — posición 2 sin imagen"
-          />
-          <PairImage
-            source={g.pair1Right}
-            label="Galería — posición 3 sin imagen"
-          />
-        </div>
-
-        <FullImage source={g.imageB} label="Galería — posición 4 sin imagen" />
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <PairImage
-            source={g.pair2Left}
-            label="Galería — posición 5 sin imagen"
-          />
-          <PairImage
-            source={g.pair2Right}
-            label="Galería — posición 6 sin imagen"
-          />
-        </div>
+        {list.map((block, i) => (
+          <div key={block._key ?? i} className="space-y-8">
+            <FullImage
+              source={block.horizontal}
+              label={`Galería — bloque ${i + 1}, apaisada sin imagen`}
+            />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              <PairImage
+                source={block.vertical1}
+                label={`Galería — bloque ${i + 1}, vertical izquierda sin imagen`}
+              />
+              <PairImage
+                source={block.vertical2}
+                label={`Galería — bloque ${i + 1}, vertical derecha sin imagen`}
+              />
+            </div>
+          </div>
+        ))}
       </Container>
     </section>
   );

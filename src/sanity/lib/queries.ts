@@ -49,13 +49,11 @@ export const PROJECT_QUERY = groq`
     paragraphs,
     heroVideo,
     heroImage ${IMAGE},
-    gallery {
-      imageA ${IMAGE},
-      pair1Left ${IMAGE},
-      pair1Right ${IMAGE},
-      imageB ${IMAGE},
-      pair2Left ${IMAGE},
-      pair2Right ${IMAGE}
+    galleryBlocks[] {
+      _key,
+      horizontal ${IMAGE},
+      vertical1 ${IMAGE},
+      vertical2 ${IMAGE}
     },
     seo ${SEO}
   }
