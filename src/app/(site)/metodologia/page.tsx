@@ -9,12 +9,16 @@ import {
   type ExperienceStep,
 } from "@/features/metodologia/ExperienciaScroll";
 import { sanityFetch } from "@/sanity/lib/fetch";
+import type { SanityImageSource } from "@/sanity/lib/image";
 import { METODOLOGIA_PAGE_QUERY } from "@/sanity/lib/queries";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
 
 export const revalidate = 3600;
 
 type MetodologiaPage = {
+  title?: string;
+  heroImage?: SanityImageSource;
+  heroImagePosition?: string;
   processTitle?: string;
   process?: ProcessStep[];
   experienceTitle?: string;
@@ -44,7 +48,11 @@ export default async function MetodologiaPage() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        title={page?.title}
+        image={page?.heroImage}
+        imagePosition={page?.heroImagePosition}
+      />
       <ProcesoTabs steps={page?.process ?? []} title={page?.processTitle} />
       <ExperienciaScroll
         steps={page?.experience ?? []}

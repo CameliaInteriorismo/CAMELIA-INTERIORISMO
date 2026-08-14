@@ -1,10 +1,31 @@
 import { PageHeroBanner } from "@/components/layout/PageHeroBanner";
+import { imageProps } from "@/sanity/lib/image";
+import type { SanityImageSource } from "@/sanity/lib/image";
 
-export function PageHeader() {
+/**
+ * La cabecera de Metodología. El título, la foto y su encuadre salen de
+ * Sanity, igual que en el Shop: los campos ya existían y la consulta ya los
+ * traía, pero este componente no recibía ninguno, así que la foto subida al
+ * panel no llegaba a pintarse nunca.
+ *
+ * El título va en color crema como en las demás cabeceras con foto: se dibuja
+ * encima de la imagen, y en vino sobre una fotografía no se leería.
+ */
+export function PageHeader({
+  title,
+  image,
+  imagePosition,
+}: {
+  title?: string;
+  image?: SanityImageSource;
+  imagePosition?: string;
+}) {
   return (
     <PageHeroBanner
-      title="Metodología"
-      placeholderLabel="Banner Metodología — sin foto en Diseño/"
+      title={title ?? "Metodología"}
+      image={imageProps(image)?.src}
+      titleClassName="text-background"
+      imagePosition={imagePosition}
     />
   );
 }
