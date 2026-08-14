@@ -39,6 +39,14 @@ export const testimonial = defineType({
       type: "number",
       description: "Menor número, antes. Ve de 10 en 10.",
     }),
+    defineField({
+      name: "visible",
+      title: "Visible",
+      type: "boolean",
+      description:
+        "Desmárcalo para retirarla de la web sin borrarla. La reseña sigue aquí y vuelve a salir en cuanto la marques.",
+      initialValue: true,
+    }),
   ],
   orderings: [
     {
@@ -48,7 +56,16 @@ export const testimonial = defineType({
     },
   ],
   preview: {
-    select: { title: "author", subtitle: "quote" },
+    select: {
+      title: "author",
+      subtitle: "quote",
+      source: "source",
+      visible: "visible",
+    },
+    prepare: ({ title, subtitle, source, visible }) => ({
+      title: visible === false ? `${title} · OCULTA` : title,
+      subtitle: [source, subtitle].filter(Boolean).join(" — "),
+    }),
   },
 });
 

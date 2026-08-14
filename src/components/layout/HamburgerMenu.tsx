@@ -189,7 +189,7 @@ export function HamburgerMenu({
                   className="h-6 w-6"
                 />
               ) : null;
-              // No URL yet (LinkedIn): render the mark, but not as a link —
+              // Una red sin URL: se dibuja la marca, pero no como enlace —
               // an anchor to "#" looks clickable and goes nowhere.
               return href ? (
                 <a

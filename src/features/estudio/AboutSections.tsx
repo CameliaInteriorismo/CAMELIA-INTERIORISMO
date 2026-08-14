@@ -7,20 +7,35 @@ import { IndicatorList } from "@/components/ui/IndicatorList";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
+import { cn } from "@/utils/cn";
 
 export type AboutSection = {
   _key: string;
   title: string;
   /** IndicatorList lo exige siempre presente; la migración lo rellena. */
   subtitle: string;
+  /** Formato anterior: párrafos sueltos, sin subtítulos. Sigue leyéndose. */
   paragraphs?: string[];
+  blocks?: AboutBlock[];
   image?: SanityImageSource;
+};
+
+/** Un tramo de texto con subtítulo propio. El subtítulo es opcional. */
+export type AboutBlock = {
+  _key?: string;
+  heading?: string;
+  paragraphs?: string[];
 };
 
 export function AboutSections({ sections }: { sections: AboutSection[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const current = sections[activeIndex];
   const image = imageProps(current?.image);
+  // Un bloque sin tramos cae en los párrafos del formato anterior, envueltos
+  // en un tramo sin subtítulo: así el componente pinta siempre lo mismo.
+  const blocks: AboutBlock[] = current?.blocks?.length
+    ? current.blocks
+    : [{ paragraphs: current?.paragraphs ?? [] }];
 
   return (
     // pt-[120px] = navbar's own 80px height (now `fixed`, out of flow) +
@@ -65,9 +80,31 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 className="w-full"
               />
             )}
-            <div className="text-primary/80 mt-title space-y-md text-sm leading-relaxed">
-              {(current?.paragraphs ?? []).map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+            {/* Los tramos con subtítulo mandan; si un bloque solo tiene el
+                texto del formato anterior, se pinta como antes y no se pierde.
+
+                El aire va donde toca: `space-y-md` entre los párrafos de un
+                mismo tramo, `mt-2` entre el subtítulo y su primer párrafo —van
+                juntos, son la misma idea— y `mt-block` entre un tramo y el
+                siguiente, para que "Nuestra historia" y "Nuestra filosofía" se
+                lean como dos bloques y no como un texto seguido. */}
+            <div className="text-primary/80 mt-title text-sm leading-relaxed">
+              {blocks.map((block, index) => (
+                <div
+                  key={block._key ?? index}
+                  className={index > 0 ? "mt-block" : ""}
+                >
+                  {block.heading && (
+                    <h3 className="text-primary text-base font-medium">
+                      {block.heading}
+                    </h3>
+                  )}
+                  <div className={cn("space-y-md", block.heading && "mt-2")}>
+                    {(block.paragraphs ?? []).map((paragraph, i) => (
+                      <p key={i}>{paragraph}</p>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>

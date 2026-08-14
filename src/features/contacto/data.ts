@@ -57,7 +57,8 @@ export const MAPS_URL =
   encodeURIComponent(ADDRESS_ONE_LINE);
 
 /**
- * Perfiles oficiales. LinkedIn se queda de momento sin URL, por decisión del
+ * Perfiles oficiales del estudio. Se retiró LinkedIn: no había perfil, así que
+ * el icono salía apagado y sin enlazar a
  * estudio: su icono se dibuja como ilustración y no como enlace, en vez de
  * apuntar a "#" y parecer pulsable sin llevar a ninguna parte. Cuando llegue
  * la URL basta con escribirla aquí — el footer, el menú y ContactCards ya
@@ -66,7 +67,6 @@ export const MAPS_URL =
 export const SOCIAL_URLS = {
   Instagram: "https://instagram.com/camelia.interiorismo",
   TikTok: "https://tiktok.com/@camelia.interiorismo",
-  LinkedIn: undefined,
 } as const;
 
 export type SocialLabel = keyof typeof SOCIAL_URLS;
@@ -74,12 +74,10 @@ export type SocialLabel = keyof typeof SOCIAL_URLS;
 export const SOCIALS: { label: SocialLabel; src: string }[] = [
   { label: "Instagram", src: "/assets/icons/ins.png" },
   { label: "TikTok", src: "/assets/icons/tiktok.png" },
-  { label: "LinkedIn", src: "/assets/icons/linkedin.png" },
 ];
 
 /** Same three, with the menu overlay's cream-on-vino icon set. */
 export const SOCIALS_MENU: { label: SocialLabel; src: string }[] = [
   { label: "Instagram", src: "/assets/icons/menu/instagram.png" },
   { label: "TikTok", src: "/assets/icons/menu/tiktok.png" },
-  { label: "LinkedIn", src: "/assets/icons/menu/linkedin.png" },
 ];

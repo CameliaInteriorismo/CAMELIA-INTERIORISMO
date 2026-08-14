@@ -172,6 +172,36 @@ export const homePage = defineType({
   preview: { prepare: () => ({ title: "Página · Inicio" }) },
 });
 
+/**
+ * Un tramo de texto dentro de un bloque de Estudio.
+ *
+ * Existe porque "Sobre nosotros" se lee en dos partes con nombre propio
+ * —"Nuestra historia" y "Nuestra filosofía"— y una lista plana de párrafos no
+ * tiene dónde guardarlos. El subtítulo es opcional: las fichas de Laura y de
+ * Adrián son un único tramo sin encabezado y siguen igual que antes.
+ */
+export const aboutBlock = defineType({
+  name: "aboutBlock",
+  title: "Tramo de texto",
+  type: "object",
+  fields: [
+    defineField({
+      name: "heading",
+      title: "Subtítulo",
+      type: "string",
+      description: 'Opcional. Por ejemplo "Nuestra historia".',
+    }),
+    defineField({ name: "paragraphs", title: "Párrafos", type: "paragraphs" }),
+  ],
+  preview: {
+    select: { title: "heading", paragraphs: "paragraphs" },
+    prepare: ({ title, paragraphs }) => ({
+      title: title || "Texto sin subtítulo",
+      subtitle: paragraphs?.[0]?.slice(0, 80),
+    }),
+  },
+});
+
 export const estudioPage = defineType({
   name: "estudioPage",
   title: "Página · Estudio",
@@ -209,9 +239,20 @@ export const estudioPage = defineType({
               description: 'El que va en mayúsculas: "LAURA CASTILLO".',
             }),
             defineField({
-              name: "paragraphs",
+              name: "blocks",
               title: "Texto",
+              type: "array",
+              description:
+                "Cada bloque es un tramo de texto con su propio subtítulo. El subtítulo es opcional: déjalo vacío y el bloque se lee como texto corrido, que es lo que necesitan las fichas de una persona.",
+              of: [defineArrayMember({ type: "aboutBlock" })],
+            }),
+            defineField({
+              name: "paragraphs",
+              title: "Texto (formato anterior)",
               type: "paragraphs",
+              description:
+                "Se conserva para no perder lo que ya estuviera escrito. Si el bloque de arriba tiene contenido, manda ese y esto no se pinta.",
+              readOnly: true,
             }),
             defineField({
               name: "image",
@@ -370,6 +411,28 @@ export const serviciosPage = defineType({
       type: "imageWithAlt",
       group: "content",
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "introTitle",
+      title: "Título de la introducción",
+      type: "text",
+      rows: 2,
+      group: "content",
+      description: "Cada salto de línea que escribas se respeta.",
+    }),
+    defineField({
+      name: "introText",
+      title: "Texto de la introducción",
+      type: "text",
+      rows: 3,
+      group: "content",
+    }),
+    defineField({
+      name: "phasesTitle",
+      title: "Título de las fases",
+      type: "text",
+      rows: 2,
+      group: "content",
     }),
     defineField({
       name: "phases",

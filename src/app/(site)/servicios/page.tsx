@@ -18,6 +18,9 @@ import type { CtaBannerData } from "@/features/shared/types";
 export const revalidate = 3600;
 
 type ServiciosPage = {
+  introTitle?: string;
+  introText?: string;
+  phasesTitle?: string;
   phases?: ServicePhase[];
   accompanimentTitle?: string;
   accompaniment?: AccompanimentItem[];
@@ -50,7 +53,12 @@ export default async function ServiciosPage() {
   return (
     <>
       <PageHeader />
-      <ProjectPhases phases={page?.phases ?? []} />
+      <ProjectPhases
+        phases={page?.phases ?? []}
+        title={page?.phasesTitle}
+        introTitle={page?.introTitle}
+        introText={page?.introText}
+      />
       <AccompanimentSection
         items={page?.accompaniment ?? []}
         title={page?.accompanimentTitle}

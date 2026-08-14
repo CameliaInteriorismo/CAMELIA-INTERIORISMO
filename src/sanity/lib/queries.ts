@@ -190,7 +190,11 @@ export const CART_PRODUCTS_QUERY = groq`
 export const ESTUDIO_PAGE_QUERY = groq`
   *[_id == "estudioPage"][0] {
     title,
-    sections[] { _key, title, subtitle, paragraphs, image ${IMAGE} },
+    sections[] {
+      _key, title, subtitle, paragraphs,
+      blocks[] { _key, heading, paragraphs },
+      image ${IMAGE}
+    },
     seo ${SEO}
   }
 `;
@@ -216,6 +220,7 @@ export const SERVICIOS_PAGE_QUERY = groq`
     // Los servicios se resuelven por referencia: su texto e imagen se editan
     // en el propio servicio, no aquí, así que no hay dos versiones.
     "phases": phases[]-> { _id, title, longDescription, image ${IMAGE} },
+    introTitle, introText, phasesTitle,
     accompanimentTitle,
     accompaniment[] { _key, question, answer, image ${IMAGE} },
     cta { title, text, button, image ${IMAGE} },
@@ -243,7 +248,15 @@ export const HOME_PAGE_QUERY = groq`
       image ${IMAGE}
     },
     testimonialsTitle,
-    "testimonials": testimonials[]-> { _id, quote, author, source },
+    // Las ocultas se descartan aquí, no en el componente: una reseña retirada
+    // desde el panel deja de viajar al navegador en vez de llegar y esconderse.
+    //
+    // El filtro va sobre la REFERENCIA (@->), antes de resolverla. Filtrar
+    // después de proyectar no vale: en ese punto el campo visible ya no está
+    // entre los campos y la lista se llena de huecos nulos.
+    "testimonials": testimonials[@->visible != false]-> {
+      _id, quote, author, source, rating
+    },
     cta { title, text, button, image ${IMAGE} },
     "partners": partners[]-> { _id, name, size, logo ${IMAGE} },
     seo ${SEO}

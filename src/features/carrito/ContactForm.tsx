@@ -127,6 +127,7 @@ export function ContactForm({
   const router = useRouter();
   const setContactInfo = useCartStore((state) => state.setContactInfo);
   const setDeliveryMode = useCartStore((state) => state.setDeliveryMode);
+  const clearCart = useCartStore((state) => state.clear);
 
   const {
     register,
@@ -151,10 +152,15 @@ export function ContactForm({
       province: data.deliveryMode === "domicilio" ? data.province : undefined,
     });
     setDeliveryMode(data.deliveryMode);
-    // Visual flow only for now — the details are kept in the cart store and
-    // the user is taken straight to the confirmation screen. Actually
-    // submitting the request (persisting it, emailing the studio) and
-    // clearing the cart afterwards is deliberately still to be wired up.
+    // Enviada la solicitud, el carrito se vacía: la pantalla de gracias ya
+    // no corresponde a un pedido pendiente, así que el contador del icono
+    // debe apagarse en el acto y seguir apagado al recargar o al volver a
+    // cualquier página. Se vacía DESPUÉS de leer los datos de arriba, que ya
+    // están guardados fuera del store.
+    //
+    // Lo que sigue pendiente y es otra cosa: persistir la solicitud y avisar
+    // al estudio por correo. Eso no cambia aquí.
+    clearCart();
     router.push("/carrito/gracias");
   }
 

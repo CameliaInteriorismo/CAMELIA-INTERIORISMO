@@ -66,7 +66,7 @@ export function Footer({ data }: { data: FooterData }) {
                     className="h-5 w-5"
                   />
                 ) : null;
-                // LinkedIn has no URL yet — shown, but not as a dead link.
+                // Una red sin URL se dibuja apagada, no como enlace roto.
                 return href ? (
                   <a
                     key={social._key}

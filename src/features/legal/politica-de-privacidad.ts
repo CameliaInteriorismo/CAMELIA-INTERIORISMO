@@ -283,7 +283,7 @@ export const PRIVACIDAD_SECTIONS: LegalSection[] = [
           "Actualmente:",
         ],
       },
-      { type: "list", items: ["Instagram", "TikTok", "LinkedIn"] },
+      { type: "list", items: ["Instagram", "TikTok"] },
       {
         type: "text",
         paragraphs: [

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
 
@@ -51,7 +52,17 @@ const DURATION = 600;
  * full-width bar that expands downward, the ordinary accordion a phone
  * expects.
  */
-export function ProjectPhases({ phases }: { phases: ServicePhase[] }) {
+export function ProjectPhases({
+  phases,
+  title,
+  introTitle,
+  introText,
+}: {
+  phases: ServicePhase[];
+  title?: string;
+  introTitle?: string;
+  introText?: string;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const reduceMotion = useReducedMotion();
@@ -82,9 +93,16 @@ export function ProjectPhases({ phases }: { phases: ServicePhase[] }) {
     <section className="pt-[100px] pb-[40px]">
       <Container>
         <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
-          Cada proyecto,
-          <br />a medida
+          <Multiline text={introTitle ?? "Diseño de interiores integral"} />
         </h2>
+        {introText && (
+          <p className="text-primary/80 mt-sm max-w-2xl text-sm leading-relaxed">
+            {introText}
+          </p>
+        )}
+        <h3 className="font-title text-primary mt-title text-2xl uppercase md:text-3xl">
+          <Multiline text={title ?? "Fases de un proyecto Camelia"} />
+        </h3>
 
         <div
           ref={rowRef}

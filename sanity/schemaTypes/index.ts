@@ -27,6 +27,7 @@ import {
 
 import { siteSettings } from "./singletons/siteSettings";
 import {
+  aboutBlock,
   blogPage,
   cartPage,
   confirmationPages,
@@ -110,6 +111,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   contactPage,
   projectFormPage,
   formStep,
+  aboutBlock,
   cartPage,
   confirmationPages,
   thanksScreen,
