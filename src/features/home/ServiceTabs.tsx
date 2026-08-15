@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Container, Grid } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 import { ButtonLink } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 
@@ -39,7 +40,7 @@ export function ServiceTabs({
     <section className="py-block">
       <Container>
         <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
-          {title}
+          <Multiline text={title} />
         </h2>
 
         <Grid className="mt-title">

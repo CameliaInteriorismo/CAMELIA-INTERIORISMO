@@ -11,6 +11,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 import { cn } from "@/utils/cn";
 
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
@@ -158,7 +159,7 @@ export function ExperienciaScroll({
     <section className="pt-[120px] pb-[100px]">
       <Container>
         <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
-          {title}
+          <Multiline text={title} />
         </h2>
         <p className="text-primary/75 mt-sm text-center text-sm leading-relaxed">
           Queremos que te sientas acompañado en cada fase del proyecto,

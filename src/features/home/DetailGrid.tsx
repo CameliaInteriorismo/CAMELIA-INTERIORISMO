@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 
 // Each card opens its own ficha. The slugs are the ones in
 // features/proyecto-detalle/data.ts, the same targets the Proyectos listing
@@ -26,7 +27,7 @@ export function DetailGrid({
     <section className="py-[60px]">
       <Container>
         <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
-          {title}
+          <Multiline text={title} />
         </h2>
         <div className="mt-title grid grid-cols-1 gap-8 md:grid-cols-2">
           {projects.map((project) => {

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Container, Grid } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 import { HorizontalTabs } from "@/components/ui/HorizontalTabs";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
@@ -45,7 +46,7 @@ export function ProcesoTabs({
     <section className="pt-[80px]">
       <Container>
         <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
-          {title}
+          <Multiline text={title} />
         </h2>
 
         <HorizontalTabs
