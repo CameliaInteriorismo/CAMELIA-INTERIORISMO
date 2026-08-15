@@ -47,7 +47,7 @@ export function AccompanimentSection({
         {/* 32px en vez de los 60px del ritmo título→contenido: las dos frases
             se leen como una sola idea encadenada, y a 60px la segunda se
             desprendía de la primera. */}
-        <Grid className="mt-md">
+        <Grid className="mt-md md:items-stretch">
           <div className="col-span-12 md:col-span-5">
             {/* Un escalón más grande (24px) para que gane peso sin acercarse
                 al h2 de 36px que la encabeza. */}
@@ -60,16 +60,16 @@ export function AccompanimentSection({
               para acompañarte durante todo el proceso.
             </p>
 
-            {/* 120px sobre el listado, no los 60 del ritmo normal: encima
-                acaba un texto corrido y a menos distancia las fichas se le
-                pegaban. Es un margen constante — no depende de cuántas fichas
-                haya.
+            {/* 40px sobre el listado: el texto de arriba y los desplegables son
+                  el mismo bloque —"Sea cual sea el punto en el que estés" y las
+                  situaciones que lo desarrollan—, y a 120 quedaban partidos en
+                  dos, con un hueco enorme frente a la foto de al lado.
 
-                Todo lo demás sale del flujo: cada fila pone su padding y el
-                texto desplegado el suyo, así que el bloque se acorta con dos
-                fichas y se alarga con seis sin que cambien ni ese margen ni
-                el ritmo entre ellas. Ninguna altura fija. */}
-            <div className="border-primary/15 mt-[120px] border-t">
+                  El alto sale del flujo: cada fila pone su padding y el texto
+                  desplegado el suyo, así que la lista se acorta con dos fichas
+                  y se alarga con seis sin que cambie ni este margen ni el
+                  ritmo entre ellas. Ninguna altura fija. */}
+            <div className="border-primary/15 mt-block border-t">
               {items.map((item, index) => {
                 const open = index === openIndex;
                 return (
@@ -108,8 +108,16 @@ export function AccompanimentSection({
             </div>
           </div>
 
+          {/* La foto se estira hasta donde llega la columna de al lado, en vez
+              de quedarse en su 4/5 y dejar un hueco bajo el último
+              desplegable: las dos columnas se leen como un único bloque. En
+              móvil, apiladas, conserva su proporción de siempre. */}
           <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
-            <div className={cn("relative aspect-[4/5] w-full overflow-hidden")}>
+            <div
+              className={cn(
+                "relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full",
+              )}
+            >
               {displayedImage ? (
                 <Image
                   src={displayedImage.src}

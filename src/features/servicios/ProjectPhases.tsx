@@ -27,11 +27,17 @@ export type ServicePhase = {
 const SPINE_W = 72;
 const GAP = 8;
 /**
- * Fixed panel height on desktop. Every phase carries four paragraphs of
- * similar length, so pinning the height keeps the row from resizing as you
- * switch — a jump there would undo the point of the transition.
+ * Alto mínimo de un panel en escritorio.
+ *
+ * Es un suelo, no una altura: el panel crece si su contenido lo pide. Antes
+ * eran 520px fijos y la primera fase, que es la más larga, salía comprimida.
+ *
+ * Todos los paneles de una misma fila acaban midiendo lo mismo porque la fila
+ * los estira (`items-stretch`) hasta el más alto, así que cambiar de fase no
+ * produce ningún salto. Y una fase nueva añadida desde el panel entra con la
+ * misma regla sin tocar nada.
  */
-const PANEL_H = 520;
+const PANEL_MIN_H = 520;
 
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const DURATION = 600;
@@ -100,13 +106,16 @@ export function ProjectPhases({
             {introText}
           </p>
         )}
-        <h3 className="font-title text-primary mt-title text-2xl md:text-3xl">
+        {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
+            bloque de acompañamiento: 24px, no un titular grande. Aquí solo
+            encabeza las fases, no abre la página. */}
+        <h3 className="font-title text-primary mt-title text-2xl">
           <Multiline text={title ?? "Fases de un proyecto Camelia"} />
         </h3>
 
         <div
           ref={rowRef}
-          className="mt-title flex flex-col md:flex-row"
+          className="mt-title flex flex-col md:flex-row md:items-stretch"
           style={{ gap: `${GAP}px` }}
         >
           {phases.map((phase, index) => {
@@ -117,10 +126,10 @@ export function ProjectPhases({
             return (
               <div
                 key={phase._id}
-                className="relative overflow-hidden md:h-[var(--panel-h)] md:shrink-0"
+                className="relative overflow-hidden md:min-h-[var(--panel-min-h)] md:shrink-0"
                 style={
                   {
-                    "--panel-h": `${PANEL_H}px`,
+                    "--panel-min-h": `${PANEL_MIN_H}px`,
                     // Only drive width on desktop; stacked, each item is
                     // simply full width.
                     ...(isDesktop && rowWidth
@@ -179,7 +188,7 @@ export function ProjectPhases({
                       : undefined
                   }
                 >
-                  <div className="flex h-full flex-col gap-8 p-6 md:flex-row md:items-stretch md:gap-10 md:p-10">
+                  <div className="flex h-full flex-col gap-8 p-8 md:flex-row md:items-stretch md:gap-10 md:p-12">
                     <div className="md:flex md:w-1/2 md:flex-col md:justify-center">
                       <h3 className="font-title text-primary/25 text-2xl uppercase">
                         {String(index + 1).padStart(2, "0")}. {phase.title}

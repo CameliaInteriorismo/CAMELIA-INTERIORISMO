@@ -37,7 +37,10 @@ export function ServiceTabs({
   const current = tabs[activeIndex];
 
   return (
-    <section className="py-block">
+    // 100px sobre el título, el mismo hueco que dejan /proyectos y /tienda
+    // bajo su cabecera. La Home iba con 40 y su título quedaba pegado al
+    // vídeo, fuera del ritmo del resto de secciones.
+    <section className="pb-block pt-[100px]">
       <Container>
         <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
           <Multiline text={title} />
