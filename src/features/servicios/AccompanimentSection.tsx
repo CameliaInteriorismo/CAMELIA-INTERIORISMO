@@ -60,7 +60,16 @@ export function AccompanimentSection({
               para acompañarte durante todo el proceso.
             </p>
 
-            <div className="border-primary/15 mt-title border-t">
+            {/* 120px sobre el listado, no los 60 del ritmo normal: encima
+                acaba un texto corrido y a menos distancia las fichas se le
+                pegaban. Es un margen constante — no depende de cuántas fichas
+                haya.
+
+                Todo lo demás sale del flujo: cada fila pone su padding y el
+                texto desplegado el suyo, así que el bloque se acorta con dos
+                fichas y se alarga con seis sin que cambien ni ese margen ni
+                el ritmo entre ellas. Ninguna altura fija. */}
+            <div className="border-primary/15 mt-[120px] border-t">
               {items.map((item, index) => {
                 const open = index === openIndex;
                 return (

@@ -26,7 +26,10 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
       <Container>
         <div className="bg-background flex flex-col items-start gap-8 px-10 py-14 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="font-title text-primary text-3xl md:text-4xl">
+            {/* El banner va en mayúsculas por diseño, y lo decide aquí: es lo
+                único de la web que las lleva por CSS. Los héroes y los títulos
+                de contenido se leen tal cual se escriben en el panel. */}
+            <h2 className="font-title text-primary text-3xl uppercase md:text-4xl">
               {cta?.title}
             </h2>
             {cta?.text && (
