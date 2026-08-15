@@ -12,8 +12,10 @@ export type ProjectCard = {
 
 /**
  * La cuadrícula de /proyectos. El contenido llega desde Sanity por props; el
- * maquetado, el hover y la tarjeta de "Próximamente" siguen siendo los de
- * antes, sin un solo cambio de clase.
+ * maquetado y el hover siguen siendo los de antes.
+ *
+ * Ya no lleva la tarjeta de "Próximamente": era un hueco de relleno y la
+ * cuadrícula se cierra ahora con el último proyecto real.
  */
 export function ProjectsGrid({ projects }: { projects: ProjectCard[] }) {
   return (
@@ -49,14 +51,6 @@ export function ProjectsGrid({ projects }: { projects: ProjectCard[] }) {
               </Link>
             );
           })}
-
-          {/* "Próximamente" placeholder card — part of the design itself,
-              not a missing-asset gap. */}
-          <div className="bg-primary relative flex aspect-[4/3] w-full items-center justify-center">
-            <span className="font-title text-background text-2xl uppercase">
-              Próximamente
-            </span>
-          </div>
         </div>
       </Container>
     </section>

@@ -84,7 +84,11 @@ export function PageHeroBanner({
       <div className="absolute inset-0 flex items-center justify-center">
         <h1
           className={cn(
-            "font-title px-6 text-center",
+            // Las cabeceras van en mayúsculas por diseño, y lo decide este
+            // componente: la escala compartida solo dimensiona. Así los
+            // títulos de contenido, que se leen tal cual se escriben en el
+            // panel, no se ven arrastrados por esta decisión.
+            "font-title px-6 text-center uppercase",
             PAGE_TITLE_SCALE,
             titleClassName,
           )}
