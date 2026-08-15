@@ -116,7 +116,7 @@ export function ProjectPhases({
         {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
             bloque de acompañamiento: 24px, no un titular grande. Aquí solo
             encabeza las fases, no abre la página. */}
-        <h3 className="font-title text-primary mt-title text-2xl">
+        <h3 className="font-title text-primary mt-md text-2xl">
           <Multiline text={title ?? "Fases de un proyecto Camelia"} />
         </h3>
 

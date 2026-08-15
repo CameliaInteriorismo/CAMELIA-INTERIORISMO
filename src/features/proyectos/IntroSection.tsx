@@ -14,9 +14,7 @@ export function IntroSection({
         <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
-        <p className="text-primary/75 mt-title text-sm leading-relaxed">
-          {text}
-        </p>
+        <p className="text-primary/75 mt-md text-sm leading-relaxed">{text}</p>
       </Container>
     </section>
   );
