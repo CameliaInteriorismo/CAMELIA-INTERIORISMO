@@ -60,16 +60,18 @@ export function AccompanimentSection({
               para acompañarte durante todo el proceso.
             </p>
 
-            {/* 40px sobre el listado: el texto de arriba y los desplegables son
+            {/* 60px sobre el listado: el texto de arriba y los desplegables son
                   el mismo bloque —"Sea cual sea el punto en el que estés" y las
                   situaciones que lo desarrollan—, y a 120 quedaban partidos en
-                  dos, con un hueco enorme frente a la foto de al lado.
+                  dos, con un hueco enorme frente a la foto de al lado. A 40
+                  se pegaban demasiado, así que se queda en el escalón de en
+                  medio de la escala.
 
                   El alto sale del flujo: cada fila pone su padding y el texto
                   desplegado el suyo, así que la lista se acorta con dos fichas
                   y se alarga con seis sin que cambie ni este margen ni el
                   ritmo entre ellas. Ninguna altura fija. */}
-            <div className="border-primary/15 mt-block border-t">
+            <div className="border-primary/15 mt-title border-t">
               {items.map((item, index) => {
                 const open = index === openIndex;
                 return (

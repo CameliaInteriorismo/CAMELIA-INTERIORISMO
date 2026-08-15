@@ -26,19 +26,6 @@ export type ServicePhase = {
 /** Width of a collapsed spine, and the gap between panels. */
 const SPINE_W = 72;
 const GAP = 8;
-/**
- * Alto mínimo de un panel en escritorio.
- *
- * Es un suelo, no una altura: el panel crece si su contenido lo pide. Antes
- * eran 520px fijos y la primera fase, que es la más larga, salía comprimida.
- *
- * Todos los paneles de una misma fila acaban midiendo lo mismo porque la fila
- * los estira (`items-stretch`) hasta el más alto, así que cambiar de fase no
- * produce ningún salto. Y una fase nueva añadida desde el panel entra con la
- * misma regla sin tocar nada.
- */
-const PANEL_MIN_H = 520;
-
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const DURATION = 600;
 
@@ -77,17 +64,37 @@ export function ProjectPhases({
   const duration = reduceMotion ? 0 : DURATION;
   const rowRef = useRef<HTMLDivElement>(null);
   const [rowWidth, setRowWidth] = useState(0);
+  // El alto de la fila lo marca la fase MÁS LARGA, medida de su propio
+  // contenido. No es una altura inventada: si mañana se alarga un texto o se
+  // añade una fase desde el panel, la fila crece sola. Y como es la misma para
+  // todas, cambiar de fase no produce ningún salto — que es justo lo que
+  // buscaba la altura fija que había antes, pero sin dejar comprimida a la
+  // fase más larga.
+  const [tallest, setTallest] = useState(0);
   const baseId = useId();
 
   useEffect(() => {
     const el = rowRef.current;
     if (!el) return;
-    const measure = () => setRowWidth(el.clientWidth);
+    const measure = () => {
+      setRowWidth(el.clientWidth);
+      // Solo se puede medir el panel visible: los plegados llevan `hidden` y
+      // no ocupan. Por eso se guarda el máximo visto — la fase más larga fija
+      // el alto en cuanto se abre, y como la primera es la más larga y es la
+      // que abre por defecto, ya está desde el primer pintado.
+      const open = el.querySelector<HTMLElement>(
+        "[data-phase-panel]:not([hidden])",
+      );
+      if (open) {
+        const h = open.scrollHeight;
+        setTallest((prev) => (h > prev ? h : prev));
+      }
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [phases, activeIndex]);
 
   const collapsed = phases.length - 1;
   const openWidth = Math.max(
@@ -102,7 +109,7 @@ export function ProjectPhases({
           <Multiline text={introTitle ?? "Diseño de interiores integral"} />
         </h2>
         {introText && (
-          <p className="text-primary/80 mt-sm max-w-2xl text-sm leading-relaxed">
+          <p className="text-primary/80 mt-md max-w-2xl text-sm leading-relaxed">
             {introText}
           </p>
         )}
@@ -115,7 +122,7 @@ export function ProjectPhases({
 
         <div
           ref={rowRef}
-          className="mt-title flex flex-col md:flex-row md:items-stretch"
+          className="mt-md flex flex-col md:flex-row md:items-stretch"
           style={{ gap: `${GAP}px` }}
         >
           {phases.map((phase, index) => {
@@ -126,10 +133,10 @@ export function ProjectPhases({
             return (
               <div
                 key={phase._id}
-                className="relative overflow-hidden md:min-h-[var(--panel-min-h)] md:shrink-0"
+                className="relative overflow-hidden md:shrink-0"
                 style={
                   {
-                    "--panel-min-h": `${PANEL_MIN_H}px`,
+                    ...(isDesktop && tallest ? { minHeight: tallest } : {}),
                     // Only drive width on desktop; stacked, each item is
                     // simply full width.
                     ...(isDesktop && rowWidth
@@ -170,11 +177,19 @@ export function ProjectPhases({
                     copy keeps its line breaks while the panel resizes. */}
                 <div
                   id={panelId}
+                  data-phase-panel
                   role="region"
                   aria-labelledby={tabId}
                   hidden={!open}
                   className={cn(
-                    "border-primary/[0.13] bg-background md:absolute md:inset-y-0 md:right-0 md:overflow-hidden md:border",
+                    // En el flujo, no absoluto: es este panel el que da el
+                    // alto de la ficha, y por eso el alto lo decide su
+                    // contenido más el padding, sin ninguna altura fija ni
+                    // mínima. Los plegados van ocultos y quedan a cero, pero
+                    // la fila (`items-stretch`) los estira hasta el más alto,
+                    // así que todos miden lo mismo y cambiar de fase no da
+                    // ningún salto. Añadir o quitar fases no cambia nada.
+                    "border-primary/[0.13] bg-background md:relative md:ml-auto md:overflow-hidden md:border",
                     open ? "md:opacity-100" : "md:opacity-0",
                   )}
                   style={
