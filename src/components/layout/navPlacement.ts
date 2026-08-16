@@ -29,17 +29,18 @@ export const NAV_H = 80;
 export const isNavFloating = (pathname: string) =>
   pathname.startsWith("/proyectos/") && pathname !== "/proyectos";
 
-/** Las páginas donde la barra va en el flujo y se va con el scroll. */
-export const isNavInFlow = (pathname: string) =>
-  !isNavFloating(pathname) &&
-  (pathname === "/" ||
-    pathname === "/metodologia" ||
-    pathname === "/servicios" ||
-    pathname === "/proyectos" ||
-    pathname === "/tienda" ||
-    // Solo el listado tiene portada; una entrada abre directa en su título.
-    pathname === "/blog" ||
-    // Estudio y Contacto se comportan como las demás: Estudio deja de llevar
-    // barra clavada con auto-ocultado, y Contacto deja de llevarla pegada.
-    pathname === "/estudio" ||
-    pathname === "/contacto");
+/**
+ * En el resto del sitio la barra ocupa su sitio arriba del documento y desde
+ * ahí se queda pegada mientras bajas: acompaña al usuario todo el scroll y, al
+ * volver arriba, aterriza exactamente donde estaba al cargar.
+ *
+ * Es la MISMA regla para todas —Inicio, Metodología, Servicios, Proyectos,
+ * Shop, Blog, Estudio y Contacto—, sin casos especiales por página. Estudio ya
+ * no tiene barra clavada ni auto-ocultado propio.
+ *
+ * Se llama "en el flujo" porque es lo que necesita saber la portada: si la
+ * barra ocupa sitio, la portada no debe volver a reservárselo con un margen.
+ * Solo las fichas de proyecto flotan, y por eso son las únicas que sí lo
+ * reservan.
+ */
+export const isNavInFlow = (pathname: string) => !isNavFloating(pathname);

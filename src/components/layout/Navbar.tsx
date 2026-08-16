@@ -103,15 +103,14 @@ export function Navbar({
     <header
       className={cn(
         "text-primary z-50",
-        // La barra va en el flujo y se va con el scroll en todas las páginas
-        // principales (ver navPlacement.ts). Solo las FICHAS de proyecto la
-        // dejan flotando sobre su portada; el resto de rutas sueltas (carrito,
-        // legales, formulario) se quedan con la `sticky` de siempre.
-        inFlow
-          ? "relative"
-          : hasHero
-            ? "fixed inset-x-0 top-0"
-            : "sticky top-0",
+        // Una sola regla para todo el sitio: la barra sale en su sitio arriba
+        // y se queda pegada mientras bajas, sin ocultarse ni reaparecer sola.
+        // La única excepción son las FICHAS de proyecto, que la dejan flotando
+        // sobre su portada a sangre (ver navPlacement.ts).
+        //
+        // Para que `sticky` funcione de verdad hace falta que el contenedor
+        // del portal no genere caja: ver `#navbar-root` en app/layout.tsx.
+        inFlow ? "sticky top-0" : "fixed inset-x-0 top-0",
       )}
     >
       {/* El fondo y la línea viven aquí, no en <header>: el menú de la

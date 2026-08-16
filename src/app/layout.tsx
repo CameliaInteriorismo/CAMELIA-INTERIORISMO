@@ -55,9 +55,16 @@ export default async function RootLayout({
     >
       <body className="bg-background text-primary flex min-h-full flex-col">
         {/* Navbar portals in here (see Navbar.tsx) — a sibling of the page
-            content, never a descendant of it, so nothing the page ever
-            does (scroll containers, transforms) can carry it along. */}
-        <div id="navbar-root" />
+            content, never a descendant of it, so nothing la página haga
+            (contenedores con scroll, transforms) puede arrastrarla.
+
+            `contents` es lo que hace que la barra pueda quedarse pegada: sin
+            él este div es una caja de 81px —justo lo que mide la barra—, y un
+            elemento `sticky` solo se pega DENTRO de su contenedor, así que se
+            despegaba en cuanto pasabas esos 81px y se iba con la página. Con
+            `contents` el div deja de generar caja y la barra pasa a colgar
+            directamente del body, que sí es tan alto como la página entera. */}
+        <div id="navbar-root" className="contents" />
         {children}
         {/* Above everything, including the navbar — see NavigationLoader. */}
         <NavigationLoader label={settings?.loadingLabel} />
