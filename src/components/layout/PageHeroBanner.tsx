@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { isNavInFlow } from "@/components/layout/navPlacement";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 import { PAGE_TITLE_SCALE } from "@/components/ui/typography";
@@ -35,6 +37,7 @@ export function PageHeroBanner({
 }) {
   const ref = useRef<HTMLElement>(null);
   const setHeroActive = useHeroStore((state) => state.setHeroActive);
+  const navInFlow = isNavInFlow(usePathname());
 
   useEffect(() => {
     const el = ref.current;
@@ -53,14 +56,19 @@ export function PageHeroBanner({
   }, [setHeroActive]);
 
   return (
-    // La portada arranca bajo la barra —80px, su alto— y descuenta ese mismo
-    // alto del viewport, así que sigue llegando justo al borde inferior de la
-    // pantalla. Antes empezaba en el 0 y la barra, ahora en crema, le tapaba
-    // la franja de arriba. El recorte y el punto focal no cambian: la foto
-    // sigue con `object-cover` sobre la misma caja, solo que desplazada.
+    // La portada siempre descuenta del viewport los 80px de la barra, así que
+    // llega justo al borde inferior de la pantalla sin que la barra le coma la
+    // franja de arriba. Lo que cambia es de dónde salen esos 80px: si la barra
+    // va en el flujo (ver navPlacement.ts) ya los ocupa ella y la portada
+    // empieza pegada debajo; si flota —fichas de proyecto— hay que reservarlos
+    // con el margen. El recorte y el punto focal no cambian: la foto sigue con
+    // `object-cover` sobre la misma caja.
     <section
       ref={ref}
-      className="relative mt-20 h-[calc(100dvh-80px)] w-full overflow-hidden"
+      className={cn(
+        "relative h-[calc(100dvh-80px)] w-full overflow-hidden",
+        !navInFlow && "mt-20",
+      )}
     >
       {image ? (
         <Image

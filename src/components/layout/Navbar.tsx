@@ -16,6 +16,7 @@ import { HamburgerMenu } from "@/components/layout/HamburgerMenu";
 import { ButtonLink } from "@/components/ui/Button";
 import { CartIcon, MenuIcon } from "@/components/ui/icons";
 import { cn } from "@/utils/cn";
+import { isNavFloating, isNavInFlow } from "@/components/layout/navPlacement";
 import { useCartHasHydrated, useCartStore } from "@/stores/cartStore";
 import { useHeroStore } from "@/stores/heroStore";
 import type { LinkData } from "@/features/shared/types";
@@ -93,8 +94,9 @@ export function Navbar({
   // excepción: su portada está pensada para verse entera de borde a borde.
   // En el resto la barra va en crema y la portada empieza justo debajo (ver
   // PageHeroBanner y home/Hero), para que la barra no le coma un trozo.
-  const isProjectDetail =
-    pathname.startsWith("/proyectos/") && pathname !== "/proyectos";
+  const isProjectDetail = isNavFloating(pathname);
+  // §6: en las páginas con portada la barra deja de flotar y pasa al flujo.
+  const inFlow = isNavInFlow(pathname);
   const transparentNav =
     ((isProjectDetail && heroActive) || alwaysFixed) && !open && !isShop;
 
@@ -134,7 +136,14 @@ export function Navbar({
     <header
       className={cn(
         "text-primary z-50",
-        hasHero || alwaysFixed ? "fixed inset-x-0 top-0" : "sticky top-0",
+        // En las páginas con portada la barra va en el flujo y se va con el
+        // scroll (ver navPlacement.ts). Las fichas de proyecto y Estudio
+        // siguen `fixed`; el resto, `sticky`, como estaba.
+        inFlow
+          ? "relative"
+          : hasHero || alwaysFixed
+            ? "fixed inset-x-0 top-0"
+            : "sticky top-0",
       )}
     >
       {/* Only this inner wrapper slides — not <header> itself, so the

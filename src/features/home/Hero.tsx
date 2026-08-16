@@ -98,11 +98,13 @@ export function Hero({
   }, [setLogoRevealed, setHeroActive]);
 
   return (
-    // Igual que en las cabeceras de sección: arranca bajo la barra y descuenta
-    // su alto, para que la barra en crema no le tape la franja de arriba. La
-    // animación del logotipo no se resiente: su ScrollTrigger mide contra este
-    // mismo elemento ("top top" / "bottom top"), no contra el viewport.
-    <div ref={heroRef} className="relative mt-20 h-[calc(100dvh-80px)] w-full">
+    // Sin margen arriba: la barra va ahora en el flujo y ya ocupa ella esos
+    // 80px (ver navPlacement.ts), que son los mismos que descuenta este alto.
+    // Barra + portada suman exactamente una pantalla, y la barra no le tapa la
+    // franja de arriba. La animación del logotipo no se resiente: su
+    // ScrollTrigger mide contra este mismo elemento ("top top" / "bottom top"),
+    // no contra el viewport, así que le da igual dónde empiece.
+    <div ref={heroRef} className="relative h-[calc(100dvh-80px)] w-full">
       {video ? (
         <VideoBackground src={video} />
       ) : photo ? (
