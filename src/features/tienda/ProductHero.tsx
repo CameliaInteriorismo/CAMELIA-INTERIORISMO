@@ -46,13 +46,23 @@ export function ProductHero({
   return (
     <section className="pt-title">
       <Container>
-        <Grid>
+        {/* `items-stretch` para que la foto llegue justo hasta donde llega la
+            columna de al lado. */}
+        <Grid className="md:items-stretch">
           <div className="col-span-12 md:col-span-6">
-            {/* 17/25, not the grid card's 4/5 — taller so this column
-                can match the info column's height (title through the
-                last accordion row) without cramming that column's own
-                spacing. Re-check both if either side's content changes. */}
-            <div className="relative aspect-[17/25] w-full overflow-hidden">
+            {/* El alto de la foto lo marca la columna de información, no una
+                proporción elegida a mano. Antes era un 17/25 ajustado a ojo
+                para que cuadrase con los desplegables cerrados: cualquier
+                cambio de precio, descripción, número de acabados o de textos
+                en Sanity lo descuadraba, y al abrir un desplegable la foto se
+                quedaba corta.
+
+                Ahora sigue al acordeón: cerrado queda compacta, al abrir crece
+                con él y al cerrar vuelve. El crecimiento no necesita animación
+                propia —el desplegable ya anima su alto, y la fila de la
+                rejilla lo sigue fotograma a fotograma—. `object-cover` recorta,
+                nunca deforma. En móvil, apiladas, conserva su 17/25. */}
+            <div className="relative aspect-[17/25] w-full overflow-hidden md:aspect-auto md:h-full">
               {activeImage ? (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
@@ -80,7 +90,7 @@ export function ProductHero({
                 <PlaceholderImage
                   aspectRatio="17 / 25"
                   label={`${product.name} — sin foto`}
-                  className="w-full"
+                  className="w-full md:h-full"
                 />
               )}
             </div>
