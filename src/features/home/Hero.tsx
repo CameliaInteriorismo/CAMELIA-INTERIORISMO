@@ -104,7 +104,7 @@ export function Hero({
     // franja de arriba. La animación del logotipo no se resiente: su
     // ScrollTrigger mide contra este mismo elemento ("top top" / "bottom top"),
     // no contra el viewport, así que le da igual dónde empiece.
-    <div ref={heroRef} className="relative h-[calc(100dvh-80px)] w-full">
+    <div ref={heroRef} className="relative h-[calc(100dvh-var(--nav-h))] w-full">
       {video ? (
         <VideoBackground src={video} />
       ) : photo ? (

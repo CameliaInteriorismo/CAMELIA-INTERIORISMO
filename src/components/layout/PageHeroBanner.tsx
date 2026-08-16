@@ -66,8 +66,8 @@ export function PageHeroBanner({
     <section
       ref={ref}
       className={cn(
-        "relative h-[calc(100dvh-80px)] w-full overflow-hidden",
-        !navInFlow && "mt-20",
+        "relative h-[calc(100dvh-var(--nav-h))] w-full overflow-hidden",
+        !navInFlow && "mt-[var(--nav-h)]",
       )}
     >
       {image ? (

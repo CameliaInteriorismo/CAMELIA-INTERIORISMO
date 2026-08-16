@@ -22,21 +22,24 @@
 /** Alto de la barra, en píxeles. */
 export const NAV_H = 80;
 
-/** Estudio: barra clavada y auto-ocultado al bajar. */
-export const isNavPinned = (pathname: string) => pathname === "/estudio";
-
-/** Ficha de proyecto: la barra flota sobre la portada. */
+/**
+ * Ficha de proyecto: la barra flota sobre la portada. Ojo, es la ficha
+ * (`/proyectos/lo-que-sea`), NO el listado `/proyectos`, que va como el resto.
+ */
 export const isNavFloating = (pathname: string) =>
   pathname.startsWith("/proyectos/") && pathname !== "/proyectos";
 
-/** Las páginas con portada donde la barra va en el flujo y se va con ella. */
+/** Las páginas donde la barra va en el flujo y se va con el scroll. */
 export const isNavInFlow = (pathname: string) =>
   !isNavFloating(pathname) &&
-  !isNavPinned(pathname) &&
   (pathname === "/" ||
     pathname === "/metodologia" ||
     pathname === "/servicios" ||
     pathname === "/proyectos" ||
     pathname === "/tienda" ||
     // Solo el listado tiene portada; una entrada abre directa en su título.
-    pathname === "/blog");
+    pathname === "/blog" ||
+    // Estudio y Contacto se comportan como las demás: Estudio deja de llevar
+    // barra clavada con auto-ocultado, y Contacto deja de llevarla pegada.
+    pathname === "/estudio" ||
+    pathname === "/contacto");

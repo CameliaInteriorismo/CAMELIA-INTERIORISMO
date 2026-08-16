@@ -15,6 +15,17 @@
   --space-title: 60px;
   --space-sm: 24px;
   --space-md: 32px;
+
+  /* La barra de navegación, desglosada: la fila y la línea que la cierra.
+     `--nav-h` es el alto REAL de la barra, y es la única referencia que usan
+     tanto la barra como las portadas —la barra para dibujar su fila, las
+     portadas para descontarlo del viewport—. Antes cada lado llevaba su
+     propio número (la fila 80px, las portadas `100dvh - 80px`) y se dejaban
+     fuera la línea: sobraba 1px de scroll. Con una sola variable no pueden
+     volver a separarse, y cambiar el alto de la barra es cambiarlo aquí. */
+  --nav-row: 80px;
+  --nav-rule: 1px;
+  --nav-h: calc(var(--nav-row) + var(--nav-rule));
 }
 
 @theme inline {

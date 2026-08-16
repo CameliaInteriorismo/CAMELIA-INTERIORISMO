@@ -3,14 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-} from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { HamburgerMenu } from "@/components/layout/HamburgerMenu";
 import { ButtonLink } from "@/components/ui/Button";
@@ -62,10 +57,6 @@ export function Navbar({
     // Legal pages (see features/legal/LegalPage) have none at all — they
     // open on a plain field, so they keep the normal solid bar too.
     pathname === "/blog";
-  // Estudio has no hero to float over, but still wants the header pinned
-  // in place while scrolling — plain `fixed`, permanently transparent (see
-  // `transparentNav` below) rather than `hasHero`'s scroll-tied fade.
-  const alwaysFixed = pathname === "/estudio";
   // Every page belonging to the shop (listing, product, cart, checkout —
   // whatever lives under /tienda or /carrito) shares this exact navbar:
   // the grid's own hero still floats the header over it (see `hasHero`
@@ -85,11 +76,6 @@ export function Navbar({
   // screen, so the header row above it should read as the normal navigation
   // chrome, not float transparently over the (now hidden) hero.
   //
-  // Estudio has no hero media to float over, but the page's own background
-  // is already the same cream as the navbar's solid state — so it stays
-  // permanently transparent instead, letting that background show through
-  // directly rather than painting an identical color on top of it.
-  //
   // La barra solo flota sobre la foto en las FICHAS de proyecto, que son la
   // excepción: su portada está pensada para verse entera de borde a borde.
   // En el resto la barra va en crema y la portada empieza justo debajo (ver
@@ -97,26 +83,7 @@ export function Navbar({
   const isProjectDetail = isNavFloating(pathname);
   // §6: en las páginas con portada la barra deja de flotar y pasa al flujo.
   const inFlow = isNavInFlow(pathname);
-  const transparentNav =
-    ((isProjectDetail && heroActive) || alwaysFixed) && !open && !isShop;
-
-  // Estudio-only auto-hide: slides the header up out of view on scroll
-  // down, back in on scroll up. Never engages while the menu is open, so
-  // the close button can't slide away mid-interaction. Every other route
-  // just keeps `navHidden` false forever, so its header never moves.
-  const [navHidden, setNavHidden] = useState(false);
-  const lastScrollY = useRef(0);
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (!alwaysFixed || open) return;
-    const delta = latest - lastScrollY.current;
-    if (delta > 4) {
-      setNavHidden(true);
-    } else if (delta < -4) {
-      setNavHidden(false);
-    }
-    lastScrollY.current = latest;
-  });
+  const transparentNav = isProjectDetail && heroActive && !open && !isShop;
 
   // Close the menu on navigation without an effect: adjust state during
   // render when pathname changes, per React's recommended pattern.
@@ -136,25 +103,21 @@ export function Navbar({
     <header
       className={cn(
         "text-primary z-50",
-        // En las páginas con portada la barra va en el flujo y se va con el
-        // scroll (ver navPlacement.ts). Las fichas de proyecto y Estudio
-        // siguen `fixed`; el resto, `sticky`, como estaba.
+        // La barra va en el flujo y se va con el scroll en todas las páginas
+        // principales (ver navPlacement.ts). Solo las FICHAS de proyecto la
+        // dejan flotando sobre su portada; el resto de rutas sueltas (carrito,
+        // legales, formulario) se quedan con la `sticky` de siempre.
         inFlow
           ? "relative"
-          : hasHero || alwaysFixed
+          : hasHero
             ? "fixed inset-x-0 top-0"
             : "sticky top-0",
       )}
     >
-      {/* Only this inner wrapper slides — not <header> itself, so the
-          hamburger overlay below (a `fixed` child) keeps positioning
-          against the viewport instead of picking up a transformed
-          ancestor as its containing block. The background/border live
-          here too (not on <header>), so hiding this on scroll takes the
-          entire visible bar with it — no empty colored strip left behind. */}
-      <motion.div
-        animate={{ y: alwaysFixed && navHidden ? "-100%" : "0%" }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      {/* El fondo y la línea viven aquí, no en <header>: el menú de la
+          hamburguesa que cuelga debajo es `fixed` y así se posiciona contra
+          la pantalla, sin heredar de un ancestro transformado. */}
+      <div
         className={cn(
           "relative z-50",
           // While the menu is open the panel below runs full-bleed and
@@ -174,7 +137,7 @@ export function Navbar({
         )}
       >
         <Container>
-          <div className="relative flex h-20 items-center justify-between">
+          <div className="relative flex h-[var(--nav-row)] items-center justify-between">
             {/* No close control at all once the menu is open: it shuts via
                 the panel's own wordmark or by clicking anywhere off the
                 links, so the bar simply empties out rather than leaving a
@@ -254,7 +217,7 @@ export function Navbar({
             )}
           </div>
         </Container>
-      </motion.div>
+      </div>
 
       {/* Full-bleed (inset-0, not top-20): the new panel covers the bar's
           row too and carries its own wordmark there.

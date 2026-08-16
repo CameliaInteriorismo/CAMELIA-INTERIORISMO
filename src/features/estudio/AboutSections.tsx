@@ -38,11 +38,11 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
     : [{ paragraphs: current?.paragraphs ?? [] }];
 
   return (
-    // pt-[120px] = navbar's own 80px height (now `fixed`, out of flow) +
-    // the section's usual pt-block (40px) — keeps the same visual gap
-    // from the viewport top as before, just no longer supplied for free
-    // by a sticky navbar reserving its own space in the document flow.
-    <section className="pt-[120px] pb-[100px]">
+    // Vuelve al `pt-block` de siempre. Llevaba 120px (40 + los 80 de la barra)
+    // porque la barra iba flotando y había que reservarle su alto a mano;
+    // ahora ocupa su sitio en el flujo, así que sumarlos otra vez dejaría el
+    // doble de hueco. El aire visible sobre el primer bloque es el mismo.
+    <section className="pt-block pb-[100px]">
       <Container>
         <h1 className="sr-only">Estudio</h1>
         <Grid>

@@ -24,6 +24,14 @@ export type ProcessStep = {
   image?: SanityImageSource;
 };
 
+/**
+ * Proporción máxima (ancho/alto) de la caja de la foto: marca hasta dónde
+ * puede achatarse antes de que la imagen se lea como una franja. No es una
+ * altura, es una forma — el alto sale del ancho real de la columna, así que
+ * acompaña al viewport en vez de quedarse clavado en un número.
+ */
+const MIN_IMAGE_RATIO = 4 / 3;
+
 // Numbered from the array index rather than written into the data, so the
 // sequence can't fall out of step if a phase is added, removed or reordered.
 const numbered = (steps: ProcessStep[]) =>
@@ -69,6 +77,7 @@ export function ProcesoTabs({
   // hasta el mismo sitio. No es un número puesto a mano — si mañana se alarga
   // un párrafo o se añade una fase desde el panel, se recalcula solo.
   const columnRef = useRef<HTMLDivElement>(null);
+  const imageColRef = useRef<HTMLDivElement>(null);
   const [tallest, setTallest] = useState(0);
 
   useEffect(() => {
@@ -88,7 +97,14 @@ export function ProcesoTabs({
       // del alto que estamos calculando. Su ancho sí sale de la columna, pero
       // el ancho lo decide la rejilla, nunca el `minHeight` — que es
       // justamente lo que evita el bucle de medición.
-      setTallest(max);
+      //
+      // Suelo para la foto: con el texto solo, la caja salía muy apaisada y la
+      // foto quedaba corta. Este suelo no es una altura fija —sale del ancho
+      // real de la columna, así que acompaña al viewport— y solo manda cuando
+      // el texto no llega. En cuanto una fase necesite más, gana el texto y la
+      // caja crece: el sistema sigue siendo el contenido más largo.
+      const anchoFoto = imageColRef.current?.clientWidth ?? 0;
+      setTallest(Math.max(max, anchoFoto / MIN_IMAGE_RATIO));
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -141,7 +157,10 @@ export function ProcesoTabs({
             </div>
           </div>
 
-          <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-0">
+          <div
+            ref={imageColRef}
+            className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-0"
+          >
             {/* La foto pasa de su 4/5 a rellenar el alto común. `object-cover`
                 recorta, nunca deforma: la proporción de la imagen se mantiene
                 pase lo que pase con la caja. En móvil conserva el 4/5. */}
