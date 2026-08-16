@@ -80,7 +80,11 @@ export const PRODUCTS_QUERY = groq`
     price,
     available,
     "category": category->title,
-    image ${IMAGE}
+    image ${IMAGE},
+    // Los acabados los necesita la tarjeta del listado: al pasar el cursor
+    // asoma su muestrario y elegir uno cambia la foto sin entrar en la ficha.
+    // El componente ya lo hacía; lo que faltaba era el dato.
+    finishes[] { _key, name, color, images[] ${IMAGE} }
   }
 `;
 

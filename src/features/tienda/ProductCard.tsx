@@ -18,7 +18,10 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
   return (
     <Link href={`/tienda/${product.slug}`} className="group block">
-      <div className="relative aspect-[5/6] w-full overflow-hidden">
+      {/* Algo menos alta que el 5/6 anterior: mismo ancho, sin zoom ni
+          recorte extra — solo una caja más compacta para que la foto no
+          domine tanto la ficha. */}
+      <div className="relative aspect-[6/7] w-full overflow-hidden">
         {activeImage ? (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
