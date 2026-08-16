@@ -48,7 +48,11 @@ export function ServiceTabs({
 
         <Grid className="mt-title">
           <div className="col-span-12 md:col-span-6">
-            <div className="relative aspect-[3/2] w-full overflow-hidden">
+            {/* Mismo ancho que antes; lo que cambia es el alto: de 3/2 a cuadrado.
+                Las fotos de servicio son verticales, así que a 3/2 se les
+                recortaba medio encuadre. No es zoom — la caja es más alta y
+                por eso cabe más foto. */}
+            <div className="relative aspect-square w-full overflow-hidden">
               <Image
                 src={imageProps(current?.image)?.src ?? ""}
                 alt={current?.title ?? ""}

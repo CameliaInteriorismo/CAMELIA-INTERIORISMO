@@ -57,8 +57,8 @@ export function ProcesoTabs({
           className="mt-title"
         />
 
-        <Grid className="mt-title">
-          <div className="col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-center">
+        <Grid className="mt-title md:items-start">
+          <div className="col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-start">
             <div>
               <h3 className="font-title text-primary text-2xl">
                 {activeIndex + 1}. {current?.title}

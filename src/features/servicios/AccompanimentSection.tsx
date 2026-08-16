@@ -28,13 +28,19 @@ export function AccompanimentSection({
   items: AccompanimentItem[];
   title?: string;
 }) {
-  // La primera abierta al cargar, y siempre hay una abierta: es un grupo de
-  // opción, no una lista que se pueda cerrar entera. Antes arrancaba sin
-  // ninguna y, al cerrar la que estuviera abierta, el índice volvía a nulo y
-  // la foto de al lado saltaba a la del primer servicio aunque no fuera el
-  // elegido. Ahora la foto es siempre la del que está abierto.
-  const [openIndex, setOpenIndex] = useState(0);
-  const displayed = items[openIndex];
+  // Dos estados distintos a propósito, porque no responden a lo mismo:
+  //
+  //   openIndex   — qué desplegable está abierto. Puede no haber ninguno:
+  //                 volver a pulsar el abierto lo cierra.
+  //   shownIndex  — de quién es la foto de al lado. Recuerda el ÚLTIMO que se
+  //                 abrió y no se borra al cerrarlo.
+  //
+  // Con un solo estado, cerrar un desplegable dejaba la columna sin foto o la
+  // devolvía a la del primero, que no era el que se había mirado. Así la foto
+  // sigue acompañando a lo último que abriste.
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [shownIndex, setShownIndex] = useState(0);
+  const displayed = items[shownIndex];
   const displayedImage = imageProps(displayed?.image);
 
   return (
@@ -81,7 +87,12 @@ export function AccompanimentSection({
                   <div key={item._key} className="border-primary/15 border-b">
                     <button
                       type="button"
-                      onClick={() => setOpenIndex(index)}
+                      onClick={() => {
+                        // Pulsar el abierto lo cierra; pulsar otro cambia.
+                        setOpenIndex((prev) => (prev === index ? null : index));
+                        // La foto solo cambia al ABRIR, nunca al cerrar.
+                        if (openIndex !== index) setShownIndex(index);
+                      }}
                       className="flex w-full items-center justify-between gap-8 py-8 text-left"
                     >
                       <span className="font-title text-primary text-xl">

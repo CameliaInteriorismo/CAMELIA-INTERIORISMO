@@ -83,7 +83,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
             {/* Los tramos con subtítulo mandan; si un bloque solo tiene el
                 texto del formato anterior, se pinta como antes y no se pierde.
 
-                El aire va donde toca: `space-y-sm` (24px) entre los párrafos de un
+                El aire va donde toca: 16px entre los párrafos de un
                 mismo tramo, `mt-2` entre el subtítulo y su primer párrafo —van
                 juntos, son la misma idea— y `mt-block` (40px) entre un tramo y
                 el siguiente.
@@ -100,11 +100,18 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                   className={index > 0 ? "mt-block" : ""}
                 >
                   {block.heading && (
-                    <h3 className="text-primary text-base font-medium">
+                    // Plus Jakarta en estilo en línea: ni `font-sans` ni la
+                    // utilidad arbitraria ganaban a la familia que hereda el
+                    // bloque, y estos dos subtítulos son de cuerpo, no
+                    // titulares.
+                    <h3
+                      className="text-primary text-base font-semibold"
+                      style={{ fontFamily: "var(--font-plus-jakarta)" }}
+                    >
                       {block.heading}
                     </h3>
                   )}
-                  <div className={cn("space-y-sm", block.heading && "mt-2")}>
+                  <div className={cn("space-y-4", block.heading && "mt-2")}>
                     {(block.paragraphs ?? []).map((paragraph, i) => (
                       <p key={i}>{paragraph}</p>
                     ))}

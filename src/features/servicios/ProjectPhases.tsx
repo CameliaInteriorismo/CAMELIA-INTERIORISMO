@@ -78,15 +78,30 @@ export function ProjectPhases({
     if (!el) return;
     const measure = () => {
       setRowWidth(el.clientWidth);
+      // Se mide la COLUMNA DE TEXTO, no el panel ni su contenedor: esos dos
+      // ya están estirados por `flex-1` y `h-full`, así que medirlos y volver
+      // a aplicar el resultado como alto los haría crecer sin fin en cada
+      // medición. El texto, en cambio, mide lo que mide.
+      //
       // Solo se puede medir el panel visible: los plegados llevan `hidden` y
       // no ocupan. Por eso se guarda el máximo visto — la fase más larga fija
       // el alto en cuanto se abre, y como la primera es la más larga y es la
       // que abre por defecto, ya está desde el primer pintado.
-      const open = el.querySelector<HTMLElement>(
-        "[data-phase-panel]:not([hidden])",
+      const texto = el.querySelector<HTMLElement>(
+        "[data-phase-panel]:not([hidden]) [data-phase-text]",
       );
-      if (open) {
-        const h = open.scrollHeight;
+      const caja = texto?.parentElement;
+      if (texto && caja) {
+        const cs = getComputedStyle(caja);
+        const panel = getComputedStyle(caja.parentElement as HTMLElement);
+        // Se suma también el borde del panel: sin él la altura calculada se
+        // queda 2px corta y la fila baila entre 620 y 622 al cambiar de fase.
+        const h =
+          texto.scrollHeight +
+          parseFloat(cs.paddingTop) +
+          parseFloat(cs.paddingBottom) +
+          parseFloat(panel.borderTopWidth) +
+          parseFloat(panel.borderBottomWidth);
         setTallest((prev) => (h > prev ? h : prev));
       }
     };
@@ -133,7 +148,7 @@ export function ProjectPhases({
             return (
               <div
                 key={phase._id}
-                className="relative overflow-hidden md:shrink-0"
+                className="relative overflow-hidden md:flex md:shrink-0 md:flex-col"
                 style={
                   {
                     ...(isDesktop && tallest ? { minHeight: tallest } : {}),
@@ -189,7 +204,7 @@ export function ProjectPhases({
                     // la fila (`items-stretch`) los estira hasta el más alto,
                     // así que todos miden lo mismo y cambiar de fase no da
                     // ningún salto. Añadir o quitar fases no cambia nada.
-                    "border-primary/[0.13] bg-background md:relative md:ml-auto md:overflow-hidden md:border",
+                    "border-primary/[0.13] bg-background md:relative md:ml-auto md:flex-1 md:overflow-hidden md:border",
                     open ? "md:opacity-100" : "md:opacity-0",
                   )}
                   style={
@@ -204,7 +219,10 @@ export function ProjectPhases({
                   }
                 >
                   <div className="flex h-full flex-col gap-8 p-8 md:flex-row md:items-stretch md:gap-10 md:p-12">
-                    <div className="md:flex md:w-1/2 md:flex-col md:justify-center">
+                    <div
+                      data-phase-text
+                      className="md:flex md:w-1/2 md:flex-col md:justify-center"
+                    >
                       <h3 className="font-title text-primary/25 text-2xl uppercase">
                         {String(index + 1).padStart(2, "0")}. {phase.title}
                       </h3>
