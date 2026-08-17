@@ -56,7 +56,7 @@ export function ProjectPhases({
   introTitle?: string;
   introText?: string;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const reduceMotion = useReducedMotion();
   // The panels still rearrange for someone who asked for less motion — they
@@ -171,7 +171,15 @@ export function ProjectPhases({
                 <button
                   type="button"
                   id={tabId}
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() =>
+                    // Apiladas, volver a tocar la abierta la cierra —el mismo
+                    // gesto que en AccompanimentSection—. En escritorio no:
+                    // la fila reparte anchos y sin ninguna abierta quedaría
+                    // un vacío a la derecha.
+                    setActiveIndex((prev) =>
+                      !isDesktop && prev === index ? null : index,
+                    )
+                  }
                   aria-expanded={open}
                   aria-controls={panelId}
                   className={cn(

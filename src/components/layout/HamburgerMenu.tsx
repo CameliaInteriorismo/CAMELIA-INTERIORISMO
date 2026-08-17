@@ -113,7 +113,12 @@ export function HamburgerMenu({
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          // Anclado a la DERECHA: en el fichero las rayas ocupan la mitad
+          // izquierda y la derecha es vino limpio, que es justo donde caen las
+          // palabras. Centrado —o anclado a la izquierda— al ensanchar el
+          // viewport el recorte se comía la zona limpia y las rayas cruzaban
+          // el texto. Así la franja limpia queda siempre bajo la navegación.
+          className="object-cover object-right"
         />
       </div>
 
@@ -122,7 +127,11 @@ export function HamburgerMenu({
           desborde ni en portátiles cortos. */}
       <div className="text-background relative z-10 flex h-full flex-col overflow-hidden">
         <Container>
-          <div className="flex h-20 shrink-0 items-center justify-end">
+          {/* El mismo carril que la navegación: sin él el logotipo sobresalía
+              40px a la derecha respecto a las palabras y la raya del borde le
+              cruzaba la última letra. Logo y enlaces comparten margen, así que
+              se leen como una sola columna. */}
+          <div className="flex h-20 shrink-0 items-center justify-end max-lg:pr-10">
             {/* Cierra el menú y vuelve a Inicio. Entra con el panel, sin
                 esperar turno: no forma parte de la cadena de enlaces. */}
             <motion.div {...item(0)}>
@@ -153,7 +162,10 @@ export function HamburgerMenu({
               gap-3 y py-6 (antes 4 y 10): con ocho enlaces, el logotipo y
               los iconos, el conjunto tiene que caber sin scroll incluso en
               una pantalla de portátil corta. */}
-          <nav className="flex flex-col items-end gap-3 py-6">
+          {/* En tablet las palabras van pegadas al borde derecho y las rayas
+              del patrón les pasaban por encima. Este carril las separa sin
+              tocar el patrón ni mover la navegación en móvil ni escritorio. */}
+          <nav className="flex flex-col items-end gap-3 py-6 max-lg:pr-10">
             {links.map((link, i) => (
               // +1 because the wordmark above is the first in the sequence.
               <motion.div key={link.href} {...item(i + 1)}>
@@ -174,7 +186,10 @@ export function HamburgerMenu({
               de pb-16 para no forzar el alto total. */}
           <motion.div
             {...item(links.length + 1)}
-            className="flex shrink-0 justify-end gap-5 pb-10"
+            // Mismo carril que el logotipo y los enlaces: los tres comparten
+            // margen derecho, así que la columna se lee recta de arriba abajo
+            // y ninguna raya del patrón les pasa por encima.
+            className="flex shrink-0 justify-end gap-5 pb-10 max-lg:pr-10"
           >
             {socials.map((social) => {
               const label = social.label;

@@ -136,7 +136,12 @@ export function Navbar({
         )}
       >
         <Container>
-          <div className="relative flex h-[var(--nav-row)] items-center justify-between">
+          {/* Tres zonas con los lados de igual peso (`flex-1`): la del medio
+              queda en el centro real de la barra midan lo que midan el menú y
+              el CTA, sin depender de un `absolute` que se desplaza en cuanto
+              uno de los dos crece. En escritorio el resultado es el mismo que
+              antes, porque allí los lados ya se equilibraban solos. */}
+          <div className="relative flex h-[var(--nav-row)] items-center justify-between gap-4 lg:gap-0">
             {/* No close control at all once the menu is open: it shuts via
                 the panel's own wordmark or by clicking anywhere off the
                 links, so the bar simply empties out rather than leaving a
@@ -208,7 +213,17 @@ export function Navbar({
                         page — the CTA's own wording is the first step of
                         that form (see FORMULARIO CONTACTO 1). */}
                     {cta && (
-                      <ButtonLink href={cta.href}>{cta.label}</ButtonLink>
+                      <ButtonLink
+                        href={cta.href}
+                        // El logotipo va centrado en la barra entera y ahí se
+                        // queda: lo que lo ahogaba en tablet era el ancho del
+                        // botón, que casi le tocaba. Estrechando su padding
+                        // entre 768 y 1023 aparece el aire, sin mover el
+                        // logotipo ni cambiar tamaños de texto.
+                        className="max-lg:px-6"
+                      >
+                        {cta.label}
+                      </ButtonLink>
                     )}
                   </div>
                 )}

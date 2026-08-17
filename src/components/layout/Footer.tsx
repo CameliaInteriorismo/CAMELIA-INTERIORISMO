@@ -48,7 +48,10 @@ export function Footer({ data }: { data: FooterData }) {
               height={130}
               className="h-6 w-auto"
             />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed font-light">
+            {/* Más estrecha en tablet: a 20rem la frase empujaba a las
+                columnas de al lado y quedaban pegadas. Cortando antes, el
+                `justify-between` reparte el ancho sobrante entre las tres. */}
+            <p className="mt-4 max-w-[15rem] text-sm leading-relaxed font-light lg:max-w-xs">
               {data.tagline ??
                 "Estudio de interiorismo en Valencia. Diseñamos espacios pensados para habitarse, vivirse y sentirse propios."}
             </p>
@@ -87,7 +90,11 @@ export function Footer({ data }: { data: FooterData }) {
             </div>
           </div>
 
-          <div>
+          {/* Navegación se cae en tablet: con cuatro columnas entre 768 y
+              1023 todo quedaba apretado, y estos enlaces ya están en el menú.
+              Al desaparecer, el `justify-between` reparte de verdad el ancho
+              entre las tres que quedan. */}
+          <div className="hidden lg:block">
             <p className="text-sm font-normal tracking-[0.06em]">
               {data.navTitle}
             </p>

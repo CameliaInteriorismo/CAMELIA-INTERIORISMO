@@ -60,8 +60,12 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 relleno: el campo existía en Sanity y viajaba en la consulta,
                 pero aquí no se leía, así que subir la foto en el panel no
                 cambiaba nada. El recuadro y su proporción son los mismos. */}
+            {/* Apilada ocupa todo el ancho, y a 16/10 salía una franja
+                aplastada. Bajo lg va a 4/5 para que gane presencia vertical;
+                desde lg vuelve al 16/10 de siempre. `object-cover` recorta,
+                nunca deforma. */}
             {image ? (
-              <div className="relative aspect-[16/10] w-full overflow-hidden">
+              <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-[16/10]">
                 <Image
                   src={image.src}
                   alt={image.alt || current?.title || ""}
@@ -77,7 +81,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
               <PlaceholderImage
                 aspectRatio="16 / 10"
                 label={`Imagen ${current?.title ?? "Estudio"} — sin foto`}
-                className="w-full"
+                className="aspect-[4/5] w-full lg:aspect-[16/10]"
               />
             )}
             {/* Los tramos con subtítulo mandan; si un bloque solo tiene el

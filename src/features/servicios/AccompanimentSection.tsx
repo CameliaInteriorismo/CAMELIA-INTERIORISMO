@@ -115,6 +115,35 @@ export function AccompanimentSection({
                           <p className="text-primary pb-8 text-sm leading-relaxed">
                             {item.answer}
                           </p>
+                          {/* Apilado, la foto va aquí dentro: en su columna
+                              aparecía suelta bajo el acordeón y no se leía
+                              como parte de lo que acabas de abrir. Desde lg
+                              vuelve a la columna de al lado. */}
+                          {open && (
+                            <div className="relative mb-8 aspect-[4/5] w-full overflow-hidden lg:hidden">
+                              {imageProps(item.image) ? (
+                                <Image
+                                  src={imageProps(item.image)!.src}
+                                  alt={
+                                    imageProps(item.image)!.alt || item.question
+                                  }
+                                  fill
+                                  className="object-cover"
+                                  style={{
+                                    objectPosition: imageProps(item.image)!
+                                      .objectPosition,
+                                  }}
+                                  sizes="100vw"
+                                />
+                              ) : (
+                                <PlaceholderImage
+                                  aspectRatio="4 / 5"
+                                  label={`Imagen ${item.question} — sin foto`}
+                                  className="h-full w-full"
+                                />
+                              )}
+                            </div>
+                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -128,7 +157,7 @@ export function AccompanimentSection({
               de quedarse en su 4/5 y dejar un hueco bajo el último
               desplegable: las dos columnas se leen como un único bloque. En
               móvil, apiladas, conserva su proporción de siempre. */}
-          <div className="col-span-12 mt-12 lg:col-span-5 lg:col-start-8 lg:mt-0">
+          <div className="col-span-12 mt-12 hidden lg:col-span-5 lg:col-start-8 lg:mt-0 lg:block">
             <div
               className={cn(
                 "relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:h-full",
