@@ -28,6 +28,7 @@ type Project = {
   services: string[];
   paragraphs?: string[];
   heroVideo?: string;
+  heroVideoFile?: string;
   heroImage?: SanityImageSource;
   galleryBlocks?: ProjectGalleryBlock[];
   seo?: SeoFields;
@@ -119,7 +120,7 @@ export default async function ProjectDetailPage({
     <>
       <ProjectHeroTitle
         name={project.name}
-        heroVideo={project.heroVideo}
+        heroVideo={project.heroVideoFile ?? project.heroVideo}
         heroImage={project.heroImage}
       />
       <ProjectInfo

@@ -48,6 +48,7 @@ export const PROJECT_QUERY = groq`
     "services": services[]->title,
     paragraphs,
     heroVideo,
+    "heroVideoFile": heroVideoFile.asset->url,
     heroImage ${IMAGE},
     galleryBlocks[] {
       _key,
@@ -235,6 +236,7 @@ export const SERVICIOS_PAGE_QUERY = groq`
 export const HOME_PAGE_QUERY = groq`
   *[_id == "homePage"][0] {
     heroVideo,
+    "heroVideoFile": heroVideoFile.asset->url,
     heroImage ${IMAGE},
     heroLogo ${IMAGE},
     animatedPhrases,

@@ -108,6 +108,15 @@ export const project = defineType({
         ),
     }),
     defineField({
+      name: "heroVideoFile",
+      title: "Vídeo de cabecera (archivo)",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      group: "media",
+      description:
+        "Sube aquí el vídeo. Tiene prioridad sobre la URL de Cloudinary, que se conserva como respaldo.",
+    }),
+    defineField({
       name: "heroVideo",
       title: "Vídeo de cabecera",
       type: "url",

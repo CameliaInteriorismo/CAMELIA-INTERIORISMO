@@ -15,6 +15,7 @@ export const revalidate = 3600;
 
 type HomePage = {
   heroVideo?: string;
+  heroVideoFile?: string;
   heroImage?: SanityImageSource;
   heroLogo?: SanityImageSource;
   servicesTitle?: string;
@@ -60,7 +61,7 @@ export default async function Home() {
   return (
     <>
       <Hero
-        video={page?.heroVideo}
+        video={page?.heroVideoFile ?? page?.heroVideo}
         image={page?.heroImage}
         logo={page?.heroLogo}
       />

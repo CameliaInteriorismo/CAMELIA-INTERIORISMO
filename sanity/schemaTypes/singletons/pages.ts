@@ -42,6 +42,15 @@ export const homePage = defineType({
   groups,
   fields: [
     defineField({
+      name: "heroVideoFile",
+      title: "Vídeo de portada (archivo)",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      group: "content",
+      description:
+        "Sube aquí el vídeo. Tiene prioridad sobre la URL de Cloudinary, que se conserva como respaldo.",
+    }),
+    defineField({
       name: "heroVideo",
       title: "Vídeo de portada",
       type: "url",
