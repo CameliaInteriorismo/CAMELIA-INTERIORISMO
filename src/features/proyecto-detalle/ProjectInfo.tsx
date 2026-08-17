@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { Container } from "@/components/layout/Container";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 // Shrinks an element's font just enough to keep its content on one line
 // (rather than letting the browser wrap it) when it would otherwise
@@ -34,6 +35,7 @@ export function ProjectInfo({
   services: string[];
 }) {
   const line1Ref = useRef<HTMLParagraphElement>(null);
+  const enUnaLinea = useMediaQuery("(min-width: 768px)");
   const line2Ref = useRef<HTMLParagraphElement>(null);
   const [line1FontSize, setLine1FontSize] = useState<number | null>(null);
   const [line2FontSize, setLine2FontSize] = useState<number | null>(null);
@@ -62,28 +64,54 @@ export function ProjectInfo({
         <div className="space-y-3 text-base sm:text-lg md:text-xl">
           <p
             ref={line1Ref}
-            style={line1FontSize ? { fontSize: line1FontSize } : undefined}
-            className="whitespace-nowrap"
+            // Igual que la línea de servicios: a 320px "Año | Ubicación" no
+            // cabe ni encogiendo, así que en móvil se deja envolver con su
+            // tamaño natural. Desde md vuelve al ajuste medido.
+            style={
+              enUnaLinea && line1FontSize
+                ? { fontSize: line1FontSize }
+                : undefined
+            }
+            className={enUnaLinea ? "whitespace-nowrap" : "whitespace-normal"}
           >
             <span className={labelClass}>Año:</span>{" "}
             <span className={valueClass}>{year}</span>
-            <span className={`${dividerClass} mx-4`} aria-hidden="true">
+            <span
+              className={`${dividerClass} mx-4 max-md:hidden`}
+              aria-hidden="true"
+            >
               |
             </span>
+            {/* Envolviendo, la barra vertical quedaba suelta al final de una
+                línea; en móvil cada dato ocupa la suya. */}
+            <span className="max-md:block" />
             <span className={labelClass}>Ubicación:</span>{" "}
             <span className={valueClass}>{location}</span>
           </p>
 
           <p
             ref={line2Ref}
-            style={line2FontSize ? { fontSize: line2FontSize } : undefined}
-            className="whitespace-nowrap"
+            // La línea se encoge para caber de una vez, pero en un móvil eso
+            // la dejaba ilegible o cortada: ahí se deja envolver con su tamaño
+            // natural. Desde md vuelve al ajuste medido de siempre.
+            style={
+              enUnaLinea && line2FontSize
+                ? { fontSize: line2FontSize }
+                : undefined
+            }
+            className={enUnaLinea ? "whitespace-nowrap" : "whitespace-normal"}
           >
             <span className={labelClass}>Servicios:</span>{" "}
             {services.map((service, index) => (
-              <span key={service}>
+              // Envolviendo, el punto separador quedaba colgando al final de
+              // una línea. En móvil cada servicio ocupa la suya y el separador
+              // desaparece; desde md vuelve la enumeración en línea.
+              <span key={service} className="max-md:block">
                 {index > 0 && (
-                  <span className={`${dividerClass} mx-3`} aria-hidden="true">
+                  <span
+                    className={`${dividerClass} mx-3 max-md:hidden`}
+                    aria-hidden="true"
+                  >
                     ·
                   </span>
                 )}

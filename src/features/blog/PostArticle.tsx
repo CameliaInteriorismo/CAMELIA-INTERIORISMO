@@ -162,7 +162,10 @@ export function PostArticle({
             at either end of the series: where there's no neighbouring
             article the slot falls back to the blog index rather than
             collapsing and leaving the remaining button adrift. */}
-        <nav className="mt-title flex items-center justify-between gap-4">
+        {/* Apila en móvil: en una sola fila, un título largo de artículo
+            empujaba al otro control y se cortaban. Desde sm vuelven a la fila
+            de siempre. */}
+        <nav className="mt-title flex flex-col items-stretch gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <ButtonLink
             href={previous ? `/blog/${previous.slug}` : "/blog"}
             className="gap-2"

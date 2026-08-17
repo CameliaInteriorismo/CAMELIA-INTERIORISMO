@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     // the grain and gradients of a hero clean while landing far closer to
     // the small end. Any value not listed here is rejected outright by the
     // optimiser, which is why it has to be declared.
-    qualities: [75, 90],
+    qualities: [75, 90, 100],
     // Las imágenes gestionadas desde Sanity se sirven desde su CDN. Sin
     // declarar el dominio, next/image las rechaza y la página devuelve un 500.
     remotePatterns: [

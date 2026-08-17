@@ -24,7 +24,10 @@ export function ContactHero({
   return (
     <section className="pt-title">
       <Container>
-        <div className="relative aspect-[2/1] w-full overflow-hidden">
+        {/* A 2/1 la portada salía como una franja aplastada en un móvil.
+            Bajo md pasa a 4/5 y gana presencia; desde md vuelve al 2/1 de
+            siempre. `object-cover` recorta, nunca deforma. */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden md:aspect-[2/1]">
           {photo && (
             <Image
               src={photo.src}
@@ -44,7 +47,7 @@ export function ContactHero({
               // el panel. Las mayúsculas son de los héroes, como en
               // PageHeroBanner.
               className={cn(
-                "font-title text-primary px-6 uppercase tracking-[0.02em]",
+                "font-title text-primary px-6 tracking-[0.02em] uppercase",
                 PAGE_TITLE_SCALE,
               )}
             >

@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Multiline } from "@/features/shared/MultilineText";
 import { ButtonLink } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
+import { PlusMinusIcon } from "@/components/ui/Accordion";
 
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 import type { LinkData } from "@/features/shared/types";
@@ -35,6 +37,10 @@ export function ServiceTabs({
   const tabs: Tab[] = services.map((s) => ({ ...s, label: s.title }));
   const [activeIndex, setActiveIndex] = useState(0);
   const current = tabs[activeIndex];
+  // Móvil: acordeón. Mismo patrón que AccompanimentSection —pulsar la abierta
+  // la cierra, así que pueden quedar las tres cerradas—. En md+ manda el
+  // sistema de pestañas de siempre, que no se toca.
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     // 100px sobre el título, el mismo hueco que dejan /proyectos y /tienda
@@ -46,7 +52,71 @@ export function ServiceTabs({
           <Multiline text={title} />
         </h2>
 
-        <Grid className="mt-title">
+        {/* MÓVIL: cada servicio es su propio bloque —título, su foto y, al
+            abrirlo, su texto—, en vez de una foto única que cambiaba al pulsar
+            una pestaña de otra columna. */}
+        <div className="mt-title space-y-6 md:hidden">
+          {tabs.map((tab, index) => {
+            const abierto = index === openIndex;
+            return (
+              <div key={tab._id} className="border-primary/15 border-t pt-6">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenIndex((prev) => (prev === index ? null : index))
+                  }
+                  aria-expanded={abierto}
+                  className="flex w-full items-center justify-between gap-4 text-left"
+                >
+                  <span className="font-title text-primary text-2xl">
+                    {tab.title}
+                  </span>
+                  <PlusMinusIcon open={abierto} />
+                </button>
+
+                <div className="relative mt-4 aspect-square w-full overflow-hidden">
+                  <Image
+                    src={imageProps(tab.image)?.src ?? ""}
+                    alt={tab.title}
+                    fill
+                    className="object-cover"
+                    style={{
+                      objectPosition: imageProps(tab.image)?.objectPosition,
+                    }}
+                    sizes="100vw"
+                  />
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {abierto && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="text-primary/75 mt-md text-sm leading-relaxed">
+                        {tab.shortDescription}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+
+          {/* Uno solo al final de los tres: repetido dentro de cada
+              desplegable, la misma llamada aparecía hasta tres veces y perdía
+              fuerza. Aquí cierra el bloque de servicios. */}
+          {cta && (
+            <ButtonLink href={cta.href} className="mt-title">
+              {cta.label}
+            </ButtonLink>
+          )}
+        </div>
+
+        <Grid className="mt-title max-md:hidden">
           <div className="col-span-12 md:col-span-6">
             {/* Mismo ancho que antes; lo que cambia es el alto: de 3/2 a cuadrado.
                 Las fotos de servicio son verticales, así que a 3/2 se les

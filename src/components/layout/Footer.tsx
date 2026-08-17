@@ -39,7 +39,10 @@ export function Footer({ data }: { data: FooterData }) {
             columna queda anclada al margen izquierdo, la última al derecho,
             y Navegación/Contacto se reparten el espacio entre ambas con
             huecos uniformes — igual que en Figma, sin forzar anchos iguales. */}
-        <div className="flex flex-col gap-y-12 py-20 md:flex-row md:flex-nowrap md:justify-between">
+        {/* Se apila hasta que las cuatro columnas caben de verdad. A 768 iban
+            tan justas que hubo que quitar Navegación; a 1024 caben las cuatro,
+            así que ya no falta ninguna en ningún ancho. */}
+        <div className="flex flex-col gap-y-12 py-20 lg:flex-row lg:flex-nowrap lg:justify-between">
           <div>
             <Image
               src="/images/logos/trimmed/Camelia logo sin fondo vino actualizado.png"
@@ -94,7 +97,9 @@ export function Footer({ data }: { data: FooterData }) {
               1023 todo quedaba apretado, y estos enlaces ya están en el menú.
               Al desaparecer, el `justify-between` reparte de verdad el ancho
               entre las tres que quedan. */}
-          <div className="hidden lg:block">
+          {/* Siempre presente: apilado cabe, y desde lg las cuatro columnas
+              tienen sitio. */}
+          <div>
             <p className="text-sm font-normal tracking-[0.06em]">
               {data.navTitle}
             </p>
