@@ -49,6 +49,7 @@ export const PROJECT_QUERY = groq`
     paragraphs,
     heroVideo,
     "heroVideoFile": heroVideoFile.asset->url,
+    heroVideoPosition,
     heroImage ${IMAGE},
     galleryBlocks[] {
       _key,

@@ -10,10 +10,12 @@ import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 export function ProjectHeroTitle({
   name,
   heroVideo,
+  heroVideoPosition,
   heroImage,
 }: {
   name: string;
   heroVideo?: string;
+  heroVideoPosition?: string;
   heroImage?: SanityImageSource;
 }) {
   const hero = imageProps(heroImage);
@@ -41,7 +43,7 @@ export function ProjectHeroTitle({
   return (
     <section ref={heroRef} className="relative h-dvh w-full overflow-hidden">
       {heroVideo ? (
-        <VideoBackground src={heroVideo} />
+        <VideoBackground src={heroVideo} objectPosition={heroVideoPosition} />
       ) : hero ? (
         <Image
           src={hero.src}

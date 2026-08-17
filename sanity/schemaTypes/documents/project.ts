@@ -117,6 +117,14 @@ export const project = defineType({
         "Sube aquí el vídeo. Tiene prioridad sobre la URL de Cloudinary, que se conserva como respaldo.",
     }),
     defineField({
+      name: "heroVideoPosition",
+      title: "Encuadre del vídeo",
+      type: "string",
+      group: "media",
+      description:
+        'Qué parte del vídeo se ve cuando se recorta. Acepta valores CSS: "center", "center 30%" o "50% 30%" suben el encuadre. Vacío = centrado.',
+    }),
+    defineField({
       name: "heroVideo",
       title: "Vídeo de cabecera",
       type: "url",

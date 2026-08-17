@@ -13,9 +13,12 @@ import { cn } from "@/utils/cn";
 export function VideoBackground({
   src,
   className,
+  objectPosition,
 }: {
   src: string;
   className?: string;
+  /** Qué parte del vídeo se ve al recortar. Sin valor, el navegador centra. */
+  objectPosition?: string;
 }) {
   return (
     <video
@@ -25,6 +28,7 @@ export function VideoBackground({
       playsInline
       preload="auto"
       src={src}
+      style={{ objectPosition }}
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
     />
   );
