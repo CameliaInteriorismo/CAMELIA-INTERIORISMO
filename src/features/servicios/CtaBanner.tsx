@@ -24,7 +24,12 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
       }}
     >
       <Container>
-        <div className="bg-background flex flex-col items-start gap-8 px-10 py-14 md:flex-row md:items-center md:justify-between">
+        {/* El recuadro no ocupa todo el contenedor: a ancho completo el
+            `justify-between` mandaba el botón al extremo derecho y quedaba un
+            vacío enorme entre la frase y él. Estrechado y centrado, el texto
+            —que ya va a `max-w-xl`— y el botón casi llenan la fila, así que el
+            hueco se cierra solo sin tocar tamaños ni tipografía. */}
+        <div className="bg-background mx-auto flex max-w-4xl flex-col items-start gap-8 px-10 py-14 md:flex-row md:items-center md:justify-between">
           <div>
             {/* El banner va en mayúsculas por diseño, y lo decide aquí: es lo
                 único de la web que las lleva por CSS. Los héroes y los títulos
