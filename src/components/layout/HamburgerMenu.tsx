@@ -108,7 +108,7 @@ export function HamburgerMenu({
           to keep in register. */}
       <div className="absolute inset-0" aria-hidden>
         <Image
-          src="/assets/menu/Fondo menu hamburgesa.png"
+          src="/images/logos/Patron menu hamburguesa.png"
           alt=""
           fill
           priority

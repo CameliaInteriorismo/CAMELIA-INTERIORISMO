@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   // overridden, which left the request-sent screen emitting both the vino
   // and the orange icon. As metadata, a page-level `icons` replaces this
   // outright — see (confirmacion)/carrito/gracias/page.tsx.
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/images/logos/FAVICON-VINO actualizado.png" },
 };
 
 /**

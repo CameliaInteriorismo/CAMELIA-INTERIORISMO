@@ -244,7 +244,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
           <div className="flex h-20 items-center">
             <Link href="/" aria-label="Camelia — inicio">
               <Image
-                src="/assets/logo/trimmed/Camelia logo sin fondo vino.png"
+                src="/images/logos/Camelia logo sin fondo vino actualizado.png"
                 alt="Camelia"
                 width={828}
                 height={130}

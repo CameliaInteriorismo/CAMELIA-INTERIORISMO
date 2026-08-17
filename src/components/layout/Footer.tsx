@@ -42,7 +42,7 @@ export function Footer({ data }: { data: FooterData }) {
         <div className="flex flex-col gap-y-12 py-20 md:flex-row md:flex-nowrap md:justify-between">
           <div>
             <Image
-              src="/assets/logo/trimmed/Camelia logo sin fondo vino.png"
+              src="/images/logos/Camelia logo sin fondo vino actualizado.png"
               alt="Camelia"
               width={828}
               height={130}

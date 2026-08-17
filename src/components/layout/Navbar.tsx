@@ -165,7 +165,7 @@ export function Navbar({
                 )}
               >
                 <Image
-                  src="/assets/logo/trimmed/Camelia logo sin fondo vino.png"
+                  src="/images/logos/Camelia logo sin fondo vino actualizado.png"
                   alt="Camelia"
                   width={828}
                   height={130}

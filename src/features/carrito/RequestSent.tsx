@@ -49,7 +49,7 @@ export function RequestSent({ content }: { content?: ThanksContent }) {
               className="flex items-center"
             >
               <Image
-                src="/assets/logo/trimmed/Camelia logo naranja.png"
+                src="/images/logos/Camelia logo naranja actualizado.png"
                 alt="Camelia"
                 width={828}
                 height={130}
@@ -72,7 +72,7 @@ export function RequestSent({ content }: { content?: ThanksContent }) {
             </h1>
 
             <Image
-              src="/assets/logo/trimmed/Favicon naranja.png"
+              src="/images/logos/Favicon naranja actualizado.png"
               alt=""
               aria-hidden
               width={322}
