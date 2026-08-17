@@ -42,7 +42,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
               className="flex items-center"
             >
               <Image
-                src="/images/logos/Camelia logo naranja actualizado.png"
+                src="/images/logos/trimmed/Camelia logo naranja actualizado.png"
                 alt="Camelia"
                 width={828}
                 height={130}
