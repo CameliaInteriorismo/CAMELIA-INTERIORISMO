@@ -23,6 +23,7 @@ export function PageHeader({
   return (
     <PageHeroBanner
       title={title ?? "Metodología"}
+      titleClassName="tracking-[0.02em]"
       image={imageProps(image)?.src}
       imagePosition={imagePosition}
     />

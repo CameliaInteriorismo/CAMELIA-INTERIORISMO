@@ -44,7 +44,7 @@ export function ContactHero({
               // el panel. Las mayúsculas son de los héroes, como en
               // PageHeroBanner.
               className={cn(
-                "font-title text-primary px-6 uppercase",
+                "font-title text-primary px-6 uppercase tracking-[0.02em]",
                 PAGE_TITLE_SCALE,
               )}
             >

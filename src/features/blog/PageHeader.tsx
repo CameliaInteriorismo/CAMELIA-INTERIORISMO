@@ -5,7 +5,7 @@ export function PageHeader() {
     <PageHeroBanner
       title="Blog"
       image="/assets/blog/Hero blog.jpg"
-      titleClassName="text-background"
+      titleClassName="text-background tracking-[0.02em]"
     />
   );
 }

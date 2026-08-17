@@ -22,7 +22,7 @@ export function PageHeader({
     <PageHeroBanner
       title={title ?? "Shop"}
       image={imageProps(image)?.src ?? "/assets/tienda/Shop hero.jpg"}
-      titleClassName="text-background"
+      titleClassName="text-background tracking-[0.02em]"
       imagePosition={imagePosition ?? "center 55%"}
     />
   );
