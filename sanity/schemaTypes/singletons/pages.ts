@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { FeaturedProjectsNote } from "../../components/FeaturedProjectsNote";
 
 /**
  * Una página = un documento único. No se crean más ejemplares: la estructura
@@ -117,7 +118,11 @@ export const homePage = defineType({
       group: "content",
       readOnly: true,
       description:
-        "Ya no se eligen aquí. La cuadrícula de la Home la forman los proyectos marcados como «Destacado en la Home», en su propio documento y con su «Foto para la Home». Marcar o desmarcar allí basta.",
+        "No se eligen aquí. La cuadrícula de la Home la forman los proyectos marcados como «Destacado en la Home», en su propio documento y con su «Foto para la Home». Marcar o desmarcar allí basta; esta lista solo enseña cuáles son ahora mismo.",
+      // El campo no guarda nada: su hueco lo ocupa la lista en vivo, que sale
+      // de la misma consulta que la web pública. Así el editor ve desde Inicio
+      // qué proyectos alimentan la cuadrícula sin elegirlos dos veces.
+      components: { input: FeaturedProjectsNote },
     }),
     defineField({
       name: "testimonialsTitle",
