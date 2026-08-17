@@ -57,7 +57,7 @@ export function ProjectPhases({
   introText?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const reduceMotion = useReducedMotion();
   // The panels still rearrange for someone who asked for less motion — they
   // just arrive instead of sliding.
@@ -140,7 +140,7 @@ export function ProjectPhases({
 
         <div
           ref={rowRef}
-          className="mt-md flex flex-col md:flex-row md:items-stretch"
+          className="mt-md flex flex-col lg:flex-row lg:items-stretch"
           style={{ gap: `${GAP}px` }}
         >
           {phases.map((phase, index) => {
@@ -151,7 +151,7 @@ export function ProjectPhases({
             return (
               <div
                 key={phase._id}
-                className="relative overflow-hidden md:flex md:shrink-0 md:flex-col"
+                className="relative overflow-hidden lg:flex lg:shrink-0 lg:flex-col"
                 style={
                   {
                     ...(isDesktop && tallest ? { minHeight: tallest } : {}),
@@ -175,8 +175,8 @@ export function ProjectPhases({
                   aria-expanded={open}
                   aria-controls={panelId}
                   className={cn(
-                    "bg-primary text-background flex w-full items-center gap-4 px-5 py-4 text-left transition-opacity md:absolute md:inset-0 md:w-[72px] md:flex-col md:items-center md:justify-start md:gap-6 md:px-0 md:py-6",
-                    open && "md:pointer-events-none md:opacity-0",
+                    "bg-primary text-background flex w-full items-center gap-4 px-5 py-4 text-left transition-opacity lg:absolute lg:inset-0 lg:w-[72px] lg:flex-col lg:items-center lg:justify-start lg:gap-6 lg:px-0 lg:py-6",
+                    open && "lg:pointer-events-none lg:opacity-0",
                     !open && "hover:opacity-90",
                   )}
                   style={{ transitionDuration: `${duration}ms` }}
@@ -186,7 +186,7 @@ export function ProjectPhases({
                   </span>
                   {/* Vertical only from md up — on a phone the bar is
                       horizontal and the title reads normally. */}
-                  <span className="font-title text-sm tracking-wide uppercase md:[writing-mode:vertical-rl]">
+                  <span className="font-title text-sm tracking-wide uppercase lg:[writing-mode:vertical-rl]">
                     {phase.title}
                   </span>
                 </button>
@@ -207,8 +207,8 @@ export function ProjectPhases({
                     // la fila (`items-stretch`) los estira hasta el más alto,
                     // así que todos miden lo mismo y cambiar de fase no da
                     // ningún salto. Añadir o quitar fases no cambia nada.
-                    "border-primary/[0.13] bg-background md:relative md:ml-auto md:flex-1 md:overflow-hidden md:border",
-                    open ? "md:opacity-100" : "md:opacity-0",
+                    "border-primary/[0.13] bg-background lg:relative lg:ml-auto lg:flex-1 lg:overflow-hidden lg:border",
+                    open ? "lg:opacity-100" : "lg:opacity-0",
                   )}
                   style={
                     isDesktop && rowWidth
@@ -221,10 +221,10 @@ export function ProjectPhases({
                       : undefined
                   }
                 >
-                  <div className="flex h-full flex-col gap-8 p-8 md:flex-row md:items-stretch md:gap-10 md:p-12">
+                  <div className="flex h-full flex-col gap-8 p-8 lg:flex-row lg:items-stretch lg:gap-10 lg:p-12">
                     <div
                       data-phase-text
-                      className="md:flex md:w-1/2 md:flex-col md:justify-center"
+                      className="lg:flex lg:w-1/2 lg:flex-col lg:justify-center"
                     >
                       <h3 className="font-title text-primary/25 text-2xl uppercase">
                         {String(index + 1).padStart(2, "0")}. {phase.title}
@@ -236,7 +236,7 @@ export function ProjectPhases({
                       </div>
                     </div>
 
-                    <div className="relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full md:w-1/2">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:h-full lg:w-1/2">
                       <Image
                         src={imageProps(phase.image)?.src ?? ""}
                         alt={phase.title}
@@ -246,7 +246,7 @@ export function ProjectPhases({
                           objectPosition: imageProps(phase.image)
                             ?.objectPosition,
                         }}
-                        sizes="(min-width: 768px) 40vw, 100vw"
+                        sizes="(min-width: 1024px) 40vw, 100vw"
                       />
                     </div>
                   </div>

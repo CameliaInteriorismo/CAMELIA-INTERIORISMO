@@ -48,8 +48,8 @@ export function ProductHero({
       <Container>
         {/* `items-stretch` para que la foto llegue justo hasta donde llega la
             columna de al lado. */}
-        <Grid className="md:items-stretch">
-          <div className="col-span-12 md:col-span-6">
+        <Grid className="lg:items-stretch">
+          <div className="col-span-12 lg:col-span-6">
             {/* El alto de la foto lo marca la columna de información, no una
                 proporción elegida a mano. Antes era un 17/25 ajustado a ojo
                 para que cuadrase con los desplegables cerrados: cualquier
@@ -62,7 +62,7 @@ export function ProductHero({
                 propia —el desplegable ya anima su alto, y la fila de la
                 rejilla lo sigue fotograma a fotograma—. `object-cover` recorta,
                 nunca deforma. En móvil, apiladas, conserva su 17/25. */}
-            <div className="relative aspect-[17/25] w-full overflow-hidden md:aspect-auto md:h-full">
+            <div className="relative aspect-[17/25] w-full overflow-hidden lg:aspect-auto lg:h-full">
               {activeImage ? (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
@@ -82,7 +82,7 @@ export function ProductHero({
                       blurDataURL={activeImage.blurDataURL}
                       className="object-cover"
                       style={{ objectPosition: activeImage.objectPosition }}
-                      sizes="(min-width: 768px) 50vw, 100vw"
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -90,13 +90,13 @@ export function ProductHero({
                 <PlaceholderImage
                   aspectRatio="17 / 25"
                   label={`${product.name} — sin foto`}
-                  className="w-full md:h-full"
+                  className="w-full lg:h-full"
                 />
               )}
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-5 md:col-start-8">
+          <div className="col-span-12 lg:col-span-5 lg:col-start-8">
             {product.category && (
               <p className="text-primary/60 text-sm tracking-wide uppercase">
                 {product.category}

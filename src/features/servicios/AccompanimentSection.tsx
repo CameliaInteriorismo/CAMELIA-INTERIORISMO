@@ -56,8 +56,8 @@ export function AccompanimentSection({
         {/* 32px en vez de los 60px del ritmo título→contenido: las dos frases
             se leen como una sola idea encadenada, y a 60px la segunda se
             desprendía de la primera. */}
-        <Grid className="mt-md md:items-stretch">
-          <div className="col-span-12 md:col-span-5">
+        <Grid className="mt-md lg:items-stretch">
+          <div className="col-span-12 lg:col-span-5">
             {/* Un escalón más grande (24px) para que gane peso sin acercarse
                 al h2 de 36px que la encabeza. */}
             <h3 className="font-title text-primary text-2xl">
@@ -128,10 +128,10 @@ export function AccompanimentSection({
               de quedarse en su 4/5 y dejar un hueco bajo el último
               desplegable: las dos columnas se leen como un único bloque. En
               móvil, apiladas, conserva su proporción de siempre. */}
-          <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
+          <div className="col-span-12 mt-12 lg:col-span-5 lg:col-start-8 lg:mt-0">
             <div
               className={cn(
-                "relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:h-full",
+                "relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:h-full",
               )}
             >
               {displayedImage ? (
@@ -141,7 +141,7 @@ export function AccompanimentSection({
                   fill
                   className="object-cover"
                   style={{ objectPosition: displayedImage.objectPosition }}
-                  sizes="(min-width: 768px) 40vw, 100vw"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
                 />
               ) : (
                 <PlaceholderImage
