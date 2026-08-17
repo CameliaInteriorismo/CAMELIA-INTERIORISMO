@@ -39,7 +39,14 @@ export function ContactHero({
           )}
           <div className="absolute inset-0 flex items-center justify-center">
             <h1
-              className={cn("font-title text-primary px-6", PAGE_TITLE_SCALE)}
+              // `uppercase` aquí y no en PAGE_TITLE_SCALE: la escala la comparten
+              // también títulos de contenido que se leen tal cual se escriben en
+              // el panel. Las mayúsculas son de los héroes, como en
+              // PageHeroBanner.
+              className={cn(
+                "font-title text-primary px-6 uppercase",
+                PAGE_TITLE_SCALE,
+              )}
             >
               {title}
             </h1>
