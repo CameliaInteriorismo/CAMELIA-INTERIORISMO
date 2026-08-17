@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { ScrollCue } from "@/components/ui/ScrollCue";
 import { gsap, ScrollTrigger } from "@/animations/gsap/gsapConfig";
 import { createHeroScrollTimeline } from "@/animations/gsap/heroScrollTimeline";
 import { VideoBackground } from "@/components/ui/VideoBackground";
@@ -136,9 +135,6 @@ export function Hero({
           sizes="(min-width: 1024px) 776px, 45vw"
         />
       </div>
-      {/* La misma flecha que las cabeceras de sección, sin una segunda
-          versión: en crema porque va sobre el vídeo. */}
-      <ScrollCue className="text-background" />
     </div>
   );
 }

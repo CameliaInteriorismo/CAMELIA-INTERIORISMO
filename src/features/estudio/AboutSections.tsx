@@ -105,7 +105,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                     // bloque, y estos dos subtítulos son de cuerpo, no
                     // titulares.
                     <h3
-                      className="text-primary text-base font-medium"
+                      className="text-primary text-base font-[450]"
                       style={{ fontFamily: "var(--font-plus-jakarta)" }}
                     >
                       {block.heading}

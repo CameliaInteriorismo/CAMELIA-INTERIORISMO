@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { isNavInFlow } from "@/components/layout/navPlacement";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import { ScrollCue } from "@/components/ui/ScrollCue";
 import { PAGE_TITLE_SCALE } from "@/components/ui/typography";
 import { useHeroStore } from "@/stores/heroStore";
 import { cn } from "@/utils/cn";
@@ -104,7 +103,6 @@ export function PageHeroBanner({
           {title}
         </h1>
       </div>
-      <ScrollCue className={titleClassName} />
     </section>
   );
 }
