@@ -62,7 +62,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
             </h1>
 
             <Image
-              src="/images/logos/Favicon naranja actualizado.png"
+              src="/images/logos/trimmed/Favicon naranja actualizado.png"
               alt=""
               aria-hidden
               width={322}
