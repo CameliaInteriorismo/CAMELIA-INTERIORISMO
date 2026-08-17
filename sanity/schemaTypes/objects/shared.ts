@@ -60,10 +60,9 @@ export const link = defineType({
  * entera para una fotografía; sin ella el bloque queda sobre el color plano
  * del fondo y se lee como un error, no como una variante.
  *
- * El de /proyectos NO usa este tipo: su fondo es un patrón de rayas hecho con
- * CSS y nunca ha llevado imagen (ver ctaBannerPlain, y proyectos/CtaBanner.tsx,
- * que ni siquiera lee el campo). Por eso son dos tipos y no uno con la imagen
- * opcional: así cada variante exige exactamente lo que su diseño necesita.
+ * Lo usan Inicio, Servicios y Proyectos: los tres eligen su patrón de fondo
+ * desde el panel. Proyectos lo dibujaba con CSS y por eso iba con
+ * `ctaBannerPlain`; ya no, así que la imagen es obligatoria también ahí.
  */
 export const ctaBanner = defineType({
   name: "ctaBanner",

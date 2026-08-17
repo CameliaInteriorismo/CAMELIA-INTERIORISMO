@@ -544,8 +544,8 @@ export const proyectosPage = defineType({
       name: "cta",
       title: "Banner final",
       description:
-        "Su fondo es un patrón de rayas hecho con CSS, no una foto: por eso no tiene campo de imagen.",
-      type: "ctaBannerPlain",
+        "El patrón del fondo se elige aquí, igual que en Inicio y Servicios.",
+      type: "ctaBanner",
       group: "content",
     }),
     heroPositionField,
