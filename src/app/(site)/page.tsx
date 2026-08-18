@@ -49,7 +49,13 @@ export async function generateMetadata(): Promise<Metadata> {
     query: HOME_PAGE_QUERY,
     tags: [...TAGS],
   });
-  return metadataFrom(page?.seo, FALLBACK);
+  // La Home es la raíz del sitio y su título es la marca a secas. Devolverlo
+  // como cadena lo hacía pasar por la plantilla `%s | Camelia` del layout, que
+  // lo dejaba en "Camelia | Camelia", así que sin título propio en Sanity se
+  // omite y hereda el `default` del layout. Si alguien escribe uno en el panel
+  // se emite como en el resto de páginas y sí lleva la plantilla.
+  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK);
+  return page?.seo?.title ? { ...resto, title } : resto;
 }
 
 export default async function Home() {
@@ -60,6 +66,11 @@ export default async function Home() {
 
   return (
     <>
+      {/* La portada muestra la marca como logotipo, así que la página se
+          quedaba sin encabezado de primer nivel: la única de las ocho. Va
+          oculto a la vista y disponible para lectores de pantalla, igual que
+          el de Estudio (AboutSections.tsx). */}
+      <h1 className="sr-only">Camelia — estudio de interiorismo</h1>
       <Hero
         video={page?.heroVideoFile ?? page?.heroVideo}
         image={page?.heroImage}
