@@ -46,7 +46,7 @@ export function ServiceTabs({
     // 100px sobre el título, el mismo hueco que dejan /proyectos y /tienda
     // bajo su cabecera. La Home iba con 40 y su título quedaba pegado al
     // vídeo, fuera del ritmo del resto de secciones.
-    <section className="pb-block pt-[100px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
           <Multiline text={title} />
@@ -55,7 +55,7 @@ export function ServiceTabs({
         {/* MÓVIL: cada servicio es su propio bloque —título, su foto y, al
             abrirlo, su texto—, en vez de una foto única que cambiaba al pulsar
             una pestaña de otra columna. */}
-        <div className="mt-title space-y-6 md:hidden">
+        <div className="mt-content space-y-6 md:hidden">
           {tabs.map((tab, index) => {
             const abierto = index === openIndex;
             return (
@@ -109,14 +109,19 @@ export function ServiceTabs({
           {/* Uno solo al final de los tres: repetido dentro de cada
               desplegable, la misma llamada aparecía hasta tres veces y perdía
               fuerza. Aquí cierra el bloque de servicios. */}
-          {cta && (
-            <ButtonLink href={cta.href} className="mt-title">
-              {cta.label}
-            </ButtonLink>
-          )}
         </div>
 
-        <Grid className="mt-title max-md:hidden">
+        {/* Fuera del `space-y`: dentro, el contenedor le añadía sus 24px
+            ADEMÁS del `mt-md` del botón, y la misma separación tenía dos
+            fuentes —48px reales donde el sistema dice 24—. Aquí el único
+            responsable del aire es el botón. */}
+        {cta && (
+          <ButtonLink href={cta.href} className="mt-md md:hidden">
+            {cta.label}
+          </ButtonLink>
+        )}
+
+        <Grid className="mt-content max-md:hidden">
           <div className="col-span-12 md:col-span-6">
             {/* Mismo ancho que antes; lo que cambia es el alto: de 3/2 a cuadrado.
                 Las fotos de servicio son verticales, así que a 3/2 se les

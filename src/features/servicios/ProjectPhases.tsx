@@ -118,7 +118,7 @@ export function ProjectPhases({
   );
 
   return (
-    <section className="pt-[100px] pb-[40px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={introTitle ?? "Diseño de interiores integral"} />
@@ -127,7 +127,7 @@ export function ProjectPhases({
             "completo" y parecía un salto puesto a mano. A 56rem cabe de una
             vez, sin irse al ancho completo del contenedor. */}
         {introText && (
-          <p className="text-primary/80 mt-md max-w-4xl text-sm leading-relaxed">
+          <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
             {introText}
           </p>
         )}

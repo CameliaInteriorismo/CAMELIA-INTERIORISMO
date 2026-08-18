@@ -48,7 +48,7 @@ export function LegalPage({
 }) {
   return (
     <>
-      <section className="pt-title">
+      <section className="pt-section">
         <Container>
           <div className={LEGAL_MEASURE}>
             {/* One line, always — no editorial break here, unlike the rest

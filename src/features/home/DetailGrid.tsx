@@ -24,12 +24,12 @@ export function DetailGrid({
   title?: string;
 }) {
   return (
-    <section className="py-[60px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary max-w-2xl text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
-        <div className="mt-title grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="mt-content grid grid-cols-1 gap-8 md:grid-cols-2">
           {projects.map((project) => {
             const image = imageProps(project.image);
             if (!image) return null;

@@ -303,7 +303,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                           <p key={p}>{p}</p>
                         ))}
                       </div>
-                      <Button onClick={next} className="mt-title">
+                      <Button onClick={next} className="mt-block">
                         {step.cta}
                       </Button>
                     </>
@@ -320,7 +320,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                           composition in every mockup: copy set left, the
                           pair of buttons pushed to the far right of the
                           text block with 60px of air above them. */}
-                      <div className="mt-title flex max-w-[30rem] items-center justify-end gap-4">
+                      <div className="mt-block flex max-w-[30rem] items-center justify-end gap-4">
                         <Button
                           onClick={() => {
                             setError(undefined);
@@ -342,7 +342,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
             {/* 6 columns, not 5. The reference gives the photo 545px of a
                 1440 page — 48.7% of the container — where 5/12 left it at
                 442px (40%), noticeably smaller than drawn. */}
-            <div className="mt-title col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
+            <div className="mt-block col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
               {/* One height for every step of the form, never shorter than
                   the copy beside it.
 

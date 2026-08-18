@@ -53,7 +53,7 @@ export function PartnerLogos({ partners }: { partners: Partner[] }) {
   return (
     // Full-bleed rather than inside Container: the band runs edge to edge
     // so the loop never appears to start or stop at a margin.
-    <section className="overflow-hidden py-[100px]">
+    <section className="pt-section overflow-hidden">
       {/* 70s for ten logos — a touch more momentum than the original 90s
           so the travel feels natural, still slow enough to read each mark
           as it drifts past. */}

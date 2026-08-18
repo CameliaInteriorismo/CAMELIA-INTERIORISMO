@@ -47,7 +47,7 @@ export function AccompanimentSection({
     // pt-[80px]: ProjectPhases' last card already ends with its own 40px
     // trailing line (see ProjectPhases.tsx), so 80 + 40 = the agreed 120px
     // total gap from "Cada proyecto, a medida" to this heading.
-    <section className="pt-[80px] pb-[120px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
@@ -56,7 +56,7 @@ export function AccompanimentSection({
         {/* 32px en vez de los 60px del ritmo título→contenido: las dos frases
             se leen como una sola idea encadenada, y a 60px la segunda se
             desprendía de la primera. */}
-        <Grid className="mt-md lg:items-stretch">
+        <Grid className="mt-content lg:items-stretch">
           <div className="col-span-12 lg:col-span-5">
             {/* Un escalón más grande (24px) para que gane peso sin acercarse
                 al h2 de 36px que la encabeza. */}
@@ -80,7 +80,7 @@ export function AccompanimentSection({
                   desplegado el suyo, así que la lista se acorta con dos fichas
                   y se alarga con seis sin que cambie ni este margen ni el
                   ritmo entre ellas. Ninguna altura fija. */}
-            <div className="border-primary/15 mt-title border-t">
+            <div className="border-primary/15 mt-content border-t">
               {items.map((item, index) => {
                 const open = index === openIndex;
                 return (

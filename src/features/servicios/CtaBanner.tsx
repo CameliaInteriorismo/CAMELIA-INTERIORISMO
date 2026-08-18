@@ -16,7 +16,11 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
 
   return (
     <section
-      className="bg-auxiliary py-16"
+      // El aire exterior de arriba vive aquí. Abajo lo pone el `pt-section` de
+      // la sección siguiente, así que cada lado tiene UNA sola fuente y nada se
+      // suma. El `py` es otra cosa: es el padding INTERNO que separa el
+      // recuadro crema del borde de la franja de color, y se queda como está.
+      className="bg-auxiliary mt-section py-16"
       style={{
         backgroundImage: background ? `url('${background}')` : undefined,
         backgroundSize: "cover",
@@ -29,7 +33,7 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
             vacío enorme entre la frase y él. Estrechado y centrado, el texto
             —que ya va a `max-w-xl`— y el botón casi llenan la fila, así que el
             hueco se cierra solo sin tocar tamaños ni tipografía. */}
-        <div className="bg-background mx-auto flex max-w-4xl flex-col items-start gap-8 px-10 py-14 md:flex-row md:items-center md:justify-between">
+        <div className="bg-background gap-md mx-auto flex max-w-4xl flex-col items-start px-10 py-14 md:flex-row md:items-center md:justify-between">
           <div>
             {/* El banner va en mayúsculas por diseño, y lo decide aquí: es lo
                 único de la web que las lleva por CSS. Los héroes y los títulos

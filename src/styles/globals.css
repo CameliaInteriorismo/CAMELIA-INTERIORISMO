@@ -11,10 +11,28 @@
   --grid-margin: 160px;
   --grid-gutter: 32px;
 
-  --space-block: 40px;
-  --space-title: 60px;
+  /* Escala de espaciado: 8 / 24 / 32 / 40 / 48 / 64. Cada escalón dice para
+     QUÉ sirve, no cuánto mide.
+
+       xs       subtítulo y su párrafo, eyebrow y su título — la misma idea
+                (no se expone como utilidad: `xs` ya es un tamaño de Tailwind
+                y declararlo en @theme le robaba el valor a `max-w-xs`, que
+                pasaba de 20rem a 8px y estrangulaba la columna del pie)
+       sm       texto y texto, elemento y elemento
+       md       cuerpo y botón, imagen y texto
+       content  título de SECCIÓN y su contenido
+       block    bloque y bloque
+       section  una sección y la siguiente
+
+     La reducción va por media query, no repartida por los componentes: el
+     sistema manda desde aquí. `sm` no baja nunca — que un título se lea junto
+     a su texto no depende del ancho de la pantalla. */
+  --space-xs: 8px;
   --space-sm: 24px;
   --space-md: 32px;
+  --space-content: 40px;
+  --space-block: 48px;
+  --space-section: 100px;
 
   /* La barra de navegación, desglosada: la fila y la línea que la cierra.
      `--nav-h` es el alto REAL de la barra, y es la única referencia que usan
@@ -28,6 +46,22 @@
   --nav-h: calc(var(--nav-row) + var(--nav-rule));
 }
 
+@media (max-width: 1023px) {
+  :root {
+    --space-block: 40px;
+    --space-section: 64px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --space-md: 24px;
+    --space-content: 32px;
+    --space-block: 32px;
+    --space-section: 48px;
+  }
+}
+
 @theme inline {
   --color-primary: var(--color-primary);
   --color-background: var(--color-background);
@@ -37,10 +71,11 @@
   --font-title: var(--font-arizona-flare);
   --font-sans: var(--font-plus-jakarta);
 
-  --spacing-block: var(--space-block);
-  --spacing-title: var(--space-title);
   --spacing-sm: var(--space-sm);
   --spacing-md: var(--space-md);
+  --spacing-content: var(--space-content);
+  --spacing-block: var(--space-block);
+  --spacing-section: var(--space-section);
 }
 
 body {

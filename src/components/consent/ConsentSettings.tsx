@@ -218,7 +218,7 @@ export function ConsentSettings({
                 })}
               </ul>
 
-              <div className="mt-title flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <div className="mt-block flex flex-col gap-3 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={onClose}

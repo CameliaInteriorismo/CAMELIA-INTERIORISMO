@@ -26,7 +26,7 @@ export function StudioMap({
 }) {
   const map = imageProps(image);
   return (
-    <section className="pt-[100px] pb-[100px]">
+    <section className="pt-section">
       <Container>
         <Grid className="items-start">
           <div className="col-span-12 md:col-span-6">
@@ -39,7 +39,13 @@ export function StudioMap({
               <Multiline text={title} />
             </h2>
           </div>
-          <div className="mt-block col-span-12 md:col-span-5 md:col-start-8 md:mt-0 md:text-right">
+          {/* Sin `mt-block`: apilado en móvil el hueco lo pone ya el `row-gap`
+              de la rejilla, y el margen se le sumaba encima —32 + 32 = 64—,
+              el doble de lo que pide el sistema para título → contenido. Es la
+              misma acumulación de dos fuentes que se quitó en las secciones.
+              Desde `md` las dos columnas van en paralelo y no hay hueco
+              vertical que reservar, así que el `md:mt-0` tampoco hace falta. */}
+          <div className="col-span-12 md:col-span-5 md:col-start-8 md:text-right">
             <p className="text-primary text-lg">{lead}</p>
             <p className="text-primary/75 mt-sm text-sm leading-relaxed">
               {text}
@@ -47,7 +53,7 @@ export function StudioMap({
           </div>
         </Grid>
 
-        <div className="mt-title relative">
+        <div className="mt-block relative">
           {/* Native ratio of the supplied artwork, so the map is never
               stretched or cropped away from the framing it was drawn at. */}
           {/* Casi 2.2/1 dejaba el mapa en una tira y el pin sin contexto.

@@ -68,7 +68,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
               width={322}
               height={270}
               priority
-              className="mt-title mx-auto h-6 w-auto"
+              className="mt-block mx-auto h-6 w-auto"
             />
 
             <p className="text-secondary/90 mt-block text-sm leading-relaxed">
@@ -77,7 +77,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
 
             <Link
               href="/"
-              className="text-secondary border-secondary/40 hover:border-secondary mt-title mx-auto block w-fit border-b pb-1 text-sm whitespace-nowrap transition-colors duration-300"
+              className="text-secondary border-secondary/40 hover:border-secondary mt-block mx-auto block w-fit border-b pb-1 text-sm whitespace-nowrap transition-colors duration-300"
             >
               {content?.backLabel}
             </Link>

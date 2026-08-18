@@ -81,13 +81,13 @@ function bodyComponents(title: string): PortableTextComponents {
     },
     types: {
       galleryPair: ({ value }) => (
-        <div className="mt-title grid gap-8 md:grid-cols-2">
+        <div className="mt-block grid gap-8 md:grid-cols-2">
           <PairImage source={value?.left} label={`${title} — foto 1`} />
           <PairImage source={value?.right} label={`${title} — foto 2`} />
         </div>
       ),
       gallerySingle: ({ value }) => (
-        <div className="mt-title">
+        <div className="mt-block">
           <PairImage source={value?.image} label={`${title} — foto`} />
         </div>
       ),
@@ -107,7 +107,7 @@ export function PostArticle({
   const lead = imageProps(post.leadImage);
 
   return (
-    <article className="pt-title pb-[100px]">
+    <article className="pt-section">
       <Container>
         {/* One step below the hero scale — see ARTICLE_TITLE_SCALE. */}
         <h1 className={cn("font-title text-primary", ARTICLE_TITLE_SCALE)}>
@@ -122,7 +122,7 @@ export function PostArticle({
 
         {/* Lead image runs the full content width at roughly 2:1, per the
             reference — wider and shallower than the gallery pairs below. */}
-        <div className="mt-title relative aspect-[2/1] w-full overflow-hidden">
+        <div className="mt-block relative aspect-[2/1] w-full overflow-hidden">
           {lead ? (
             <Image
               src={lead.src}
@@ -146,7 +146,7 @@ export function PostArticle({
         </div>
 
         {post.subtitle && (
-          <h2 className="font-title text-primary mt-title text-2xl md:text-3xl">
+          <h2 className="font-title text-primary mt-block text-2xl md:text-3xl">
             {post.subtitle}
           </h2>
         )}
@@ -165,7 +165,7 @@ export function PostArticle({
         {/* Apila en móvil: en una sola fila, un título largo de artículo
             empujaba al otro control y se cortaban. Desde sm vuelven a la fila
             de siempre. */}
-        <nav className="mt-title flex flex-col items-stretch gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <nav className="mt-block flex flex-col items-stretch gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <ButtonLink
             href={previous ? `/blog/${previous.slug}` : "/blog"}
             className="gap-2"

@@ -58,7 +58,7 @@ export function ContactCards({
     cards.map((card) => [card.kind, card]),
   ) as Partial<Record<ContactCardData["kind"], ContactCardData>>;
   return (
-    <section className="pt-title">
+    <section className="pt-section">
       <Container>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <Card title={byKind.email?.title ?? ""}>

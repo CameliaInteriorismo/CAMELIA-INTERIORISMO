@@ -15,7 +15,7 @@ export type PostCard = {
 
 export function PostList({ posts }: { posts: PostCard[] }) {
   return (
-    <section className="pt-title pb-[100px]">
+    <section className="pt-section">
       <Container>
         {/* One hairline under every row, including the last — matching the
             reference, where the rule closes the list rather than only
@@ -27,7 +27,7 @@ export function PostList({ posts }: { posts: PostCard[] }) {
               <Link
                 key={post._id}
                 href={`/blog/${post.slug}`}
-                className="group py-title block"
+                className="group py-block block"
               >
                 <Grid className="items-center">
                   <div className="col-span-12 md:col-span-6">

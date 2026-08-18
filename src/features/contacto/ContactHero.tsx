@@ -22,7 +22,7 @@ export function ContactHero({
 }) {
   const photo = imageProps(image);
   return (
-    <section className="pt-title">
+    <section className="pt-section">
       <Container>
         {/* A 2/1 la portada salía como una franja aplastada en un móvil.
             Bajo md pasa a 4/5 y gana presencia; desde md vuelve al 2/1 de

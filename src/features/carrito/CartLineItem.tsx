@@ -71,7 +71,7 @@ export function CartLineItem({
           </p>
         )}
 
-        <div className="mt-title flex flex-wrap items-start gap-10">
+        <div className="mt-block flex flex-wrap items-start gap-10">
           <div>
             <p className="text-primary mb-2 text-sm">
               {copy.quantityLabel ?? "Cantidad"}

@@ -12,13 +12,13 @@ export function FaqSection({
   title?: string;
 }) {
   return (
-    <section className="pt-[120px] pb-[120px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 
-        <Accordion items={items} className="mt-title" />
+        <Accordion items={items} className="mt-content" />
       </Container>
     </section>
   );

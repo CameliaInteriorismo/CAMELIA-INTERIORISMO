@@ -117,7 +117,7 @@ export function ProcesoTabs({
   const commonHeight = isDesktop && tallest ? tallest : undefined;
 
   return (
-    <section className="pt-[80px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
           <Multiline text={title} />
@@ -128,13 +128,13 @@ export function ProcesoTabs({
           activeIndex={activeIndex}
           onChange={setActiveIndex}
           layoutId="proceso-tab-underline"
-          className="mt-title"
+          className="mt-content"
         />
 
         {/* `items-stretch` y no `items-start`: la columna de la foto tiene que
             llegar hasta abajo para poder rellenar el alto común. El texto y la
             foto siguen empezando arriba, que es lo que se ve. */}
-        <Grid className="mt-title md:items-stretch">
+        <Grid className="mt-sm md:items-stretch">
           <div
             ref={columnRef}
             className="relative col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-start"

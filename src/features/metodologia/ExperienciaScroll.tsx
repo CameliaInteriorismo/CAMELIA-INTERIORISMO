@@ -156,12 +156,12 @@ export function ExperienciaScroll({
   });
 
   return (
-    <section className="pt-[120px] pb-[100px]">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
-        <p className="text-primary/75 mt-sm text-center text-sm leading-relaxed">
+        <p className="text-primary/75 mt-content text-center text-sm leading-relaxed">
           Queremos que te sientas acompañado en cada fase del proyecto,
           entendiendo lo que ocurre en todo momento y viviendo el proceso con
           tranquilidad y confianza. Sabemos que diseñar un espacio implica

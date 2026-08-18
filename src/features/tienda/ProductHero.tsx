@@ -44,7 +44,7 @@ export function ProductHero({
   }
 
   return (
-    <section className="pt-title">
+    <section className="pt-section">
       <Container>
         {/* `items-stretch` para que la foto llegue justo hasta donde llega la
             columna de al lado. */}

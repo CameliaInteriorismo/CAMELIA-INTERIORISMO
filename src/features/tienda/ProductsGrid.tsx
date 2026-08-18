@@ -97,7 +97,7 @@ export function ProductsGrid({
   }, [all, category, sort]);
 
   return (
-    <section className="pt-[100px] pb-[100px]">
+    <section className="pt-section">
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-6">
           <h2 className="font-title text-primary text-3xl md:text-4xl">
@@ -119,7 +119,7 @@ export function ProductsGrid({
           </div>
         </div>
 
-        <div className="mt-title grid grid-cols-1 gap-8 sm:grid-cols-2">
+        <div className="mt-block grid grid-cols-1 gap-8 sm:grid-cols-2">
           {products.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

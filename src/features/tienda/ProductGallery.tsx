@@ -10,7 +10,7 @@ export function ProductGallery({ product }: { product: Product }) {
   if (!product.gallery || product.gallery.length === 0) return null;
 
   return (
-    <section className="mt-title">
+    <section className="mt-block">
       <Container>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {product.gallery.map((source, index) => {

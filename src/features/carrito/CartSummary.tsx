@@ -23,7 +23,7 @@ export function CartSummary({
 
   if (items.length === 0) {
     return (
-      <section className="pt-title pb-[100px]">
+      <section className="pt-section">
         <Container>
           <h1 className="font-title text-primary text-3xl md:text-4xl">
             Resumen del pedido
@@ -40,7 +40,7 @@ export function CartSummary({
   }
 
   return (
-    <section className="pt-title pb-[100px]">
+    <section className="pt-section">
       <Container>
         <h1 className="font-title text-primary text-3xl md:text-4xl">
           {copy.title ?? "Resumen del pedido"}
@@ -48,7 +48,7 @@ export function CartSummary({
 
         {/* 72px por línea en vez de 60: con la foto a ~340px las filas
             necesitan más aire entre sí para no leerse comprimidas. */}
-        <div className="divide-primary/15 mt-title divide-y">
+        <div className="divide-primary/15 mt-block divide-y">
           {items.map((item) => (
             <div key={item.id} className="py-[72px] first:pt-0 last:pb-0">
               <CartLineItem

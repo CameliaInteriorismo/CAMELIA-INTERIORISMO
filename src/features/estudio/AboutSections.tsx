@@ -97,7 +97,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
     // porque la barra iba flotando y había que reservarle su alto a mano;
     // ahora ocupa su sitio en el flujo, así que sumarlos otra vez dejaría el
     // doble de hueco. El aire visible sobre el primer bloque es el mismo.
-    <section className="pt-block pb-[100px]">
+    <section className="pt-block">
       <Container>
         <h1 className="sr-only">Estudio</h1>
         {/* MÓVIL: las tres secciones apiladas. La línea de la izquierda es
@@ -213,7 +213,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 fragmentos sueltos en vez de como una unidad. La distancia
                 entre "Nuestra historia" y "Nuestra filosofía" no se toca: es
                 la que hace ver que empieza otra parte. */}
-            <div className="text-primary/80 mt-title text-sm leading-relaxed">
+            <div className="text-primary/80 mt-content text-sm leading-relaxed">
               {blocks.map((block, index) => (
                 <div
                   key={block._key ?? index}

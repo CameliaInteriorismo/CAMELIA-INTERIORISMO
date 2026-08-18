@@ -165,13 +165,13 @@ export function ContactForm({
   }
 
   return (
-    <section className="pt-title pb-[100px]">
+    <section className="pt-section">
       <Container>
         <h1 className="font-title text-primary text-3xl md:text-4xl">
           {copy.title ?? "Información de contacto"}
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-title">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-block">
           <Grid>
             <div className="col-span-12 md:col-span-5">
               <h2 className="font-title text-primary text-2xl">
@@ -204,7 +204,7 @@ export function ContactForm({
               </div>
             </div>
 
-            <div className="mt-title col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
+            <div className="mt-block col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
               <DeliveryModeToggle
                 value={deliveryMode ?? null}
                 onChange={(mode) =>
@@ -288,7 +288,7 @@ export function ContactForm({
             </div>
           </Grid>
 
-          <Button type="submit" className="mt-title w-full">
+          <Button type="submit" className="mt-block w-full">
             {copy.submitLabel ?? "TRAMITAR PEDIDO"}
           </Button>
         </form>

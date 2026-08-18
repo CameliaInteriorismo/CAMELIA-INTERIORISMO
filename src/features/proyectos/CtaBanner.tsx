@@ -12,7 +12,15 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
 
   return (
     <section
-      className="bg-auxiliary mb-[120px] py-20"
+      // El `py` es aire INTERNO: la franja de color necesita margen alrededor
+      // del recuadro crema. El `mb-[120px]` que había, en cambio, era
+      // separación entre secciones metida por margen —justo la acumulación que
+      // el sistema elimina—, así que se va: el aire lo pone la siguiente.
+      // El aire exterior de arriba vive aquí. Abajo lo pone el `pt-section` de
+      // la sección siguiente, así que cada lado tiene UNA sola fuente y nada se
+      // suma. El `py` es otra cosa: es el padding INTERNO que separa el
+      // recuadro crema del borde de la franja de color, y se queda como está.
+      className="bg-auxiliary mt-section py-20"
       style={{
         backgroundImage: background ? `url('${background}')` : undefined,
         backgroundSize: "cover",
@@ -20,7 +28,7 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
       }}
     >
       <Container>
-        <div className="bg-background flex flex-col items-center gap-8 px-10 py-16 text-center">
+        <div className="bg-background gap-md flex flex-col items-center px-10 py-16 text-center">
           {/* El banner va en mayúsculas por diseño, y lo decide aquí: es lo
                 único de la web que las lleva por CSS. Los héroes y los títulos
                 de contenido se leen tal cual se escriben en el panel. */}

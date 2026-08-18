@@ -37,13 +37,13 @@ export function Testimonials({
   );
 
   return (
-    <section className="py-block">
+    <section className="pt-section">
       <Container>
         <h2 className="font-title text-primary text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 
-        <div className="mt-title grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="mt-content grid grid-cols-1 gap-8 md:grid-cols-3">
           {visible.map((testimonial, i) => (
             <div key={i} className="border-primary/15 border-t pt-6">
               <div className="text-primary flex gap-5">

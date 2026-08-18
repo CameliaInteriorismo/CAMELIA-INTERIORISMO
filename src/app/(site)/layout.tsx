@@ -52,7 +52,13 @@ export default async function SiteLayout({
         menuLabel={settings.menuLabel}
         cartLabel={settings.cartLabel}
       />
-      <main className="flex-1">{children}</main>
+      {/* El aire contra el pie se pone AQUÍ y solo aquí. Antes cada sección
+          llevaba su propio `pb`, que se sumaba al `pt` de la siguiente y dejaba
+          huecos de hasta 474px medidos entre el último píxel de una y el primero
+          de la otra. Ahora la distancia entre secciones la marca únicamente el
+          `pt-section` de la de abajo, así que el número declarado es el que se
+          ve. */}
+      <main className="pb-section flex-1">{children}</main>
       <Footer
         data={{
           tagline: settings.footerTagline,

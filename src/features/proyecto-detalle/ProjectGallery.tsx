@@ -67,7 +67,7 @@ export function ProjectGallery({ blocks }: { blocks?: ProjectGalleryBlock[] }) {
   if (list.length === 0) return null;
 
   return (
-    <section className="mt-block pb-[100px]">
+    <section className="mt-block">
       <Container className="space-y-8">
         {list.map((block, i) => {
           const hayVerticales = !!(block.vertical1 || block.vertical2);

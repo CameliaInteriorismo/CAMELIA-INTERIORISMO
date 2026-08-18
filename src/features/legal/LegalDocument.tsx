@@ -175,7 +175,7 @@ export function LegalDocument({
     // 100px hero-to-content one: at 40px the legal H1 heads its document
     // rather than standing off from it as a hero would. The closing 100px
     // before the footer is unchanged, as is the 100px between clauses.
-    <section className="pt-title pb-[100px]">
+    <section className="pt-section">
       <Container>
         {/* Same centred measure as the title above it (see LEGAL_MEASURE):
             nothing on a legal page breaks the column, so the document reads

@@ -19,7 +19,7 @@ export type ProjectCard = {
  */
 export function ProjectsGrid({ projects }: { projects: ProjectCard[] }) {
   return (
-    <section className="pt-title pb-[100px]">
+    <section className="pt-section">
       <Container>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {projects.map((project) => {
