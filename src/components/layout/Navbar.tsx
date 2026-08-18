@@ -204,9 +204,13 @@ export function Navbar({
                     )}
                   </Link>
                 )}
-                {/* TODO(mobile): no hay frame de Figma para el navbar en mobile;
-                  el CTA se oculta bajo md y queda accesible vía "Contacto"
-                  en el menú — ajustar si llega una referencia mobile real. */}
+                {/* Bajo md el CTA sale de la barra, que en móvil ya va llena
+                  con menú, logotipo y carrito. No desaparece: el menú
+                  hamburguesa lo recibe por prop y lo pinta al cierre de su
+                  navegación. Antes decía que quedaba accesible vía
+                  "Contacto", y era falso: ese enlace lleva a /contacto y el
+                  CTA a /cuentanos-tu-proyecto, que en móvil se quedaba sin
+                  ninguna entrada desde la navegación. */}
                 {!isShop && (
                   <div className="hidden md:block">
                     {/* Goes to the project brief flow, not the Contacto
@@ -244,6 +248,7 @@ export function Navbar({
           <HamburgerMenu
             key="menu-panel"
             links={navLinks}
+            cta={cta}
             socials={socials}
             onNavigate={() => setOpen(false)}
             onClose={() => setOpen(false)}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/layout/Container";
+import { ButtonLink } from "@/components/ui/Button";
 import { imageProps } from "@/sanity/lib/image";
 import type { LinkData } from "@/features/shared/types";
 import type { Social } from "@/features/contacto/types";
@@ -55,11 +56,14 @@ const itemVariants: Variants = {
 
 export function HamburgerMenu({
   links,
+  cta,
   socials,
   onNavigate,
   onClose,
 }: {
   links: LinkData[];
+  /** El mismo `siteSettings.headerCta` que la barra: aquí no se duplica. */
+  cta?: LinkData;
   socials: Social[];
   onNavigate: () => void;
   onClose: () => void;
@@ -178,6 +182,39 @@ export function HamburgerMenu({
                 </Link>
               </motion.div>
             ))}
+
+            {/* Bajo md el CTA sale de la barra superior (ver Navbar), y sin
+                esto /cuentanos-tu-proyecto se quedaba sin ninguna entrada en
+                móvil. Va al cierre de la navegación, donde la lectura
+                termina. Comparte el índice del cascadeo con los iconos
+                sociales para no retrasarlos en escritorio, donde no se pinta.
+
+                No lleva `onClick`: el panel entero cierra por el `onClick`
+                de su raíz, y el clic del enlace burbujea hasta allí — el
+                mismo camino que ya usan los enlaces de arriba. */}
+            {cta && (
+              <motion.div
+                {...item(links.length + 1)}
+                className="mt-sm md:hidden"
+              >
+                <ButtonLink
+                  href={cta.href}
+                  // Crema con el texto en vino: sobre el panel vino, el
+                  // `bg-primary` de baseStyles se fundía con el fondo y el
+                  // botón se leía como una línea de texto más.
+                  //
+                  // Los `!` no son un estilo extra, son lo que hace que
+                  // ESTOS dos colores ganen: el `cn` del proyecto (ver
+                  // utils/cn.ts) concatena sin resolver conflictos, así que
+                  // conviven con los de base y decide el orden del CSS, no
+                  // el del atributo. Sin ellos el fondo se quedaba en vino
+                  // —medido: rgb(63,14,26) sobre rgb(63,14,26)—.
+                  className="bg-background! text-primary!"
+                >
+                  {cta.label}
+                </ButtonLink>
+              </motion.div>
+            )}
           </nav>
         </Container>
 
