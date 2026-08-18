@@ -398,7 +398,12 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       aria-hidden
                       fill
                       priority
-                      className="object-cover"
+                      // Apilada, la caja es apaisada y la foto vertical, así
+                      // que el recorte centrado se quedaba con la franja
+                      // media y perdía el motivo de arriba. `max-md:` lo
+                      // limita al móvil: desde md la caja ya acompaña a la
+                      // foto y el encuadre centrado de siempre sigue igual.
+                      className="object-cover max-md:object-top"
                       sizes="(min-width: 768px) 50vw, 100vw"
                     />
                   </motion.div>
