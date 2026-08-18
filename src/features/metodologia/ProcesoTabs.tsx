@@ -46,12 +46,13 @@ const numbered = (steps: ProcessStep[]) =>
  * alta. Al ser el mismo componente, no puede quedar una versión desfasada de
  * la otra: cualquier cambio de tipografía o de aire afecta a las dos.
  */
-function StepText({ step, number }: { step: ProcessStep; number: number }) {
+function StepText({ step }: { step: ProcessStep }) {
   return (
     <div>
-      <h3 className="font-title text-primary text-2xl">
-        {number}. {step.title}
-      </h3>
+      {/* Sin número: la barra de pestañas ya numera las fases (ver
+          `numbered`), y repetirlo aquí lo decía dos veces en la misma
+          pantalla. */}
+      <h3 className="font-title text-primary text-2xl">{step.title}</h3>
       <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
         {(step.paragraphs ?? []).map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
@@ -134,13 +135,13 @@ export function ProcesoTabs({
         {/* `items-stretch` y no `items-start`: la columna de la foto tiene que
             llegar hasta abajo para poder rellenar el alto común. El texto y la
             foto siguen empezando arriba, que es lo que se ve. */}
-        <Grid className="mt-sm md:items-stretch">
+        <Grid className="mt-content md:items-stretch">
           <div
             ref={columnRef}
             className="relative col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-start"
             style={commonHeight ? { minHeight: commonHeight } : undefined}
           >
-            {current && <StepText step={current} number={activeIndex + 1} />}
+            {current && <StepText step={current} />}
 
             {/* Las cuatro fases a la vez, sin ocupar sitio ni salir en el
                 lector de pantalla: solo están para que el navegador nos diga
@@ -149,9 +150,9 @@ export function ProcesoTabs({
               aria-hidden
               className="pointer-events-none invisible absolute inset-x-0 top-0"
             >
-              {steps.map((step, index) => (
+              {steps.map((step) => (
                 <div key={step._key} data-step-measure>
-                  <StepText step={step} number={index + 1} />
+                  <StepText step={step} />
                 </div>
               ))}
             </div>
