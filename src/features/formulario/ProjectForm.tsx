@@ -342,7 +342,17 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
             {/* 6 columns, not 5. The reference gives the photo 545px of a
                 1440 page — 48.7% of the container — where 5/12 left it at
                 442px (40%), noticeably smaller than drawn. */}
-            <div className="mt-block col-span-12 md:col-span-6 md:col-start-7 md:mt-0">
+            {/* Apilado, la foto va DELANTE del texto: abría la página con un
+                bloque de copia y la imagen quedaba fuera de pantalla, sin
+                anunciar de qué va el formulario. `max-md:` lo limita al
+                apilado — desde `md` el orden lo sigue marcando
+                `md:col-start-7` y la composición no se toca.
+
+                Sale también el `mt-block`: con la foto arriba ese margen se
+                colaba entre la cabecera y la imagen, y la separación con el
+                texto ya la pone el `gap-y-8` de la rejilla. Antes se sumaban
+                los dos y daban 64px donde el sistema pide 32. */}
+            <div className="col-span-12 max-md:order-first md:col-span-6 md:col-start-7">
               {/* One height for every step of the form, never shorter than
                   the copy beside it.
 
@@ -359,7 +369,12 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
 
                   The aspect ratio only governs the stacked mobile layout,
                   where there is no second column to match. */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden md:aspect-auto md:h-full md:min-h-[810px]">
+              {/* En móvil pasa de 3/4 a 3/2: a 3/4 la foto medía unos 490px
+                  de alto y se comía la pantalla entera antes de llegar a la
+                  primera pregunta. Apaisada acompaña sin tapar el
+                  formulario. `object-cover` recorta, nunca deforma, y desde
+                  `md` sigue mandando `md:aspect-auto`. */}
+              <div className="relative aspect-[3/2] w-full overflow-hidden md:aspect-auto md:h-full md:min-h-[810px]">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={step.image}
