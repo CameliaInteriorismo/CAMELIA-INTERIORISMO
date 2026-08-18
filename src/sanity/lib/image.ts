@@ -65,7 +65,12 @@ export function imageProps(source: SanityImageSource | undefined | null) {
     width: dimensions?.width ?? 1600,
     height: dimensions?.height ?? 1200,
     blurDataURL: source.asset.metadata?.lqip,
-    alt: source.alt ?? "",
+    // Un guion es la convención del panel para "decorativa" (ver el campo
+    // `alt` de imageWithAlt). Se traduce aquí, en el único sitio por el que
+    // pasan todas las imágenes de Sanity, porque en el HTML tiene que llegar
+    // como cadena vacía: un lector de pantalla anuncia `alt="-"` como
+    // contenido, que es justo lo contrario de lo que se quiso marcar.
+    alt: source.alt?.trim() === "-" ? "" : (source.alt ?? ""),
     objectPosition: objectPositionFrom(source),
   };
 }

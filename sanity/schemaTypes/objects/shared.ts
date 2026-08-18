@@ -18,7 +18,7 @@ export const imageWithAlt = defineType({
       title: "Texto alternativo",
       type: "string",
       description:
-        "Describe lo que se ve, para quien no puede verla. Si es puramente decorativa, escribe un guion.",
+        "Describe lo que se ve, para quien no puede verla. Si es puramente decorativa —un fondo, una textura, algo que no aporta información— escribe un guion: la web lo publica como texto alternativo vacío para que los lectores de pantalla la salten.",
       validation: (rule) => rule.required(),
     }),
   ],
