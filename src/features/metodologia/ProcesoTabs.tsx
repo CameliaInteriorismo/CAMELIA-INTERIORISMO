@@ -57,9 +57,7 @@ function StepText({ step }: { step: ProcessStep }) {
       {/* En móvil el punto numerado es el elemento de navegación y manda:
           esta frase queda por debajo, como recalco. Desde `md` la barra
           horizontal ya hace de navegación y el título recupera su escala. */}
-      <h3 className="font-title text-primary text-[28px] md:text-2xl">
-        {step.title}
-      </h3>
+      <h3 className="font-title text-primary text-2xl">{step.title}</h3>
       <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
         {(step.paragraphs ?? []).map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
@@ -210,7 +208,7 @@ export function ProcesoTabs({
                   onClick={() => setActiveIndex(index)}
                   aria-expanded={abierta}
                   className={cn(
-                    "font-title py-content flex w-full items-center text-left text-[22px] transition-colors duration-300",
+                    "font-title py-content flex w-full items-center text-left text-xl transition-colors duration-300",
                     abierta ? "text-primary" : "text-primary/50",
                   )}
                 >

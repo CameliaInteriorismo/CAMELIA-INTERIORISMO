@@ -123,7 +123,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
               <div
                 key={seccion._key}
                 data-seccion
-                className={i > 0 ? "mt-[100px]" : ""}
+                className={i > 0 ? "mt-section" : ""}
               >
                 <h2
                   className={cn(

@@ -36,7 +36,7 @@ export function PostList({ posts }: { posts: PostCard[] }) {
                     <p className="font-title text-primary/30 text-2xl">
                       {String(index + 1).padStart(2, "0")}
                     </p>
-                    <h2 className="font-title text-primary mt-block text-3xl md:text-4xl">
+                    <h2 className="font-title text-primary mt-block text-2xl md:text-3xl">
                       {(post.titleLines?.length
                         ? post.titleLines
                         : [post.title]

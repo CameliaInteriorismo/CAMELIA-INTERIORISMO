@@ -78,10 +78,10 @@ export default async function ProductPage({
   if (!product) notFound();
 
   return (
-    // Single closing pb here (rather than on each section) means the gap
-    // before the footer is always exactly 100px regardless of which of
-    // Gallery/Info/Related actually render for this product.
-    <div className="pb-[100px]">
+    // Sin `pb` propio: el `pb-section` del <main> de (site) ya pone el
+    // colchón contra el pie, y sumar aquí otros 100px fijos lo duplicaba —
+    // además de no bajar a 64/48 en tablet y móvil como el resto.
+    <div>
       <ProductHero product={product} copy={copy ?? {}} />
       <ProductGallery product={product} />
       <RelatedProducts product={product} copy={copy ?? {}} />

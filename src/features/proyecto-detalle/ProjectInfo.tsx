@@ -59,7 +59,7 @@ export function ProjectInfo({
   }, [location, services]);
 
   return (
-    <section className="mt-[100px]">
+    <section className="mt-section">
       <Container>
         <div className="space-y-3 text-base sm:text-lg md:text-xl">
           <p

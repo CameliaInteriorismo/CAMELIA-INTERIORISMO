@@ -50,7 +50,7 @@ export function CartSummary({
             necesitan más aire entre sí para no leerse comprimidas. */}
         <div className="divide-primary/15 mt-block divide-y">
           {items.map((item) => (
-            <div key={item.id} className="py-[72px] first:pt-0 last:pb-0">
+            <div key={item.id} className="py-block first:pt-0 last:pb-0">
               <CartLineItem
                 item={item}
                 product={products.find((p) => p.slug === item.slug)}
@@ -65,7 +65,7 @@ export function CartSummary({
             un bloque tan ancho. */}
         <ButtonLink
           href="/carrito/confirmacion"
-          className="mt-[72px] w-full md:h-14"
+          className="mt-block w-full md:h-14"
         >
           {copy.continueLabel ?? "CONTINUAR"}
         </ButtonLink>

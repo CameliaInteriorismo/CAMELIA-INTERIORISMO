@@ -21,7 +21,7 @@ export function DeliveryModeToggle({
 }) {
   return (
     <div>
-      <h2 className="font-title text-primary text-2xl">
+      <h2 className="font-title text-primary text-3xl md:text-4xl">
         {copy.title ?? "Método de entrega"}
       </h2>
       <div className="mt-block">

@@ -174,7 +174,7 @@ export function ContactForm({
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-block">
           <Grid>
             <div className="col-span-12 md:col-span-5">
-              <h2 className="font-title text-primary text-2xl">
+              <h2 className="font-title text-primary text-3xl md:text-4xl">
                 {copy.orderDataTitle ?? "Datos del pedido"}
               </h2>
 

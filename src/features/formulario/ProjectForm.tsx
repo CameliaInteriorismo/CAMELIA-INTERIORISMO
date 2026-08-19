@@ -256,7 +256,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
         </Container>
       </header>
 
-      <main className="flex flex-1 items-center py-[100px]">
+      <main className="py-section flex flex-1 items-center">
         <Container className="w-full">
           {/* Stretch, not centre: the row's height is set by the photo (see
               its min-h below) and the copy is centred against it by its own

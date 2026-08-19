@@ -189,7 +189,7 @@ export function LegalDocument({
               // Each clause is its own block of the page — a full 100px
               // of air between them, so scrolling lands on one at a time.
               // The lead paragraphs above count as a block of their own.
-              className={index === 0 && !lead ? undefined : "mt-[100px]"}
+              className={index === 0 && !lead ? undefined : "mt-section"}
             >
               {/* 20px so every clause heading holds a single line inside
                   the 576px column — the longest ("11. Google Analytics y

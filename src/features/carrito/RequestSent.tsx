@@ -61,7 +61,7 @@ export function RequestSent({ content }: { content?: ThanksContent }) {
         </Container>
       </header>
 
-      <main className="flex flex-1 items-center justify-center py-[100px]">
+      <main className="py-section flex flex-1 items-center justify-center">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             {/* Still the page's headline, but pulled back to 20px so it
