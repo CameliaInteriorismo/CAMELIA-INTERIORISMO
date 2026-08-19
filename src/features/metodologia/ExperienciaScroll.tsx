@@ -161,7 +161,7 @@ export function ExperienciaScroll({
         <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
-        <p className="text-primary/75 mt-content text-center text-sm leading-relaxed">
+        <p className="text-primary/75 mt-content text-center text-sm leading-relaxed max-md:text-left">
           Queremos que te sientas acompañado en cada fase del proyecto,
           entendiendo lo que ocurre en todo momento y viviendo el proceso con
           tranquilidad y confianza. Sabemos que diseñar un espacio implica
@@ -170,7 +170,28 @@ export function ExperienciaScroll({
           como la experiencia de todo el camino.
         </p>
 
-        <div ref={stepsRef} className="relative mt-[100px]">
+        {/* Los 100px eran un valor fijo suelto, igual en las tres anchuras. En
+            móvil abrían un hueco que hacía leer las filas como otra sección
+            distinta de su propia entradilla. Bajo `md` pasa al token de
+            bloque (32px); desde `md` se conserva el valor de siempre, que ahí
+            funciona. */}
+        <div
+          ref={stepsRef}
+          className="mt-section relative max-md:pl-8 md:mt-[100px]"
+        >
+          {/* MÓVIL: el mismo carril de Estudio (AboutSections). Uno tenue de
+              fondo y, encima, el tramo recorrido, que crece con el bloque que
+              el scroll tiene delante. No es navegación —no se pulsa—, solo
+              informa de por dónde vas. La atenuación de cada bloque la sigue
+              haciendo el `opacity` ligado al scroll que ya existía. */}
+          <div className="bg-primary/15 absolute top-0 bottom-0 left-0 w-px md:hidden" />
+          <motion.div
+            className="bg-primary absolute top-0 left-0 w-px md:hidden"
+            animate={{
+              height: `${((activeIndex + 1) / Math.max(total, 1)) * 100}%`,
+            }}
+            transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+          />
           {/* One continuous, fixed base line for the whole journey — it
               never moves or resizes; only the marker (in each row) does. */}
           <Grid className="pointer-events-none absolute inset-0">

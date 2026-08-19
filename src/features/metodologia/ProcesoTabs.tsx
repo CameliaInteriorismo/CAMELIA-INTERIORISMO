@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Multiline } from "@/features/shared/MultilineText";
 import { HorizontalTabs } from "@/components/ui/HorizontalTabs";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/utils/cn";
 
 // TODO(content): "Diseño del proyecto" y "Ejecución y seguimiento" mostraban
 // el mismo párrafo en las capturas del prototipo que nos pasó el cliente —
@@ -52,7 +54,12 @@ function StepText({ step }: { step: ProcessStep }) {
       {/* Sin número: la barra de pestañas ya numera las fases (ver
           `numbered`), y repetirlo aquí lo decía dos veces en la misma
           pantalla. */}
-      <h3 className="font-title text-primary text-2xl">{step.title}</h3>
+      {/* En móvil el punto numerado es el elemento de navegación y manda:
+          esta frase queda por debajo, como recalco. Desde `md` la barra
+          horizontal ya hace de navegación y el título recupera su escala. */}
+      <h3 className="font-title text-primary text-[28px] md:text-2xl">
+        {step.title}
+      </h3>
       <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
         {(step.paragraphs ?? []).map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
@@ -129,13 +136,13 @@ export function ProcesoTabs({
           activeIndex={activeIndex}
           onChange={setActiveIndex}
           layoutId="proceso-tab-underline"
-          className="mt-content"
+          className="mt-content max-md:hidden"
         />
 
         {/* `items-stretch` y no `items-start`: la columna de la foto tiene que
             llegar hasta abajo para poder rellenar el alto común. El texto y la
             foto siguen empezando arriba, que es lo que se ve. */}
-        <Grid className="mt-content md:items-stretch">
+        <Grid className="mt-content max-md:hidden md:items-stretch">
           <div
             ref={columnRef}
             className="relative col-span-12 md:col-span-5 md:row-start-1 md:flex md:flex-col md:justify-start"
@@ -185,6 +192,70 @@ export function ProcesoTabs({
             )}
           </div>
         </Grid>
+
+        {/* MÓVIL: la barra horizontal envolvía en cuatro filas y ocupaba
+            media pantalla antes de llegar al contenido. Aquí cada fase es su
+            propio punto: se toca y abre debajo su texto y su foto. El estado
+            es el mismo `activeIndex` que usa la barra, así que las dos vistas
+            no pueden desincronizarse, y el texto lo pinta el mismo `StepText`
+            que en escritorio. */}
+        <div className="mt-content md:hidden">
+          {steps.map((step, index) => {
+            const abierta = index === activeIndex;
+            const foto = imageProps(step.image);
+            return (
+              <div key={step._key} className="border-primary/15 border-b">
+                <button
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  aria-expanded={abierta}
+                  className={cn(
+                    "font-title py-content flex w-full items-center text-left text-[22px] transition-colors duration-300",
+                    abierta ? "text-primary" : "text-primary/50",
+                  )}
+                >
+                  {index + 1}. {step.label}
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {abierta && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pb-content">
+                        {foto ? (
+                          <div className="relative aspect-[4/5] w-full overflow-hidden">
+                            <Image
+                              src={foto.src}
+                              alt={foto.alt}
+                              fill
+                              className="object-cover"
+                              style={{ objectPosition: foto.objectPosition }}
+                              sizes="100vw"
+                            />
+                          </div>
+                        ) : (
+                          <PlaceholderImage
+                            aspectRatio="4 / 5"
+                            label={`Imagen ${step.label} — sin foto`}
+                            className="w-full"
+                          />
+                        )}
+                        <div className="mt-content">
+                          <StepText step={step} />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
       </Container>
     </section>
   );
