@@ -11,6 +11,9 @@ import { toContactDetails } from "@/sanity/lib/contact";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
+  // Pantalla transaccional: no aporta nada como resultado de búsqueda.
+  // `follow` para que los enlaces que salen de aquí sí se rastreen.
+  robots: { index: false, follow: true },
   title: "Información de contacto",
   description: "Camelia Shop — información de contacto y método de entrega.",
 };

@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // lo dejaba en "Camelia | Camelia", así que sin título propio en Sanity se
   // omite y hereda el `default` del layout. Si alguien escribe uno en el panel
   // se emite como en el resto de páginas y sí lleva la plantilla.
-  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK);
+  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/");
   return page?.seo?.title ? { ...resto, title } : resto;
 }
 

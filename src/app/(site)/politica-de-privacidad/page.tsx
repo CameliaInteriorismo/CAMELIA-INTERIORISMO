@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     params: { slug: SLUG },
     tags: ["legalDocument"],
   });
-  return metadataFrom(doc?.seo, FALLBACK);
+  return metadataFrom(doc?.seo, FALLBACK, "/politica-de-privacidad");
 }
 
 export default async function Page() {

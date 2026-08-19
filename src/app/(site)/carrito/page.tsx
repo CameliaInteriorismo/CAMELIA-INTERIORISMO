@@ -14,6 +14,9 @@ import type { CartCopy } from "@/features/carrito/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
+  // Pantalla transaccional: no aporta nada como resultado de búsqueda.
+  // `follow` para que los enlaces que salen de aquí sí se rastreen.
+  robots: { index: false, follow: true },
   title: "Carrito",
   description: "Camelia Shop — resumen de tu pedido.",
 };

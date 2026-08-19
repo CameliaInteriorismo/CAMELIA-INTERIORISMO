@@ -13,8 +13,15 @@ import {
 } from "@/sanity/lib/queries";
 import { imageProps } from "@/sanity/lib/image";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
+import { articulo, JsonLd } from "@/components/seo/JsonLd";
 
-type PostPageData = Post & { publishedAt: string; seo?: SeoFields };
+// `author` ya viaja en POST_QUERY; solo faltaba declararlo aquí para que
+// llegue al JSON-LD del artículo.
+type PostPageData = Post & {
+  publishedAt: string;
+  author?: string;
+  seo?: SeoFields;
+};
 
 /** Igual que el resto: estática, con el webhook caducándola al publicar. */
 export const revalidate = 3600;
@@ -44,11 +51,15 @@ export async function generateMetadata({
   });
   if (!post) return {};
 
-  return metadataFrom(post.seo, {
-    title: post.title,
-    description: post.subtitle ?? `Camelia — ${post.title}.`,
-    image: imageProps(post.leadImage)?.src,
-  });
+  return metadataFrom(
+    post.seo,
+    {
+      title: post.title,
+      description: post.subtitle ?? `Camelia — ${post.title}.`,
+      image: imageProps(post.leadImage)?.src,
+    },
+    `/blog/${slug}`,
+  );
 }
 
 export default async function BlogPostPage({
@@ -76,5 +87,19 @@ export default async function BlogPostPage({
     tags: ["post"],
   });
 
-  return <PostArticle post={post} previous={previous} next={next} />;
+  return (
+    <>
+      <JsonLd
+        data={articulo({
+          title: post.title,
+          slug,
+          subtitle: post.subtitle,
+          publishedAt: post.publishedAt,
+          author: post.author,
+          imagen: imageProps(post.leadImage)?.src,
+        })}
+      />
+      <PostArticle post={post} previous={previous} next={next} />
+    </>
+  );
 }

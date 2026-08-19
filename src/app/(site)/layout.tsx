@@ -5,6 +5,7 @@ import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { toContactDetails } from "@/sanity/lib/contact";
 import type { Social } from "@/features/contacto/types";
 import type { LinkData } from "@/features/shared/types";
+import { JsonLd, servicioProfesional, sitioWeb } from "@/components/seo/JsonLd";
 
 /**
  * La barra y el pie salen en todas las páginas, así que sus datos se piden
@@ -45,6 +46,10 @@ export default async function SiteLayout({
 
   return (
     <>
+      {/* Los dos schemas globales viven aquí y solo aquí: el layout envuelve
+          todas las páginas públicas, así que no puede haber copias sueltas. */}
+      <JsonLd data={servicioProfesional(settings)} />
+      <JsonLd data={sitioWeb()} />
       <Navbar
         navLinks={navLinks}
         cta={settings.headerCta}

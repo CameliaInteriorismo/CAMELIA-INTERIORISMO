@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { NextStudio } from "next-sanity/studio";
+import { metadata as studioMetadata } from "next-sanity/studio";
 import config from "../../../../sanity.config";
 
 /**
@@ -11,7 +13,17 @@ import config from "../../../../sanity.config";
  */
 export const dynamic = "force-dynamic";
 
-export { metadata, viewport } from "next-sanity/studio";
+export { viewport } from "next-sanity/studio";
+
+/**
+ * La metadata del Studio se reexportaba entera desde next-sanity. Se
+ * mantiene, y encima se declara que el panel no debe indexarse: hasta ahora
+ * era una ruta pública más para un buscador.
+ */
+export const metadata: Metadata = {
+  ...studioMetadata,
+  robots: { index: false, follow: false },
+};
 
 export default function StudioPage() {
   return <NextStudio config={config} />;

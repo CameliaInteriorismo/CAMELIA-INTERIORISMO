@@ -6,6 +6,9 @@ import { CONFIRMATION_PAGES_QUERY } from "@/sanity/lib/queries";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
+  // Pantalla transaccional: no aporta nada como resultado de búsqueda.
+  // `follow` para que los enlaces que salen de aquí sí se rastreen.
+  robots: { index: false, follow: true },
   title: "Solicitud enviada",
   description: "Camelia — gracias por contactar con nosotras.",
 };

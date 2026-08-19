@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: ESTUDIO_PAGE_QUERY,
     tags: ["estudioPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK);
+  return metadataFrom(page?.seo, FALLBACK, "/estudio");
 }
 
 export default async function EstudioPage() {

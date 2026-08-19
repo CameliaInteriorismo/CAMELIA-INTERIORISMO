@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: PROYECTOS_PAGE_QUERY,
     tags: ["proyectosPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK);
+  return metadataFrom(page?.seo, FALLBACK, "/proyectos");
 }
 
 export default async function ProyectosPage() {

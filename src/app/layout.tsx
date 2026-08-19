@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 import localFont from "next/font/local";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { NavigationLoader } from "@/components/layout/NavigationLoader";
@@ -21,6 +22,10 @@ const plusJakarta = localFont({
 });
 
 export const metadata: Metadata = {
+  // Sin `metadataBase`, Next resuelve las imágenes de Open Graph como rutas
+  // relativas y ninguna red social las llega a cargar. Apunta al dominio
+  // definitivo, no al de Vercel: ver src/lib/site.ts.
+  metadataBase: new URL(SITE_URL),
   title: { default: "Camelia", template: "%s | Camelia" },
   description: "Camelia — Diseñamos espacios que cuentan historias",
   // Declared here (from public/) rather than as app/favicon.ico: the

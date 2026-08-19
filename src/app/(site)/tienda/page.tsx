@@ -5,6 +5,7 @@ import type { ProductCardData, ShopCopy } from "@/features/tienda/types";
 import type { SanityImageSource } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { PRODUCTS_QUERY, TIENDA_PAGE_QUERY } from "@/sanity/lib/queries";
+import { absoluteUrl } from "@/lib/site";
 
 /**
  * La página se sirve ya renderizada y se rehace, como mucho, una vez por
@@ -15,6 +16,7 @@ import { PRODUCTS_QUERY, TIENDA_PAGE_QUERY } from "@/sanity/lib/queries";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
+  alternates: { canonical: absoluteUrl("/tienda") },
   title: "Shop",
   description:
     "Camelia — piezas y objetos seleccionados para vestir y completar tus espacios.",

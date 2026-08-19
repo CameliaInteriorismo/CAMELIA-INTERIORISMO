@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: METODOLOGIA_PAGE_QUERY,
     tags: ["metodologiaPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK);
+  return metadataFrom(page?.seo, FALLBACK, "/metodologia");
 }
 
 export default async function MetodologiaPage() {

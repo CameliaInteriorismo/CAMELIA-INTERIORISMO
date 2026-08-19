@@ -12,6 +12,7 @@ import {
 } from "@/sanity/lib/queries";
 import { imageProps } from "@/sanity/lib/image";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
+import { JsonLd, producto } from "@/components/seo/JsonLd";
 
 type ProductPageData = Product & { seo?: SeoFields };
 
@@ -48,11 +49,15 @@ export async function generateMetadata({
   });
   if (!product) return {};
 
-  return metadataFrom(product.seo, {
-    title: product.name,
-    description: `Camelia Shop — ${product.name}.`,
-    image: imageProps(product.image)?.src,
-  });
+  return metadataFrom(
+    product.seo,
+    {
+      title: product.name,
+      description: `Camelia Shop — ${product.name}.`,
+      image: imageProps(product.image)?.src,
+    },
+    `/tienda/${slug}`,
+  );
 }
 
 export default async function ProductPage({
@@ -82,6 +87,15 @@ export default async function ProductPage({
     // colchón contra el pie, y sumar aquí otros 100px fijos lo duplicaba —
     // además de no bajar a 64/48 en tablet y móvil como el resto.
     <div>
+      <JsonLd
+        data={producto({
+          name: product.name,
+          slug,
+          description: product.description,
+          imagen: imageProps(product.image)?.src,
+          price: product.price,
+        })}
+      />
       <ProductHero product={product} copy={copy ?? {}} />
       <ProductGallery product={product} />
       <RelatedProducts product={product} copy={copy ?? {}} />

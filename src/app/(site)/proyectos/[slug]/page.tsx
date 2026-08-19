@@ -88,11 +88,15 @@ export async function generateMetadata({
 
   // El SEO del panel manda; si está vacío, se mantienen exactamente los
   // textos que la web ya generaba.
-  return metadataFrom(project.seo, {
-    title: `Proyecto ${project.name}`,
-    description: `Camelia — proyecto de interiorismo ${project.name}.`,
-    image: imageProps(project.heroImage)?.src,
-  });
+  return metadataFrom(
+    project.seo,
+    {
+      title: `Proyecto ${project.name}`,
+      description: `Camelia — proyecto de interiorismo ${project.name}.`,
+      image: imageProps(project.heroImage)?.src,
+    },
+    `/proyectos/${slug}`,
+  );
 }
 
 export default async function ProjectDetailPage({

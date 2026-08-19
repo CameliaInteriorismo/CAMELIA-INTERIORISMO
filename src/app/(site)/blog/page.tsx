@@ -3,11 +3,13 @@ import { PageHeader } from "@/features/blog/PageHeader";
 import { PostList, type PostCard } from "@/features/blog/PostList";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { POSTS_QUERY } from "@/sanity/lib/queries";
+import { absoluteUrl } from "@/lib/site";
 
 /** Igual que el resto: estática, con el webhook caducándola al publicar. */
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
+  alternates: { canonical: absoluteUrl("/blog") },
   title: "Blog",
   description:
     "Camelia — reflexiones sobre interiorismo, materiales y formas de habitar.",

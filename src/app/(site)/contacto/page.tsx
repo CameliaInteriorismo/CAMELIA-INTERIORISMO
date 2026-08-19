@@ -51,7 +51,7 @@ async function load() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { page } = await load();
-  return metadataFrom(page?.seo, FALLBACK);
+  return metadataFrom(page?.seo, FALLBACK, "/contacto");
 }
 
 export default async function ContactoPage() {

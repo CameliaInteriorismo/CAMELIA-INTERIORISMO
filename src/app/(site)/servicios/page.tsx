@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: SERVICIOS_PAGE_QUERY,
     tags: ["serviciosPage", "service"],
   });
-  return metadataFrom(page?.seo, FALLBACK);
+  return metadataFrom(page?.seo, FALLBACK, "/servicios");
 }
 
 export default async function ServiciosPage() {

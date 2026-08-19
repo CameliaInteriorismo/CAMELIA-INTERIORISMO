@@ -11,6 +11,9 @@ export const revalidate = 3600;
 // on this screen is only ever artwork inside the page itself (the wordmark
 // and the camellia), never the tab icon.
 export const metadata: Metadata = {
+  // Pantalla transaccional: no aporta nada como resultado de búsqueda.
+  // `follow` para que los enlaces que salen de aquí sí se rastreen.
+  robots: { index: false, follow: true },
   title: "Solicitud enviada",
   description: "Camelia — hemos recibido tu solicitud.",
 };
