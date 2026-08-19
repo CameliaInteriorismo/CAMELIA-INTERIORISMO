@@ -209,6 +209,10 @@ export function ProcesoTabs({
                   aria-expanded={abierta}
                   className={cn(
                     "font-title py-content flex w-full items-center text-left text-xl transition-colors duration-300",
+                    // El primero pega arriba: su `pt` se sumaba al `mt-content`
+                    // del contenedor y dejaba 64px donde La experiencia, en la
+                    // misma página, abre con 32.
+                    index === 0 && "pt-0",
                     abierta ? "text-primary" : "text-primary/50",
                   )}
                 >

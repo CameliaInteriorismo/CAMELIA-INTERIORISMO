@@ -133,6 +133,15 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 >
                   {seccion.title}
                 </h2>
+                {/* El subtítulo se perdía solo en móvil: la vista apilada
+                    pintaba el título y saltaba a la foto, mientras que desde
+                    `md` el IndicatorList sí lo muestra bajo cada nombre. Mismo
+                    dato y mismo tratamiento que allí. */}
+                {seccion.subtitle && (
+                  <p className="text-primary/70 mt-2 text-xs tracking-wide">
+                    {seccion.subtitle}
+                  </p>
+                )}
 
                 {foto ? (
                   <div className="mt-md relative aspect-[4/5] w-full overflow-hidden">
