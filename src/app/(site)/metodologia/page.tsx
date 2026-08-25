@@ -27,9 +27,9 @@ type MetodologiaPage = {
 };
 
 const FALLBACK = {
-  title: "Metodología",
+  title: "Metodología y proceso de interiorismo | Camelia",
   description:
-    "Camelia — nuestro proceso de trabajo, del primer contacto a la entrega, y cómo acompañamos al cliente durante todo el camino.",
+    "Conoce cómo desarrollamos un proyecto de interiorismo en Camelia, desde el primer contacto hasta la ejecución, con acompañamiento en cada fase.",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,7 +37,13 @@ export async function generateMetadata(): Promise<Metadata> {
     query: METODOLOGIA_PAGE_QUERY,
     tags: ["metodologiaPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK, "/metodologia");
+  // El título ya lleva la marca al final, así que se emite en ABSOLUTO: la
+  // plantilla `%s | Camelia` del layout la repetiría. Un título escrito en
+  // Sanity sigue pasando por la plantilla, como en el resto de páginas.
+  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/metodologia");
+  return page?.seo?.title
+    ? { ...resto, title }
+    : { ...resto, title: { absolute: FALLBACK.title } };
 }
 
 export default async function MetodologiaPage() {
