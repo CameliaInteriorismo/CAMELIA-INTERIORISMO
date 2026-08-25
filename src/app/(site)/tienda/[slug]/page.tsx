@@ -94,6 +94,7 @@ export default async function ProductPage({
           description: product.description,
           imagen: imageProps(product.image)?.src,
           price: product.price,
+          available: product.available,
         })}
       />
       <ProductHero product={product} copy={copy ?? {}} />

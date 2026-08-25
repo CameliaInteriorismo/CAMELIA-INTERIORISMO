@@ -40,6 +40,8 @@ export type ProductDetails = {
 
 /** La ficha completa. */
 export type Product = ProductCardData & {
+  /** Ya viajaba en la consulta; faltaba declararlo para el schema Product. */
+  available?: boolean;
   description?: string;
   gallery?: SanityImageSource[];
   details?: ProductDetails;

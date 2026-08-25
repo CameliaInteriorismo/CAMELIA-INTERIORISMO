@@ -119,9 +119,9 @@ export function articulo(post: {
 }
 
 /**
- * `priceCurrency` no se declara: el proyecto no guarda la moneda en ningún
- * campo —el símbolo se escribe en la plantilla—, y suponer EUR sería inventar
- * un dato. `availability` sí sale del campo real `available`.
+ * `priceCurrency` es EUR: la tienda vende en euros y el símbolo ya se escribe
+ * en la plantilla. `availability` sale del campo real `available` de Sanity,
+ * no de una suposición. Sin `sku` ni `brand`: no existen en los datos.
  */
 export function producto(p: {
   name: string;
@@ -137,6 +137,7 @@ export function producto(p: {
       ? limpio({
           "@type": "Offer",
           price: p.price,
+          priceCurrency: p.price === undefined ? undefined : "EUR",
           availability:
             p.available === undefined
               ? undefined

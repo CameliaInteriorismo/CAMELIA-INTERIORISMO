@@ -5,7 +5,7 @@ import type { ProductCardData, ShopCopy } from "@/features/tienda/types";
 import type { SanityImageSource } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { PRODUCTS_QUERY, TIENDA_PAGE_QUERY } from "@/sanity/lib/queries";
-import { absoluteUrl } from "@/lib/site";
+import { metadataFrom } from "@/sanity/lib/seo";
 
 /**
  * La página se sirve ya renderizada y se rehace, como mucho, una vez por
@@ -15,11 +15,23 @@ import { absoluteUrl } from "@/lib/site";
  */
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  alternates: { canonical: absoluteUrl("/tienda") },
-  title: "Shop",
+const FALLBACK = {
+  title: "Tienda de interiorismo | Camelia",
   description:
-    "Camelia — piezas y objetos seleccionados para vestir y completar tus espacios.",
+    "Descubre piezas de interiorismo y decoración seleccionadas por Camelia para completar y transformar tus espacios.",
+};
+
+/**
+ * Pasa por `metadataFrom` como el resto de páginas: era la única que declaraba
+ * su metadata a mano y por eso se quedaba sin Open Graph ni Twitter cards.
+ * El título va en ABSOLUTO porque ya lleva la marca al final.
+ *
+ * "Tienda" y no "Shop": el rótulo de la sección sigue siendo Shop, pero en el
+ * título buscamos la palabra que se busca.
+ */
+export const metadata: Metadata = {
+  ...metadataFrom(undefined, FALLBACK, "/tienda"),
+  title: { absolute: FALLBACK.title },
 };
 
 export default async function TiendaPage() {
