@@ -3,16 +3,25 @@ import { PageHeader } from "@/features/blog/PageHeader";
 import { PostList, type PostCard } from "@/features/blog/PostList";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { POSTS_QUERY } from "@/sanity/lib/queries";
-import { absoluteUrl } from "@/lib/site";
+import { metadataFrom } from "@/sanity/lib/seo";
 
 /** Igual que el resto: estática, con el webhook caducándola al publicar. */
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  alternates: { canonical: absoluteUrl("/blog") },
-  title: "Blog",
+const FALLBACK = {
+  title: "Blog de interiorismo y decoración | Camelia",
   description:
-    "Camelia — reflexiones sobre interiorismo, materiales y formas de habitar.",
+    "Camelia — Ideas, consejos y tendencias de interiorismo, decoración, materiales y formas de habitar.",
+};
+
+/**
+ * Pasa por `metadataFrom` como el resto: declaraba su metadata a mano y por
+ * eso se quedaba sin Open Graph ni Twitter cards. El título va en ABSOLUTO
+ * porque ya lleva la marca al final.
+ */
+export const metadata: Metadata = {
+  ...metadataFrom(undefined, FALLBACK, "/blog"),
+  title: { absolute: FALLBACK.title },
 };
 
 export default async function BlogPage() {

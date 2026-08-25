@@ -51,7 +51,10 @@ export async function generateMetadata({
   });
   if (!post) return {};
 
-  return metadataFrom(
+  // El `seo.title` del panel ya se escribe con la marca al final, así que se
+  // emite en ABSOLUTO: pasarlo por la plantilla `%s | Camelia` del layout la
+  // repetiría. Sin título propio, el respaldo sí usa la plantilla.
+  const meta = metadataFrom(
     post.seo,
     {
       title: post.title,
@@ -60,6 +63,9 @@ export async function generateMetadata({
     },
     `/blog/${slug}`,
   );
+  return post.seo?.title
+    ? { ...meta, title: { absolute: post.seo.title } }
+    : meta;
 }
 
 export default async function BlogPostPage({
