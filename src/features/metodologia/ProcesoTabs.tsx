@@ -34,6 +34,13 @@ export type ProcessStep = {
  */
 const MIN_IMAGE_RATIO = 4 / 3;
 
+/**
+ * Holgura entre el texto más largo y el borde inferior de la foto. Sin ella la
+ * fase más extensa llegaba justo al canto —0px en tablet, 3px en escritorio— y
+ * parecía que el texto se desbordaba. 24px es el escalón `sm` del sistema.
+ */
+const HOLGURA = 24;
+
 // Numbered from the array index rather than written into the data, so the
 // sequence can't fall out of step if a phase is added, removed or reordered.
 const numbered = (steps: ProcessStep[]) =>
@@ -110,7 +117,7 @@ export function ProcesoTabs({
       // el texto no llega. En cuanto una fase necesite más, gana el texto y la
       // caja crece: el sistema sigue siendo el contenido más largo.
       const anchoFoto = imageColRef.current?.clientWidth ?? 0;
-      setTallest(Math.max(max, anchoFoto / MIN_IMAGE_RATIO));
+      setTallest(Math.max(max + HOLGURA, anchoFoto / MIN_IMAGE_RATIO));
     };
     measure();
     const observer = new ResizeObserver(measure);
