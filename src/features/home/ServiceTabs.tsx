@@ -35,12 +35,22 @@ export function ServiceTabs({
   cta?: LinkData;
 }) {
   const tabs: Tab[] = services.map((s) => ({ ...s, label: s.title }));
-  const [activeIndex, setActiveIndex] = useState(0);
-  const current = tabs[activeIndex];
+  // Arranca sin ninguna pestaña seleccionada: abría en Interiorismo y su
+  // descripción aparecía bajo la foto sin que nadie la hubiera pedido. La
+  // imagen sigue mostrándose —cae en la primera mientras no haya selección—;
+  // lo que se oculta es el texto del servicio.
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const current = activeIndex === null ? undefined : tabs[activeIndex];
+  /** La foto que se ve mientras no hay servicio elegido. */
+  const visible = current ?? tabs[0];
   // Móvil: acordeón. Mismo patrón que AccompanimentSection —pulsar la abierta
   // la cierra, así que pueden quedar las tres cerradas—. En md+ manda el
   // sistema de pestañas de siempre, que no se toca.
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  //
+  // Arranca con las tres cerradas: abría en Interiorismo, y el texto de esa
+  // primera aparecía sin que nadie lo hubiera pedido. El contenido se muestra
+  // ahora solo como consecuencia de abrir su punto.
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     // 100px sobre el título, el mismo hueco que dejan /proyectos y /tienda
@@ -129,12 +139,12 @@ export function ServiceTabs({
                 por eso cabe más foto. */}
             <div className="relative aspect-square w-full overflow-hidden">
               <Image
-                src={imageProps(current?.image)?.src ?? ""}
-                alt={current?.title ?? ""}
+                src={imageProps(visible?.image)?.src ?? ""}
+                alt={visible?.title ?? ""}
                 fill
                 className="object-cover"
                 style={{
-                  objectPosition: imageProps(current?.image)?.objectPosition,
+                  objectPosition: imageProps(visible?.image)?.objectPosition,
                 }}
                 sizes="(min-width: 768px) 50vw, 100vw"
               />
@@ -152,7 +162,7 @@ export function ServiceTabs({
           <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8 md:mt-0">
             <Tabs
               items={tabs}
-              activeIndex={activeIndex}
+              activeIndex={activeIndex ?? -1}
               onChange={setActiveIndex}
             />
           </div>
