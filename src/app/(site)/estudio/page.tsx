@@ -12,7 +12,7 @@ export const revalidate = 3600;
 type EstudioPage = { sections?: AboutSection[]; seo?: SeoFields };
 
 const FALLBACK = {
-  title: "Estudio",
+  title: "Sobre Camelia | Interiorismo en Alzira, Valencia",
   description:
     "Camelia — estudio de interiorismo en Alzira. Conoce el origen del estudio y su dirección creativa y ejecutiva.",
 };
@@ -22,7 +22,13 @@ export async function generateMetadata(): Promise<Metadata> {
     query: ESTUDIO_PAGE_QUERY,
     tags: ["estudioPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK, "/estudio");
+  // El título ya lleva la marca delante, así que se emite en ABSOLUTO: la
+  // plantilla `%s | Camelia` del layout lo dejaría con la marca repetida al
+  // final. Un título escrito en Sanity sigue pasando por la plantilla.
+  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/estudio");
+  return page?.seo?.title
+    ? { ...resto, title }
+    : { ...resto, title: { absolute: FALLBACK.title } };
 }
 
 export default async function EstudioPage() {

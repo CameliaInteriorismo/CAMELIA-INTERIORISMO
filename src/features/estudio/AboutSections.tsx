@@ -99,7 +99,9 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
     // doble de hueco. El aire visible sobre el primer bloque es el mismo.
     <section className="pt-block">
       <Container>
-        <h1 className="sr-only">Estudio</h1>
+        <h1 className="sr-only">
+          Sobre Camelia — Interiorismo en Alzira, Valencia
+        </h1>
         {/* MÓVIL: las tres secciones apiladas. La línea de la izquierda es
             una sola —el carril tenue de fondo— y sobre ella crece la parte
             marcada hasta donde has llegado, así que se lee como un recorrido y
