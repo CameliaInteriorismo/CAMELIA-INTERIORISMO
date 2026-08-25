@@ -31,9 +31,9 @@ type HomePage = {
 };
 
 const FALLBACK = {
-  title: "Camelia",
+  title: "Camelia | Estudio de interiorismo en Alzira, Valencia",
   description:
-    "Camelia — estudio de interiorismo. Diseñamos espacios que cuentan historias.",
+    "Camelia, estudio de interiorismo en Alzira, Valencia. Diseñamos espacios que cuentan historias y reflejan la esencia de quienes los habitan.",
 };
 
 const TAGS = [
@@ -49,13 +49,14 @@ export async function generateMetadata(): Promise<Metadata> {
     query: HOME_PAGE_QUERY,
     tags: [...TAGS],
   });
-  // La Home es la raíz del sitio y su título es la marca a secas. Devolverlo
-  // como cadena lo hacía pasar por la plantilla `%s | Camelia` del layout, que
-  // lo dejaba en "Camelia | Camelia", así que sin título propio en Sanity se
-  // omite y hereda el `default` del layout. Si alguien escribe uno en el panel
-  // se emite como en el resto de páginas y sí lleva la plantilla.
+  // El título de la Home ya lleva la marca delante, así que se emite en
+  // ABSOLUTO: pasarlo por la plantilla `%s | Camelia` del layout lo dejaría
+  // en "... | Camelia" con la marca repetida al final. Si alguien escribe uno
+  // propio en el panel, ese sí se comporta como el del resto de páginas.
   const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/");
-  return page?.seo?.title ? { ...resto, title } : resto;
+  return page?.seo?.title
+    ? { ...resto, title }
+    : { ...resto, title: { absolute: FALLBACK.title } };
 }
 
 export default async function Home() {
