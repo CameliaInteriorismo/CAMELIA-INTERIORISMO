@@ -31,7 +31,7 @@ type ServiciosPage = {
 };
 
 const FALLBACK = {
-  title: "Servicios",
+  title: "Servicios de interiorismo y reforma integral | Camelia",
   description:
     "Camelia — interiorismo, ejecución y supervisión de obra, y decoración. Descubre cómo podemos acompañarte en tu proyecto.",
 };
@@ -41,7 +41,13 @@ export async function generateMetadata(): Promise<Metadata> {
     query: SERVICIOS_PAGE_QUERY,
     tags: ["serviciosPage", "service"],
   });
-  return metadataFrom(page?.seo, FALLBACK, "/servicios");
+  // El título ya lleva la marca al final, así que se emite en ABSOLUTO: la
+  // plantilla `%s | Camelia` del layout la repetiría. Mismo patrón que Home,
+  // Estudio y Metodología.
+  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/servicios");
+  return page?.seo?.title
+    ? { ...resto, title }
+    : { ...resto, title: { absolute: FALLBACK.title } };
 }
 
 export default async function ServiciosPage() {
