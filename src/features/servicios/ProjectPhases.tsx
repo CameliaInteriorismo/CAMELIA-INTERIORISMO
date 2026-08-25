@@ -134,10 +134,6 @@ export function ProjectPhases({
         {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
             bloque de acompañamiento: 24px, no un titular grande. Aquí solo
             encabeza las fases, no abre la página. */}
-        <h3 className="font-title text-primary mt-md text-2xl">
-          <Multiline text={title ?? "Fases de un proyecto Camelia"} />
-        </h3>
-
         <div
           ref={rowRef}
           className="mt-md flex flex-col lg:flex-row lg:items-stretch"
@@ -235,7 +231,7 @@ export function ProjectPhases({
                       className="lg:flex lg:w-1/2 lg:flex-col lg:justify-center"
                     >
                       <h3 className="font-title text-primary/25 text-2xl uppercase">
-                        {String(index + 1).padStart(2, "0")}. {phase.title}
+                        FASE {String(index + 1).padStart(2, "0")}. {phase.title}
                       </h3>
                       <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
                         {(phase.longDescription ?? []).map((paragraph, i) => (
