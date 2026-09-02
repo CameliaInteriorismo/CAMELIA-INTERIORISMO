@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { enviarSolicitudProyecto } from "@/lib/requests/actions";
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
@@ -13,6 +14,10 @@ import { fieldClass } from "@/features/formulario/styles";
 import { cn } from "@/utils/cn";
 
 type Answers = Record<string, string>;
+
+/** Las mismas dos formas que valida el servidor, para avisar antes de enviar. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const TELEFONO = /^[+()\d][\d\s().-]{7,}$/;
 
 const EASE = [0.4, 0, 0.2, 1] as const;
 
@@ -197,6 +202,10 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [error, setError] = useState<string>();
+  // Apaga los dos botones mientras el envío está en vuelo: sin esto, un
+  // doble clic en FINALIZAR dispara dos solicitudes, y serían dos números y
+  // dos pares de correos por el mismo proyecto.
+  const [enviando, setEnviando] = useState(false);
 
   const step = steps[index];
   const isLast = index === steps.length - 1;
@@ -228,13 +237,47 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
         return;
       }
     }
+    // Email y teléfono, con forma además de con contenido: son las dos vías
+    // por las que el estudio responde, y una errata aquí deja la solicitud
+    // sin respuesta posible. Se comprueba en el paso donde se piden, para
+    // avisar ahí y no al final. El servidor lo vuelve a comprobar.
+    if (step.kind === "fields") {
+      if (answers.email !== undefined && !EMAIL.test(answers.email.trim())) {
+        setError("Revisa el correo electrónico");
+        return;
+      }
+      if (
+        answers.telefono !== undefined &&
+        !TELEFONO.test(answers.telefono.trim())
+      ) {
+        setError("Revisa el teléfono");
+        return;
+      }
+    }
     if (isLast) {
-      // Visual flow only for now — nothing is submitted or emailed yet.
-      router.push("/cuentanos-tu-proyecto/gracias");
+      void enviar();
       return;
     }
     setError(undefined);
     setIndex((i) => i + 1);
+  }
+
+  async function enviar() {
+    if (enviando) return;
+    setEnviando(true);
+    setError(undefined);
+
+    const resultado = await enviarSolicitudProyecto({ answers });
+
+    // Solo se pasa a la pantalla de gracias si los correos han salido. Si
+    // fallan, la persona se queda aquí con sus respuestas y puede reintentar
+    // sin volver a rellenar los diez pasos.
+    if (!resultado.ok) {
+      setError(resultado.error);
+      setEnviando(false);
+      return;
+    }
+    router.push("/cuentanos-tu-proyecto/gracias");
   }
 
   return (
@@ -322,6 +365,8 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                           text block with 60px of air above them. */}
                       <div className="mt-block flex max-w-[30rem] items-center justify-end gap-4">
                         <Button
+                          disabled={enviando}
+                          className="disabled:cursor-not-allowed disabled:opacity-60"
                           onClick={() => {
                             setError(undefined);
                             setIndex((i) => Math.max(0, i - 1));
@@ -329,8 +374,16 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                         >
                           ATRÁS
                         </Button>
-                        <Button onClick={next}>
-                          {isLast ? "FINALIZAR" : "SIGUIENTE"}
+                        <Button
+                          onClick={next}
+                          disabled={enviando}
+                          className="disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {enviando
+                            ? "ENVIANDO…"
+                            : isLast
+                              ? "FINALIZAR"
+                              : "SIGUIENTE"}
                         </Button>
                       </div>
                     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, type InputHTMLAttributes } from "react";
+import { forwardRef, useState, type InputHTMLAttributes } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,6 +13,7 @@ import { DeliveryModeToggle } from "@/features/carrito/DeliveryModeToggle";
 import type { ConfirmationCopy } from "@/features/carrito/types";
 import type { ContactDetails } from "@/features/contacto/types";
 import { useCartStore } from "@/stores/cartStore";
+import { enviarSolicitudProducto } from "@/lib/requests/actions";
 
 const schema = z
   .object({
@@ -128,6 +129,13 @@ export function ContactForm({
   const setContactInfo = useCartStore((state) => state.setContactInfo);
   const setDeliveryMode = useCartStore((state) => state.setDeliveryMode);
   const clearCart = useCartStore((state) => state.clear);
+  const items = useCartStore((state) => state.items);
+
+  // `enviando` hace dos cosas a la vez: apaga el botón —así un doble clic no
+  // dispara dos solicitudes, que serían dos números y dos correos— y cambia
+  // su rótulo para que se note que algo está pasando.
+  const [enviando, setEnviando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState<string>();
 
   const {
     register,
@@ -139,7 +147,42 @@ export function ContactForm({
 
   const deliveryMode = watch("deliveryMode");
 
-  function onSubmit(data: FormValues) {
+  async function onSubmit(data: FormValues) {
+    if (enviando) return;
+    setEnviando(true);
+    setErrorEnvio(undefined);
+
+    // El envío va PRIMERO. Solo si los correos han salido se vacía el
+    // carrito y se pasa a la pantalla de gracias: si Resend falla, la
+    // persona se queda en el formulario con sus datos y su carrito intactos,
+    // y puede reintentar. Mostrar "enviado" sin haber enviado sería perder
+    // la solicitud sin que nadie se entere.
+    const resultado = await enviarSolicitudProducto({
+      name: data.name,
+      taxId: data.taxId,
+      email: data.email,
+      phone: data.phone,
+      deliveryMode: data.deliveryMode,
+      address: data.deliveryMode === "domicilio" ? data.address : undefined,
+      postalCode:
+        data.deliveryMode === "domicilio" ? data.postalCode : undefined,
+      city: data.deliveryMode === "domicilio" ? data.city : undefined,
+      province: data.deliveryMode === "domicilio" ? data.province : undefined,
+      items: items.map((item) => ({
+        title: item.title,
+        slug: item.slug,
+        finish: item.finish,
+        quantity: item.quantity,
+        notes: item.notes,
+      })),
+    });
+
+    if (!resultado.ok) {
+      setErrorEnvio(resultado.error);
+      setEnviando(false);
+      return;
+    }
+
     setContactInfo({
       name: data.name,
       taxId: data.taxId,
@@ -288,8 +331,21 @@ export function ContactForm({
             </div>
           </Grid>
 
-          <Button type="submit" className="mt-block w-full">
-            {copy.submitLabel ?? "TRAMITAR PEDIDO"}
+          {errorEnvio && (
+            <p
+              role="alert"
+              className="border-primary/20 text-primary mt-block border p-4 text-sm leading-relaxed"
+            >
+              {errorEnvio}
+            </p>
+          )}
+
+          <Button
+            type="submit"
+            disabled={enviando}
+            className="mt-block w-full disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {enviando ? "ENVIANDO…" : (copy.submitLabel ?? "TRAMITAR PEDIDO")}
           </Button>
         </form>
       </Container>
