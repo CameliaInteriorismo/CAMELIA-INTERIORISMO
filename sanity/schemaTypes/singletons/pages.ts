@@ -1315,3 +1315,132 @@ export const thanksScreen = defineType({
   ],
   preview: { select: { title: "title", subtitle: "text" } },
 });
+
+/**
+ * Los textos fijos de un correo. Cuatro plantillas comparten esta forma:
+ * las dos de artículo y las dos de proyecto.
+ *
+ * Solo texto. Ni un dato del formulario entra aquí: el nombre de quien
+ * escribe, el producto o la fecha llegan de la solicitud y se colocan entre
+ * los rótulos que se editan en este objeto.
+ *
+ * Todo es opcional a propósito. El código lleva escritos los textos de la
+ * referencia como valor por defecto, así que un campo vacío en el panel no
+ * rompe el correo: simplemente sale el de siempre.
+ */
+export const emailTemplate = defineType({
+  name: "emailTemplate",
+  title: "Plantilla de correo",
+  type: "object",
+  options: { collapsible: true, collapsed: true },
+  fields: [
+    defineField({
+      name: "subject",
+      title: "Asunto",
+      type: "string",
+      description: "Lo que se lee en la bandeja antes de abrir.",
+    }),
+    defineField({ name: "title", title: "Titular", type: "string" }),
+    defineField({
+      name: "referenceLabel",
+      title: "Rótulo del número",
+      type: "string",
+      description:
+        'Va arriba a la derecha, delante del número. Por ejemplo "N.º DE PEDIDO".',
+    }),
+    defineField({
+      name: "intro",
+      title: "Texto de entrada",
+      type: "array",
+      of: [defineArrayMember({ type: "text", rows: 3 })],
+      description:
+        'Un párrafo por línea. Escribe {nombre} donde deba ir el nombre de quien ha escrito; si no lo hay, el hueco se cierra solo.',
+    }),
+    defineField({
+      name: "sections",
+      title: "Rótulos de las secciones",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+      description:
+        "En el mismo orden en que aparecen en el correo. Si dejas uno vacío se usa el de siempre.",
+    }),
+    defineField({
+      name: "labels",
+      title: "Rótulos de los campos",
+      type: "array",
+      of: [defineArrayMember({ type: "emailLabel" })],
+      description:
+        "El texto que va a la izquierda de cada dato. La clave no se toca: es la que casa el rótulo con su valor.",
+    }),
+    defineField({
+      name: "outro",
+      title: "Texto de cierre",
+      type: "text",
+      rows: 2,
+    }),
+  ],
+  preview: { select: { title: "title", subtitle: "subject" } },
+});
+
+export const emailLabel = defineType({
+  name: "emailLabel",
+  title: "Rótulo",
+  type: "object",
+  fields: [
+    defineField({
+      name: "key",
+      title: "Clave técnica",
+      type: "string",
+      readOnly: true,
+      description:
+        "La fija el código: dice a qué dato acompaña este rótulo. Se muestra solo para que sepas cuál estás editando.",
+    }),
+    defineField({ name: "label", title: "Texto", type: "string" }),
+  ],
+  preview: { select: { title: "label", subtitle: "key" } },
+});
+
+/**
+ * Los cuatro correos que salen de los formularios, con sus textos editables.
+ *
+ * Se agrupan en un solo documento porque son cuatro variantes de lo mismo y
+ * separarlos en cuatro documentos habría llenado la barra lateral sin ganar
+ * nada. Mismo criterio que "Confirmación y gracias", que ya reúne las dos
+ * pantallas de gracias en un documento.
+ */
+export const emailsPage = defineType({
+  name: "emailsPage",
+  title: "Correos de los formularios",
+  type: "document",
+  groups: [
+    { name: "producto", title: "Solicitud de artículo", default: true },
+    { name: "proyecto", title: "Solicitud de proyecto" },
+  ],
+  fields: [
+    defineField({
+      name: "productoCliente",
+      title: "Artículo · confirmación al cliente",
+      type: "emailTemplate",
+      group: "producto",
+    }),
+    defineField({
+      name: "productoEstudio",
+      title: "Artículo · aviso al estudio",
+      type: "emailTemplate",
+      group: "producto",
+    }),
+    defineField({
+      name: "proyectoCliente",
+      title: "Proyecto · confirmación al cliente",
+      type: "emailTemplate",
+      group: "proyecto",
+    }),
+    defineField({
+      name: "proyectoEstudio",
+      title: "Proyecto · aviso al estudio",
+      type: "emailTemplate",
+      group: "proyecto",
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Correos de los formularios" }) },
+});

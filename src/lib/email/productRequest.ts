@@ -1,6 +1,7 @@
 import "server-only";
 import { SITE_URL } from "@/lib/site";
 import {
+  articulo,
   envoltorio,
   esc,
   fila,
@@ -10,6 +11,11 @@ import {
   titulo,
   type Contacto,
 } from "@/lib/email/layout";
+import {
+  conNombre,
+  resolver,
+  type Plantilla,
+} from "@/lib/email/textos";
 
 export type ArticuloSolicitado = {
   title: string;
@@ -20,6 +26,7 @@ export type ArticuloSolicitado = {
 };
 
 export type SolicitudProducto = {
+  reference: string;
   fecha: string;
   name: string;
   taxId: string;
@@ -33,76 +40,92 @@ export type SolicitudProducto = {
   items: ArticuloSolicitado[];
 };
 
+/** Lo que se lee en el correo según lo elegido en el formulario. */
 const ENTREGA = {
   domicilio: "Entrega a domicilio",
   recogida: "Recogida en el estudio",
 } as const;
 
-/** El listado de piezas, en HTML y en texto, para no repetirlo dos veces. */
+/** "Acabado: Roble · Cantidad: 2". El acabado se cae si la pieza no tiene. */
+function detalle(item: ArticuloSolicitado) {
+  return [
+    item.finish ? `Acabado: ${esc(item.finish)}` : "",
+    `Cantidad: ${esc(String(item.quantity))}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 function articulosHtml(items: ArticuloSolicitado[]) {
   return items
-    .map((item) => {
-      const url = `${SITE_URL}/tienda/${item.slug}`;
-      const detalles = [
-        item.finish ? `Acabado: ${item.finish}` : "",
-        `Cantidad: ${item.quantity}`,
-      ]
-        .filter(Boolean)
-        .join(" &nbsp;·&nbsp; ");
-      return `<div style="padding:16px 0;border-bottom:1px solid #e6ddcc;">
-        <a href="${esc(url)}" style="color:#3f0e1a;font-size:15px;text-decoration:underline;">${esc(item.title)}</a>
-        <div style="margin-top:6px;color:#3f0e1a;opacity:.65;font-size:13px;">${detalles}</div>
-        ${item.notes ? `<div style="margin-top:6px;color:#3f0e1a;opacity:.65;font-size:13px;">Nota: ${esc(item.notes)}</div>` : ""}
-      </div>`;
-    })
+    .map((item) =>
+      articulo(
+        item.title,
+        `${SITE_URL}/tienda/${item.slug}`,
+        detalle(item) + (item.notes ? `<br>Nota: ${esc(item.notes)}` : ""),
+      ),
+    )
     .join("");
 }
 
 function articulosTexto(items: ArticuloSolicitado[]) {
   return items
-    .map((item) => {
-      const partes = [
+    .map((item) =>
+      [
         `- ${item.title}`,
         item.finish ? `  Acabado: ${item.finish}` : "",
         `  Cantidad: ${item.quantity}`,
         item.notes ? `  Nota: ${item.notes}` : "",
         `  ${SITE_URL}/tienda/${item.slug}`,
-      ];
-      return partes.filter(Boolean).join("\n");
-    })
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    )
     .join("\n");
 }
 
 /** Confirmación para quien ha solicitado las piezas. */
-export function emailCliente(s: SolicitudProducto, contacto: Contacto) {
-  const subject = "Hemos recibido tu solicitud · Camelia Interiorismo";
+export function emailCliente(
+  s: SolicitudProducto,
+  contacto: Contacto,
+  textos?: Plantilla,
+) {
+  const t = resolver("productoCliente", textos);
+
   const cuerpo = `
-    ${parrafo(`Hola ${esc(s.name)}, gracias por escribirnos.`)}
-    ${parrafo("Hemos recibido tu solicitud y la estamos revisando. Te contactaremos en breve para confirmarte disponibilidad y plazos.")}
-    ${titulo("Lo que has solicitado")}
+    ${t.intro.map((p) => parrafo(esc(conNombre(p, s.name)))).join("")}
+    ${titulo(t.seccion(0))}
     ${articulosHtml(s.items)}
-    ${titulo("Cómo lo recibirás")}
-    ${tabla(fila("Entrega", ENTREGA[s.deliveryMode]))}
-    ${parrafo("Si necesitas cambiar algo, respóndenos a este mismo correo.")}
+    ${titulo(t.seccion(1))}
+    ${tabla(
+      fila(t.rotulo("entrega"), ENTREGA[s.deliveryMode]) +
+        fila(t.rotulo("direccion"), s.address),
+    )}
+    <div style="height:28px;line-height:28px;font-size:0;">&nbsp;</div>
+    ${parrafo(esc(t.outro))}
   `;
 
   return {
-    subject,
+    subject: t.subject,
     html: envoltorio({
-      preheader: "Hemos recibido tu solicitud y la estamos revisando.",
-      encabezado: "Solicitud recibida",
+      preheader: t.intro[1] ?? t.title,
+      titular: t.title,
+      referenciaLabel: t.referenceLabel,
+      referencia: s.reference,
       cuerpo,
       contacto,
     }),
     text: textoPlano(
-      "Solicitud recibida",
+      t.title,
+      t.referenceLabel,
+      s.reference,
       [
-        `Hola ${s.name}, gracias por escribirnos.`,
-        "Hemos recibido tu solicitud y la estamos revisando. Te contactaremos en breve para confirmarte disponibilidad y plazos.",
-        "LO QUE HAS SOLICITADO",
+        ...t.intro.map((p) => conNombre(p, s.name)),
+        t.seccion(0),
         articulosTexto(s.items),
-        ["Entrega", ENTREGA[s.deliveryMode]],
-        "Si necesitas cambiar algo, respóndenos a este mismo correo.",
+        [t.rotulo("entrega"), ENTREGA[s.deliveryMode]],
+        [t.rotulo("direccion"), s.address],
+        t.outro,
       ],
       contacto,
     ),
@@ -110,56 +133,65 @@ export function emailCliente(s: SolicitudProducto, contacto: Contacto) {
 }
 
 /** Aviso para el estudio, con todo lo que ha rellenado el cliente. */
-export function emailEstudio(s: SolicitudProducto, contacto: Contacto) {
-  const subject = `Nueva solicitud de artículo · ${s.name}`;
+export function emailEstudio(
+  s: SolicitudProducto,
+  contacto: Contacto,
+  textos?: Plantilla,
+) {
+  const t = resolver("productoEstudio", textos);
+
   const cuerpo = `
-    ${titulo("Cliente")}
+    ${titulo(t.seccion(0))}
     ${tabla(
-      fila("Nombre", s.name) +
-        fila("DNI / NIF", s.taxId) +
-        fila("Email", s.email) +
-        fila("Teléfono", s.phone),
+      fila(t.rotulo("nombre"), s.name) +
+        fila(t.rotulo("dni"), s.taxId) +
+        fila(t.rotulo("email"), s.email) +
+        fila(t.rotulo("telefono"), s.phone),
     )}
-    ${titulo("Artículos")}
+    ${titulo(t.seccion(1))}
     ${articulosHtml(s.items)}
-    ${titulo("Entrega")}
+    ${titulo(t.seccion(2))}
     ${tabla(
-      fila("Modo", ENTREGA[s.deliveryMode]) +
-        fila("Dirección", s.address) +
-        fila("Código postal", s.postalCode) +
-        fila("Localidad", s.city) +
-        fila("Provincia", s.province),
+      fila(t.rotulo("modo"), ENTREGA[s.deliveryMode]) +
+        fila(t.rotulo("direccion"), s.address) +
+        fila(t.rotulo("codigoPostal"), s.postalCode) +
+        fila(t.rotulo("localidad"), s.city) +
+        fila(t.rotulo("provincia"), s.province),
     )}
-    ${titulo("Solicitud")}
-    ${tabla(fila("Fecha y hora", s.fecha))}
+    ${titulo(t.seccion(3))}
+    ${tabla(fila(t.rotulo("fecha"), s.fecha))}
   `;
 
   return {
-    subject,
+    subject: `${t.subject} · ${s.reference}`,
     html: envoltorio({
-      preheader: `${s.name} ha solicitado ${s.items.length} artículo(s).`,
-      encabezado: "Nueva solicitud de artículo",
+      preheader: `${s.name} · ${s.items.length} artículo(s)`,
+      titular: t.title,
+      referenciaLabel: t.referenceLabel,
+      referencia: s.reference,
       cuerpo,
       contacto,
     }),
     text: textoPlano(
-      "Nueva solicitud de artículo",
+      t.title,
+      t.referenceLabel,
+      s.reference,
       [
-        "CLIENTE",
-        ["Nombre", s.name],
-        ["DNI / NIF", s.taxId],
-        ["Email", s.email],
-        ["Teléfono", s.phone],
-        "ARTÍCULOS",
+        t.seccion(0),
+        [t.rotulo("nombre"), s.name],
+        [t.rotulo("dni"), s.taxId],
+        [t.rotulo("email"), s.email],
+        [t.rotulo("telefono"), s.phone],
+        t.seccion(1),
         articulosTexto(s.items),
-        "ENTREGA",
-        ["Modo", ENTREGA[s.deliveryMode]],
-        ["Dirección", s.address],
-        ["Código postal", s.postalCode],
-        ["Localidad", s.city],
-        ["Provincia", s.province],
-        "SOLICITUD",
-        ["Fecha y hora", s.fecha],
+        t.seccion(2),
+        [t.rotulo("modo"), ENTREGA[s.deliveryMode]],
+        [t.rotulo("direccion"), s.address],
+        [t.rotulo("codigoPostal"), s.postalCode],
+        [t.rotulo("localidad"), s.city],
+        [t.rotulo("provincia"), s.province],
+        t.seccion(3),
+        [t.rotulo("fecha"), s.fecha],
       ],
       contacto,
     ),

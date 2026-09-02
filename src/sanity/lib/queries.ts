@@ -479,3 +479,25 @@ export const TIENDA_PAGE_QUERY = groq`
     detailLabels { detallesDeLaPieza, materialesYMedidas, envioYEntrega }
   }
 `;
+
+/**
+ * Los textos fijos de los cuatro correos de los formularios.
+ *
+ * Solo rótulos: ni un dato de la solicitud sale de aquí. Todo puede venir
+ * vacío —el documento quizá ni exista todavía— y el código tiene escritos los
+ * textos de siempre como respaldo, así que el correo nunca sale a medias.
+ */
+const EMAIL_TEMPLATE = groq`{
+  subject, title, referenceLabel, intro, sections,
+  labels[] { key, label },
+  outro
+}`;
+
+export const EMAILS_PAGE_QUERY = groq`
+  *[_id == "emailsPage"][0] {
+    productoCliente ${EMAIL_TEMPLATE},
+    productoEstudio ${EMAIL_TEMPLATE},
+    proyectoCliente ${EMAIL_TEMPLATE},
+    proyectoEstudio ${EMAIL_TEMPLATE}
+  }
+`;

@@ -2,15 +2,17 @@
 
 import { z } from "zod";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { EMAILS_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import {
   assertEmailConfig,
   sendEmail,
   studioAddress,
 } from "@/lib/email/resend";
 import type { Contacto } from "@/lib/email/layout";
+import type { TextosCorreo } from "@/lib/email/textos";
 import * as producto from "@/lib/email/productRequest";
 import * as proyecto from "@/lib/email/projectRequest";
+import { nextReference } from "@/lib/requests/reference";
 
 /**
  * Las dos acciones que envían los correos de los formularios.
@@ -20,6 +22,9 @@ import * as proyecto from "@/lib/email/projectRequest";
  * llamar directamente, sin pasar por la interfaz, así que lo que llega no es
  * de fiar. La validación del navegador es comodidad para quien rellena; esta
  * es la que protege.
+ *
+ * El número de solicitud se emite AQUÍ y nunca llega desde el cliente: si
+ * viniera en el payload, cualquiera podría repetirlo o inventárselo.
  */
 
 export type ResultadoEnvio = { ok: true } | { ok: false; error: string };
@@ -70,13 +75,39 @@ function ahora() {
   }).format(new Date());
 }
 
-/** Los datos del pie de los correos salen del panel, no del código. */
-async function contactoEstudio(): Promise<Contacto> {
-  const s = await sanityFetch<Contacto | null>({
-    query: SITE_SETTINGS_QUERY,
-    tags: ["siteSettings"],
-  });
-  return s ?? {};
+type Ajustes = Contacto & { socials?: { label?: string; url?: string }[] };
+
+/**
+ * Lo que necesita el pie y lo que necesitan los rótulos, en una sola ida.
+ *
+ * Las dos consultas van en paralelo porque no dependen entre sí: esperarlas
+ * en fila sumaría su latencia al tiempo que la persona pasa mirando el botón.
+ */
+async function contenido(): Promise<{ contacto: Contacto; textos: TextosCorreo }> {
+  const [ajustes, textos] = await Promise.all([
+    sanityFetch<Ajustes | null>({
+      query: SITE_SETTINGS_QUERY,
+      tags: ["siteSettings"],
+    }),
+    sanityFetch<TextosCorreo | null>({
+      query: EMAILS_PAGE_QUERY,
+      tags: ["emailsPage"],
+    }),
+  ]);
+
+  const instagram = ajustes?.socials?.find((s) =>
+    /instagram/i.test(s.label ?? ""),
+  )?.url;
+
+  return {
+    contacto: {
+      ...(ajustes ?? {}),
+      // El pie enseña el usuario, no la URL entera.
+      instagram: instagram?.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@"),
+      web: "CAMELIAINTERIORISMO.COM",
+    },
+    textos: textos ?? {},
+  };
 }
 
 /**
@@ -107,15 +138,16 @@ export async function enviarSolicitudProducto(
   const datos = parsed.data;
 
   try {
-    // Falla pronto si la configuración de correo no está puesta, antes de
-    // pedirle nada a Sanity.
+    // Primero lo que puede fallar sin coste: si falta configuración, se sale
+    // antes de gastar un número de la serie y dejar un hueco.
     assertEmailConfig();
-    const contacto = await contactoEstudio();
-    const solicitud = { ...datos, fecha: ahora() };
+    const { contacto, textos } = await contenido();
+    const reference = await nextReference("PROD");
+    const solicitud = { ...datos, reference, fecha: ahora() };
 
     await enviarPar(
-      producto.emailEstudio(solicitud, contacto),
-      producto.emailCliente(solicitud, contacto),
+      producto.emailEstudio(solicitud, contacto, textos.productoEstudio),
+      producto.emailCliente(solicitud, contacto, textos.productoCliente),
       datos.email,
     );
 
@@ -137,10 +169,10 @@ export async function enviarSolicitudProyecto(
 
   // Los tres campos con los que el estudio puede responder. El resto del
   // formulario es contenido y puede variar; estos no.
-  const contacto = z
+  const datosContacto = z
     .object({ nombre: noVacio, email, telefono })
     .safeParse(answers);
-  if (!contacto.success) {
+  if (!datosContacto.success) {
     return {
       ok: false,
       error: "Revisa el nombre, el email y el teléfono antes de enviar.",
@@ -149,13 +181,14 @@ export async function enviarSolicitudProyecto(
 
   try {
     assertEmailConfig();
-    const datosEstudio = await contactoEstudio();
-    const solicitud = { answers, fecha: ahora() };
+    const { contacto, textos } = await contenido();
+    const reference = await nextReference("PROY");
+    const solicitud = { answers, reference, fecha: ahora() };
 
     await enviarPar(
-      proyecto.emailEstudio(solicitud, datosEstudio),
-      proyecto.emailCliente(solicitud, datosEstudio),
-      contacto.data.email,
+      proyecto.emailEstudio(solicitud, contacto, textos.proyectoEstudio),
+      proyecto.emailCliente(solicitud, contacto, textos.proyectoCliente),
+      datosContacto.data.email,
     );
 
     return { ok: true };
