@@ -24,9 +24,13 @@ export type AccompanimentItem = {
 export function AccompanimentSection({
   items,
   title,
+  subtitle,
+  text,
 }: {
   items: AccompanimentItem[];
   title?: string;
+  subtitle?: string;
+  text?: string;
 }) {
   // Dos estados distintos a propósito, porque no responden a lo mismo:
   //
@@ -60,13 +64,9 @@ export function AccompanimentSection({
           <div className="col-span-12 lg:col-span-5">
             {/* Un escalón más grande (24px) para que gane peso sin acercarse
                 al h2 de 36px que la encabeza. */}
-            <h3 className="font-title text-primary text-2xl">
-              Sea cual sea el punto en el que estés.
-            </h3>
+            <h3 className="font-title text-primary text-2xl">{subtitle}</h3>
             <p className="text-primary/75 mt-md text-sm leading-relaxed">
-              Da igual si tu casa está por estrenar o lleva años contigo.
-              Adaptamos nuestros servicios al momento en el que nos necesites
-              para acompañarte durante todo el proceso.
+              {text}
             </p>
 
             {/* 60px sobre el listado: el texto de arriba y los desplegables son

@@ -22,6 +22,7 @@ type MetodologiaPage = {
   processTitle?: string;
   process?: ProcessStep[];
   experienceTitle?: string;
+  experienceText?: string;
   experience?: ExperienceStep[];
   seo?: SeoFields;
 };
@@ -63,6 +64,7 @@ export default async function MetodologiaPage() {
       <ExperienciaScroll
         steps={page?.experience ?? []}
         title={page?.experienceTitle}
+        text={page?.experienceText}
       />
     </>
   );

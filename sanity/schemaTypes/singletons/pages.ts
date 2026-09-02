@@ -337,6 +337,15 @@ export const metodologiaPage = defineType({
       group: "content",
     }),
     defineField({
+      name: "experienceText",
+      title: "Entradilla de la experiencia",
+      type: "text",
+      rows: 4,
+      group: "content",
+      description:
+        "El párrafo que va bajo el título, antes de los pasos que se revelan al bajar.",
+    }),
+    defineField({
       name: "experience",
       title: "Pasos de la experiencia",
       type: "array",
@@ -439,6 +448,22 @@ export const serviciosPage = defineType({
       title: "Título del acompañamiento",
       type: "string",
       group: "content",
+    }),
+    defineField({
+      name: "accompanimentSubtitle",
+      title: "Subtítulo del acompañamiento",
+      type: "string",
+      group: "content",
+      description:
+        "La frase que encabeza la columna de la izquierda, sobre los desplegables.",
+    }),
+    defineField({
+      name: "accompanimentText",
+      title: "Texto del acompañamiento",
+      type: "text",
+      rows: 3,
+      group: "content",
+      description: "El párrafo que va bajo ese subtítulo.",
     }),
     defineField({
       name: "accompaniment",

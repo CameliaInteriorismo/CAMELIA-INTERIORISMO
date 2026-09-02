@@ -121,9 +121,11 @@ function ExperienciaRow({
 export function ExperienciaScroll({
   steps,
   title,
+  text,
 }: {
   steps: ExperienceStep[];
   title?: string;
+  text?: string;
 }) {
   const stepsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -162,12 +164,7 @@ export function ExperienciaScroll({
           <Multiline text={title} />
         </h2>
         <p className="text-primary/75 mt-content text-center text-sm leading-relaxed max-md:text-left">
-          Queremos que te sientas acompañado en cada fase del proyecto,
-          entendiendo lo que ocurre en todo momento y viviendo el proceso con
-          tranquilidad y confianza. Sabemos que diseñar un espacio implica
-          muchas decisiones y tiempo, por eso buscamos hacer las cosas de forma
-          cercana, clara y bien organizada, cuidando tanto el resultado final
-          como la experiencia de todo el camino.
+          {text}
         </p>
 
         {/* Los 100px eran un valor fijo suelto, igual en las tres anchuras. En

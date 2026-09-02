@@ -23,6 +23,8 @@ type ServiciosPage = {
   phasesTitle?: string;
   phases?: ServicePhase[];
   accompanimentTitle?: string;
+  accompanimentSubtitle?: string;
+  accompanimentText?: string;
   accompaniment?: AccompanimentItem[];
   cta?: CtaBannerData;
   faqTitle?: string;
@@ -68,6 +70,8 @@ export default async function ServiciosPage() {
       <AccompanimentSection
         items={page?.accompaniment ?? []}
         title={page?.accompanimentTitle}
+        subtitle={page?.accompanimentSubtitle}
+        text={page?.accompanimentText}
       />
       <CtaBanner cta={page?.cta} />
       <FaqSection items={page?.faq ?? []} title={page?.faqTitle} />

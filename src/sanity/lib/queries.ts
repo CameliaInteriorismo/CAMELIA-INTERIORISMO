@@ -211,6 +211,7 @@ export const METODOLOGIA_PAGE_QUERY = groq`
     processTitle,
     process[] { _key, label, title, paragraphs, image ${IMAGE} },
     experienceTitle,
+    experienceText,
     experience[] { _key, title, paragraphs, imageRight, image ${IMAGE} },
     seo ${SEO}
   }
@@ -226,6 +227,8 @@ export const SERVICIOS_PAGE_QUERY = groq`
     "phases": phases[]-> { _id, title, longDescription, image ${IMAGE} },
     introTitle, introText, phasesTitle,
     accompanimentTitle,
+    accompanimentSubtitle,
+    accompanimentText,
     accompaniment[] { _key, question, answer, image ${IMAGE} },
     cta { title, text, button, image ${IMAGE} },
     faqTitle,
