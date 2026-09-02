@@ -47,7 +47,20 @@ export function StudioMap({
               vertical que reservar, así que el `md:mt-0` tampoco hace falta. */}
           <div className="col-span-12 md:col-span-5 md:col-start-8 md:text-right">
             <p className="text-primary text-lg">{lead}</p>
-            <p className="text-primary/75 mt-sm text-sm leading-relaxed">
+            {/* Desde `xl` esta frase —y solo ella— se ensancha hacia la
+                izquierda para caber en una línea, como en el diseño: la
+                columna mide 442px y el texto pide 537.
+
+                Va como margen negativo en el propio párrafo y no en la
+                columna, porque la columna la comparte con la frase de arriba,
+                que debe seguir partiéndose en dos líneas. Así cada una
+                conserva su ancho.
+
+                Los 220px cubren el peor caso: a 1280 la columna se estrecha a
+                375 y faltan 162. Solo se come hueco vacío —a esa anchura
+                quedan 383px libres hasta el título de al lado—, y el borde
+                derecho no se mueve, así que la alineación es la misma. */}
+            <p className="text-primary/75 mt-sm text-sm leading-relaxed xl:-ml-[220px] xl:whitespace-nowrap">
               {text}
             </p>
           </div>
