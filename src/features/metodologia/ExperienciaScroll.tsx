@@ -160,10 +160,19 @@ export function ExperienciaScroll({
   return (
     <section className="pt-section">
       <Container>
-        <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
+        {/* Mismo tratamiento que el titular de "El proceso": a la izquierda
+            y con tope de medida, para que las dos secciones de la página
+            abran igual. */}
+        <h2 className="font-title text-primary max-w-3xl text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
-        <p className="text-primary/75 mt-content text-center text-sm leading-relaxed max-md:text-left">
+        {/* Arranca en la misma izquierda que el titular pero, al revés que
+            él, no lleva tope de medida: ocupa el ancho del contenedor de
+            punta a punta y forma una banda horizontal amplia. Los márgenes
+            laterales los pone el Container, los mismos del resto de la web.
+            El `max-md:text-left` que había aquí sobra desde que el texto ya
+            no se centra en ningún ancho. */}
+        <p className="text-primary/75 mt-content text-sm leading-relaxed">
           {text}
         </p>
 

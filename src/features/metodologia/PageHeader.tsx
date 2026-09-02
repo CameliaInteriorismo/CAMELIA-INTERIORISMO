@@ -8,8 +8,9 @@ import type { SanityImageSource } from "@/sanity/lib/image";
  * traía, pero este componente no recibía ninguno, así que la foto subida al
  * panel no llegaba a pintarse nunca.
  *
- * El título va en el vino de la marca y no en crema como el resto de
- * cabeceras: es la excepción que pide el diseño para esta página.
+ * El título va en el crema de la marca, igual que Servicios, Proyectos,
+ * Blog y Shop: es la misma cabecera y no había motivo para que esta fuera la
+ * única en vino.
  */
 export function PageHeader({
   title,
@@ -23,7 +24,7 @@ export function PageHeader({
   return (
     <PageHeroBanner
       title={title ?? "Metodología"}
-      titleClassName="tracking-[0.02em]"
+      titleClassName="text-background tracking-[0.02em]"
       image={imageProps(image)?.src}
       imagePosition={imagePosition}
     />

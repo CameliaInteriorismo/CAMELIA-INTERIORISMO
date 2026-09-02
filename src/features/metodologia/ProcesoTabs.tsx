@@ -132,7 +132,11 @@ export function ProcesoTabs({
   return (
     <section className="pt-section">
       <Container>
-        <h2 className="font-title text-primary text-center text-3xl md:text-4xl">
+        {/* Alineado a la izquierda, no centrado: el titular abre la sección
+            como una portada editorial y el aire queda a su derecha. El
+            `max-w` es solo un tope de medida —hoy ninguna línea llega a él—,
+            para que un titular más largo no se estire de margen a margen. */}
+        <h2 className="font-title text-primary max-w-3xl text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>
 
