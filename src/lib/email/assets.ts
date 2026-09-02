@@ -37,6 +37,21 @@ export const EMAIL_ASSETS = {
    * —y de paso pesa menos, que en un correo cuenta.
    */
   patron: asset("/images/emails/patron-email.png"),
+  /**
+   * El mismo dibujo para el teléfono, compuesto en espejo.
+   *
+   * En móvil del patrón solo asoman 16px a cada lado del bloque crema, y el
+   * dibujo original tiene un ritmo de ~40px: pareja de rayas, hueco del mismo
+   * ancho. Así que esa rendija de 16px cae entera en rayas o entera en hueco
+   * según el ancho del teléfono, y salía vino liso a un lado y rayas al otro.
+   *
+   * Esta variante es el mismo patrón —mismos colores, mismos grosores, misma
+   * escala— duplicado en espejo. Al ser simétrico, centrarlo hace que los dos
+   * lados sean reflejo exacto uno del otro en cualquier ancho de pantalla, no
+   * en unos cuantos que se hayan probado. El eje se eligió para que la rendija
+   * caiga sobre rayas y no sobre hueco.
+   */
+  patronMovil: asset("/images/emails/patron-email-movil.png"),
   /** Bloque del pie apaisado, para el correo a 600px. */
   footer: asset("/images/emails/Footer.png"),
   /**

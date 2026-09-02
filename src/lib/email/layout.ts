@@ -206,6 +206,7 @@ export function envoltorio({
   contacto: Contacto;
 }): string {
   const patron = EMAIL_ASSETS.patron;
+  const patronMovil = EMAIL_ASSETS.patronMovil;
   // Outlook de escritorio no pinta `background-image` en una celda: necesita
   // VML. Va en comentario condicional para que ningún otro cliente lo vea.
   const vml = patron
@@ -234,7 +235,12 @@ export function envoltorio({
     /* Mismos saltos que en escritorio —titular/sección 1,73 y
        sección/cuerpo 1,15—, un escalón más abajo. Encoge la escala, no la
        jerarquía. */
-    .marco   { padding:22px 16px !important; }
+    /* El patrón pasa a la variante en espejo y centrada, para que las dos
+       rendijas que quedan a los lados del bloque sean reflejo exacto una de
+       otra sea cual sea el ancho del teléfono. Solo por debajo de 520px: en
+       escritorio el patrón se queda exactamente como estaba. Si el recurso
+       no está disponible se cae al de siempre, que es lo que había. */
+    .marco   { padding:22px 16px !important;${patronMovil ? ` background-image:url('${patronMovil}') !important; background-position:center top !important;` : ""} }
     .bloque  { padding:30px 22px !important; }
     .titular { font-size:26px !important; }
     .sec     { font-size:15px !important; margin-top:30px !important; }

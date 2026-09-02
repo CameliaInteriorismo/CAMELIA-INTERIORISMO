@@ -53,12 +53,26 @@ const ESTUDIO_PROYECTO = [
   "comoNosConociste",
 ] as const;
 
+/**
+ * La superficie se pregunta como número y se lee como medida, así que la
+ * unidad se pone al pintarla: el dato guardado no cambia.
+ *
+ * Solo se añade si no viene ya puesta —alguien puede escribir "120 m2" en el
+ * formulario—, para no acabar con un "120 m² m²".
+ */
+function conUnidad(clave: string, valor?: string): string | undefined {
+  if (clave !== "superficie") return valor;
+  const limpio = valor?.trim();
+  if (!limpio) return valor;
+  return /m\s*(²|2|\u33A1)\s*$/i.test(limpio) ? limpio : `${limpio} m²`;
+}
+
 function filasDe(
   answers: Record<string, string>,
   claves: readonly string[],
   rotulo: (k: string) => string,
 ): string {
-  return claves.map((k) => fila(rotulo(k), answers[k])).join("");
+  return claves.map((k) => fila(rotulo(k), conUnidad(k, answers[k]))).join("");
 }
 
 function textoDe(
@@ -66,7 +80,7 @@ function textoDe(
   claves: readonly string[],
   rotulo: (k: string) => string,
 ): [string, string | undefined][] {
-  return claves.map((k) => [rotulo(k), answers[k]]);
+  return claves.map((k) => [rotulo(k), conUnidad(k, answers[k])]);
 }
 
 /** Confirmación para quien ha contado su proyecto. */
