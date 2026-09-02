@@ -23,14 +23,52 @@ const SEO = groq`{ title, description, ogTitle, ogDescription, ogImage ${IMAGE} 
 
 // --------------------------------------------------------------- proyectos
 
-/** El listado. Solo lo que pinta la cuadrícula, nada más. */
+/**
+ * La fecha de un proyecto, convertida en algo ordenable.
+ *
+ * El panel guarda mes y año juntos, en un solo campo de texto y en castellano
+ * ("Junio 2026"), porque es tal cual como se pinta en la ficha. Eso no se
+ * puede ordenar directamente: alfabéticamente "Abril" va antes que "Agosto" y
+ * el listado saldría en un orden sin sentido.
+ *
+ * Así que aquí se parte en dos: el año, que al ser de cuatro cifras ya ordena
+ * bien como texto, y el mes, traducido a número. Si un proyecto no lleva mes
+ * —o lo lleva escrito de otra forma— cae en 0 y queda al final de su año, que
+ * es el sitio menos dañino: nunca se cuela por delante de uno fechado.
+ */
+const MES = groq`string::split(year, " ")[0]`;
+const FECHA_ORDENABLE = groq`
+    "anio": coalesce(string::split(year, " ")[1], year, "0000"),
+    "mes": select(
+      ${MES} == "Diciembre"  => 12,
+      ${MES} == "Noviembre"  => 11,
+      ${MES} == "Octubre"    => 10,
+      ${MES} == "Septiembre" => 9,
+      ${MES} == "Agosto"     => 8,
+      ${MES} == "Julio"      => 7,
+      ${MES} == "Junio"      => 6,
+      ${MES} == "Mayo"       => 5,
+      ${MES} == "Abril"      => 4,
+      ${MES} == "Marzo"      => 3,
+      ${MES} == "Febrero"    => 2,
+      ${MES} == "Enero"      => 1,
+      0
+    )`;
+
+/**
+ * El listado. Solo lo que pinta la cuadrícula, nada más.
+ *
+ * Del más reciente al más antiguo, por la fecha del propio proyecto. El campo
+ * `order` solo entra a desempatar cuando dos comparten mes y año, para que el
+ * resultado sea siempre el mismo y no dependa del azar.
+ */
 export const PROJECTS_QUERY = groq`
-  *[_type == "project" && defined(slug.current)] | order(order asc) {
+  *[_type == "project" && defined(slug.current)] {
     _id,
     name,
     "slug": slug.current,
-    cardImage ${IMAGE}
-  }
+    cardImage ${IMAGE},${FECHA_ORDENABLE}
+  } | order(anio desc, mes desc, order asc)
 `;
 
 /** Las rutas a prerenderizar. Un proyecto nuevo entra aquí solo. */
@@ -255,14 +293,16 @@ export const HOME_PAGE_QUERY = groq`
     // Los destacados salen solos de los proyectos marcados como tales: la
     // fuente de verdad es el campo del proyecto, no una lista aparte que
     // había que mantener a mano y podía discrepar de él —y discrepaba.
+    // Del más reciente al más antiguo, con el mismo criterio que el listado
+    // de /proyectos: la fecha del proyecto manda, y order solo desempata.
     "featuredProjects": *[
       _type == "project" && featured == true && defined(slug.current)
-    ] | order(order asc) {
+    ] {
       "_key": _id,
       name,
       "slug": slug.current,
-      "image": homeImage ${IMAGE}
-    },
+      "image": homeImage ${IMAGE},${FECHA_ORDENABLE}
+    } | order(anio desc, mes desc, order asc),
     testimonialsTitle,
     // Las ocultas se descartan aquí, no en el componente: una reseña retirada
     // desde el panel deja de viajar al navegador en vez de llegar y esconderse.
