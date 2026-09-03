@@ -53,13 +53,13 @@ export const EMAIL_ASSETS = {
    */
   patronMovil: asset("/images/emails/patron-email-movil.png"),
   /** Bloque del pie apaisado, para el correo a 600px. */
-  footer: asset("/images/emails/Footer.png"),
+  footer: asset("/images/emails/Desktop%20Sign%20Footer.png"),
   /**
    * El mismo pie en composición vertical, para el teléfono. Encoger el
    * apaisado a 288px dejaría los rótulos por debajo de lo legible; esta
    * versión reparte los mismos elementos en alto.
    */
-  footerMovil: asset("/images/emails/Footer%20mobile.png"),
+  footerMovil: asset("/images/emails/Mobile%20Sign%20Footer.png"),
   /** Logotipo suelto, por si el pie se compone con texto en vez de imagen. */
   logo: asset("/images/logos/trimmed/Camelia%20logo%20naranja%20actualizado.png"),
 } as const;
