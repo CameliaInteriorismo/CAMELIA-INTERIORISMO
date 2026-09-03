@@ -8,9 +8,9 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
-import { AddressAutocomplete } from "@/features/formulario/AddressAutocomplete";
 import { type Step } from "@/features/formulario/data";
-import { fieldClass } from "@/features/formulario/styles";
+import { ProjectReview } from "@/features/formulario/ProjectReview";
+import { renderHelp, StepFields } from "@/features/formulario/StepFields";
 import { cn } from "@/utils/cn";
 
 type Answers = Record<string, string>;
@@ -32,25 +32,47 @@ const STEP_IN = 0.3;
 const STEP_OUT = 0.18;
 
 /**
- * The help line, with `helpBold` set in bold where a step asks for it (the
- * optional-section notice). Split rather than stored as markup so the copy
- * stays a plain sentence in the data file.
+ * Qué falta en un paso, si algo falta. La misma comprobación sirve para
+ * avanzar de paso en paso y para revalidar todo de un tirón antes de
+ * confirmar desde la revisión —editar ahí no vuelve a pasar por `next()`,
+ * así que sin esto un campo obligatorio vaciado durante la edición podría
+ * colarse hasta el envío.
  */
-function renderHelp(step: Exclude<Step, { kind: "intro" }>) {
-  const help = step.help;
-  if (!help) return null;
-
-  const bold = "helpBold" in step ? step.helpBold : undefined;
-  if (!bold || !help.includes(bold)) return help;
-
-  const [before, ...rest] = help.split(bold);
-  return (
-    <>
-      {before}
-      <strong className="text-primary font-semibold">{bold}</strong>
-      {rest.join(bold)}
-    </>
-  );
+function validarPaso(
+  step: Step,
+  answers: Answers,
+): string | undefined {
+  if (step.kind === "intro") return undefined;
+  // "long" is explicitly optional per the reference; every other question
+  // must be answered before moving on.
+  if (step.kind === "text" || step.kind === "choice") {
+    if (!answers[step.name]?.trim()) return "Completa este campo para continuar";
+  }
+  // The multi-answer screens gate on every one of their parts, so a
+  // half-filled contact block or a single picked group can't slip past.
+  if (step.kind === "fields" || step.kind === "choiceGroups") {
+    const parts = step.kind === "fields" ? step.fields : step.groups;
+    if (parts.some((part) => !answers[part.name]?.trim())) {
+      return step.kind === "fields"
+        ? "Completa todos los campos para continuar"
+        : "Elige una opción en cada apartado para continuar";
+    }
+  }
+  // Email y teléfono, con forma además de con contenido: son las dos vías
+  // por las que el estudio responde, y una errata aquí deja la solicitud
+  // sin respuesta posible. El servidor lo vuelve a comprobar.
+  if (step.kind === "fields") {
+    if (answers.email !== undefined && !EMAIL.test(answers.email.trim())) {
+      return "Revisa el correo electrónico";
+    }
+    if (
+      answers.telefono !== undefined &&
+      !TELEFONO.test(answers.telefono.trim())
+    ) {
+      return "Revisa el teléfono";
+    }
+  }
+  return undefined;
 }
 
 function StepBody({
@@ -77,118 +99,7 @@ function StepBody({
         </p>
       )}
 
-      {step.kind === "text" && (
-        <div className="mt-block max-w-[30rem]">
-          {step.autocomplete === "address" ? (
-            <AddressAutocomplete
-              value={answers[step.name] ?? ""}
-              onChange={(next) => setAnswer(step.name, next)}
-              placeholder={step.placeholder}
-            />
-          ) : (
-            <input
-              value={answers[step.name] ?? ""}
-              onChange={(e) => setAnswer(step.name, e.target.value)}
-              placeholder={step.placeholder}
-              inputMode={step.inputMode}
-              className={cn(fieldClass, "h-11")}
-            />
-          )}
-        </div>
-      )}
-
-      {step.kind === "choice" && (
-        <div className="mt-block space-y-3">
-          {step.options.map((option) => (
-            <label
-              key={option}
-              className="flex w-fit cursor-pointer items-center gap-3"
-            >
-              <input
-                type="radio"
-                name={step.name}
-                checked={answers[step.name] === option}
-                onChange={() => setAnswer(step.name, option)}
-                className="accent-primary h-4 w-4"
-              />
-              <span className="text-primary text-sm">{option}</span>
-            </label>
-          ))}
-        </div>
-      )}
-
-      {step.kind === "long" && (
-        <div className="mt-block space-y-block max-w-[30rem]">
-          {step.fields.map((field) => (
-            <div key={field.name}>
-              <p className="text-primary mb-2 text-sm leading-relaxed">
-                {field.label}
-              </p>
-              <textarea
-                rows={3}
-                value={answers[field.name] ?? ""}
-                onChange={(e) => setAnswer(field.name, e.target.value)}
-                placeholder={field.placeholder}
-                className={cn(fieldClass, "resize-none py-3 leading-relaxed")}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Same label + input pairing as "long" above, just single-line —
-          the contact-details screen (FORMULARIO CONTACTO 10). */}
-      {step.kind === "fields" && (
-        <div className="mt-block space-y-block max-w-[30rem]">
-          {step.fields.map((field) => (
-            <div key={field.name}>
-              <p className="text-primary mb-2 text-sm leading-relaxed">
-                {field.label}
-              </p>
-              <input
-                type={field.type ?? "text"}
-                value={answers[field.name] ?? ""}
-                onChange={(e) => setAnswer(field.name, e.target.value)}
-                placeholder={field.placeholder}
-                inputMode={field.inputMode}
-                className={cn(fieldClass, "h-11")}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Two radio groups on one screen (FORMULARIO CONTACTO 11). Each group
-          renders exactly like a "choice" step's options — same spacing, same
-          control — under its own label, set like the field labels above. */}
-      {step.kind === "choiceGroups" && (
-        <div className="mt-block space-y-block">
-          {step.groups.map((group) => (
-            <div key={group.name}>
-              <p className="text-primary mb-4 text-sm leading-relaxed">
-                {group.label}
-              </p>
-              <div className="space-y-3">
-                {group.options.map((option) => (
-                  <label
-                    key={option}
-                    className="flex w-fit cursor-pointer items-center gap-3"
-                  >
-                    <input
-                      type="radio"
-                      name={group.name}
-                      checked={answers[group.name] === option}
-                      onChange={() => setAnswer(group.name, option)}
-                      className="accent-primary h-4 w-4"
-                    />
-                    <span className="text-primary text-sm">{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <StepFields step={step} answers={answers} setAnswer={setAnswer} />
 
       {error && <p className="text-secondary mt-sm text-xs">{error}</p>}
     </>
@@ -202,6 +113,11 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [error, setError] = useState<string>();
+  // Al terminar el último paso no se envía todavía: se enseña una revisión
+  // de todo lo contestado. `answers`/`index` no se tocan al entrar ni al
+  // salir de este modo, así que "Editar" y "Volver" son gratis — es el
+  // mismo formulario, solo cambia qué se pinta.
+  const [revisando, setRevisando] = useState(false);
   // Apaga los dos botones mientras el envío está en vuelo: sin esto, un
   // doble clic en FINALIZAR dispara dos solicitudes, y serían dos números y
   // dos pares de correos por el mismo proyecto.
@@ -216,50 +132,39 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   }
 
   function next() {
-    // "long" is explicitly optional per the reference; every other
-    // question must be answered before moving on.
-    if (step.kind === "text" || step.kind === "choice") {
-      if (!answers[step.name]?.trim()) {
-        setError("Completa este campo para continuar");
-        return;
-      }
-    }
-    // The multi-answer screens gate on every one of their parts, so a
-    // half-filled contact block or a single picked group can't slip past.
-    if (step.kind === "fields" || step.kind === "choiceGroups") {
-      const parts = step.kind === "fields" ? step.fields : step.groups;
-      if (parts.some((part) => !answers[part.name]?.trim())) {
-        setError(
-          step.kind === "fields"
-            ? "Completa todos los campos para continuar"
-            : "Elige una opción en cada apartado para continuar",
-        );
-        return;
-      }
-    }
-    // Email y teléfono, con forma además de con contenido: son las dos vías
-    // por las que el estudio responde, y una errata aquí deja la solicitud
-    // sin respuesta posible. Se comprueba en el paso donde se piden, para
-    // avisar ahí y no al final. El servidor lo vuelve a comprobar.
-    if (step.kind === "fields") {
-      if (answers.email !== undefined && !EMAIL.test(answers.email.trim())) {
-        setError("Revisa el correo electrónico");
-        return;
-      }
-      if (
-        answers.telefono !== undefined &&
-        !TELEFONO.test(answers.telefono.trim())
-      ) {
-        setError("Revisa el teléfono");
-        return;
-      }
+    const problema = validarPaso(step, answers);
+    if (problema) {
+      setError(problema);
+      return;
     }
     if (isLast) {
-      void enviar();
+      setError(undefined);
+      setRevisando(true);
       return;
     }
     setError(undefined);
     setIndex((i) => i + 1);
+  }
+
+  /**
+   * Revalida los diez pasos de un tirón antes de enviar. Editar en la propia
+   * revisión ya no pasa por `next()`, así que sin esto alguien podría vaciar
+   * un campo obligatorio ahí y llegar a confirmar con la solicitud a medias.
+   * Si algo falla, se sale de la revisión y se aterriza justo en ese paso —
+   * el mismo criterio de siempre: nunca "vuelve al principio del
+   * formulario", vuelve al apartado exacto.
+   */
+  function revisarYEnviar() {
+    for (let i = 0; i < steps.length; i++) {
+      const problema = validarPaso(steps[i], answers);
+      if (problema) {
+        setError(problema);
+        setRevisando(false);
+        setIndex(i);
+        return;
+      }
+    }
+    void enviar();
   }
 
   async function enviar() {
@@ -309,14 +214,24 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
           <Grid className="items-stretch">
             {/* 6 columns, not 5: the reference gives the copy ~520px of a
                 1440 page, and at 5/12 (442px) the intro headline no longer
-                fits on its two intended lines. */}
-            <div className="col-span-12 flex flex-col justify-center md:col-span-6">
+                fits on its two intended lines.
+
+                La revisión ocupa las 12: es una lista de datos, no una
+                pregunta con foto al lado, y necesita el ancho para no
+                sentirse apretada. */}
+            <div
+              className={cn(
+                "col-span-12 flex flex-col justify-center",
+                !revisando && "md:col-span-6",
+              )}
+            >
               {/* Each step hands over in place rather than the page
                   re-rendering wholesale, so the split composition holds
-                  steady while only the question changes. */}
+                  steady while only the question changes. La revisión entra
+                  con la misma transición, como un paso más del mismo viaje. */}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
-                  key={index}
+                  key={revisando ? "revision" : index}
                   initial={{ opacity: 0, x: shift }}
                   animate={{
                     opacity: 1,
@@ -329,7 +244,20 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                     transition: { duration: STEP_OUT, ease: EASE },
                   }}
                 >
-                  {step.kind === "intro" ? (
+                  {revisando ? (
+                    <ProjectReview
+                      steps={steps}
+                      answers={answers}
+                      setAnswer={setAnswer}
+                      enviando={enviando}
+                      error={error}
+                      onVolver={() => {
+                        setError(undefined);
+                        setRevisando(false);
+                      }}
+                      onConfirmar={revisarYEnviar}
+                    />
+                  ) : step.kind === "intro" ? (
                     <>
                       {/* ~60px at desktop, matching the reference — one
                           step under the hero scale, which at 72px broke
@@ -404,7 +332,12 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                 Sale también el `mt-block`: con la foto arriba ese margen se
                 colaba entre la cabecera y la imagen, y la separación con el
                 texto ya la pone el `gap-y-8` de la rejilla. Antes se sumaban
-                los dos y daban 64px donde el sistema pide 32. */}
+                los dos y daban 64px donde el sistema pide 32.
+
+                No se pinta en la revisión: no hay una foto por sección, y
+                dejar la última del formulario puesta ahí sugeriría que
+                pertenece a un dato que ya no se está mostrando. */}
+            {!revisando && (
             <div className="col-span-12 max-md:order-first md:col-span-6 md:col-start-7">
               {/* One height for every step of the form, never shorter than
                   the copy beside it.
@@ -473,6 +406,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                 </AnimatePresence>
               </div>
             </div>
+            )}
           </Grid>
         </Container>
       </main>

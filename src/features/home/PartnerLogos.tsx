@@ -31,9 +31,16 @@ export function PartnerLogos({ partners }: { partners: Partner[] }) {
     // sizing each into a common box keeps them optically even instead of
     // letting the wide ones dominate. No card, border or shadow — just the
     // mark on the page background.
+    //
+    // Maora es la excepción: su marca (sello + palabra + "CERAMIC" apiladas)
+    // mide 1.45:1, muy por debajo de cualquier otra (1.84–6.97), así que
+    // dentro de la misma altura compartida sale visiblemente más pequeña
+    // que sus vecinas por mucho ancho de más que se le dé al slot — el
+    // ancho ya no es lo que la limita. `scale-125` la agranda sin tocar el
+    // hueco que ocupa en la fila, así el resto de espaciados no se mueve.
     <span
       key={partner._id}
-      className={`relative block shrink-0 ${SLOTS[partner.size ?? "normal"]}`}
+      className={`relative block shrink-0 ${SLOTS[partner.size ?? "normal"]} ${partner.name === "Maora Ceramic" ? "scale-125" : ""}`}
     >
       {/* Eager: the duplicated half of the track sits off-screen, and
           lazy-loading would leave it blank until it drifted in — visible
@@ -54,10 +61,11 @@ export function PartnerLogos({ partners }: { partners: Partner[] }) {
     // Full-bleed rather than inside Container: the band runs edge to edge
     // so the loop never appears to start or stop at a margin.
     <section className="pt-section overflow-hidden">
-      {/* 70s for ten logos — a touch more momentum than the original 90s
-          so the travel feels natural, still slow enough to read each mark
-          as it drifts past. */}
-      <Marquee items={logos} duration={70} gapClassName="gap-16 md:gap-24" />
+      {/* De derecha a izquierda, sin `reverse`: es el sentido que se quiere
+          aquí. 50s en vez de 70: un poco más de velocidad mientras se sigue
+          leyendo cada marca al pasar, no un scroll que se lea de un vistazo
+          borroso. */}
+      <Marquee items={logos} duration={50} gapClassName="gap-16 md:gap-24" />
     </section>
   );
 }

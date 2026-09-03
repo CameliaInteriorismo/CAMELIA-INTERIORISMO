@@ -1138,10 +1138,11 @@ export const confirmationPages = defineType({
     }),
     defineField({
       name: "submitLabel",
-      title: "Botón de envío",
+      title: "Botón para revisar el pedido",
       type: "string",
       group: "content",
-      description: "Solo el texto. Lo que hace el botón no cambia.",
+      description:
+        "Solo el texto. Este botón pasa a la pantalla de revisión, no envía el pedido todavía — eso lo hace 'CONFIRMAR PEDIDO' en esa pantalla siguiente.",
     }),
     defineField({
       name: "studioName",
