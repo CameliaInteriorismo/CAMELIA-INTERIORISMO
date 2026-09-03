@@ -12,7 +12,6 @@ import type { Contacto } from "@/lib/email/layout";
 import type { TextosCorreo } from "@/lib/email/textos";
 import * as producto from "@/lib/email/productRequest";
 import * as proyecto from "@/lib/email/projectRequest";
-import { nextReference } from "@/lib/requests/reference";
 
 /**
  * Las dos acciones que envían los correos de los formularios.
@@ -22,9 +21,6 @@ import { nextReference } from "@/lib/requests/reference";
  * llamar directamente, sin pasar por la interfaz, así que lo que llega no es
  * de fiar. La validación del navegador es comodidad para quien rellena; esta
  * es la que protege.
- *
- * El número de solicitud se emite AQUÍ y nunca llega desde el cliente: si
- * viniera en el payload, cualquiera podría repetirlo o inventárselo.
  */
 
 export type ResultadoEnvio = { ok: true } | { ok: false; error: string };
@@ -138,12 +134,9 @@ export async function enviarSolicitudProducto(
   const datos = parsed.data;
 
   try {
-    // Primero lo que puede fallar sin coste: si falta configuración, se sale
-    // antes de gastar un número de la serie y dejar un hueco.
     assertEmailConfig();
     const { contacto, textos } = await contenido();
-    const reference = await nextReference("PROD");
-    const solicitud = { ...datos, reference, fecha: ahora() };
+    const solicitud = { ...datos, fecha: ahora() };
 
     await enviarPar(
       producto.emailEstudio(solicitud, contacto, textos.productoEstudio),
@@ -182,8 +175,7 @@ export async function enviarSolicitudProyecto(
   try {
     assertEmailConfig();
     const { contacto, textos } = await contenido();
-    const reference = await nextReference("PROY");
-    const solicitud = { answers, reference, fecha: ahora() };
+    const solicitud = { answers, fecha: ahora() };
 
     await enviarPar(
       proyecto.emailEstudio(solicitud, contacto, textos.proyectoEstudio),

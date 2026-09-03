@@ -12,7 +12,6 @@ import {
 import { conNombre, resolver, type Plantilla } from "@/lib/email/textos";
 
 export type SolicitudProyecto = {
-  reference: string;
   fecha: string;
   answers: Record<string, string>;
 };
@@ -105,15 +104,11 @@ export function emailCliente(
     html: envoltorio({
       preheader: t.intro[1] ?? t.title,
       titular: t.title,
-      referenciaLabel: t.referenceLabel,
-      referencia: s.reference,
       cuerpo,
       contacto,
     }),
     text: textoPlano(
       t.title,
-      t.referenceLabel,
-      s.reference,
       [
         ...t.intro.map((p) => conNombre(p, nombre)),
         t.seccion(0),
@@ -144,19 +139,15 @@ export function emailEstudio(
   `;
 
   return {
-    subject: `${t.subject} · ${s.reference}`,
+    subject: t.subject,
     html: envoltorio({
       preheader: `${nombre} ha enviado una solicitud de proyecto.`,
       titular: t.title,
-      referenciaLabel: t.referenceLabel,
-      referencia: s.reference,
       cuerpo,
       contacto,
     }),
     text: textoPlano(
       t.title,
-      t.referenceLabel,
-      s.reference,
       [
         t.seccion(0),
         ...textoDe(s.answers, ESTUDIO_CONTACTO, t.rotulo),

@@ -9,7 +9,7 @@ import type { SanityImageSource } from "@/sanity/lib/image";
  * panel no llegaba a pintarse nunca.
  *
  * El título va en el crema de la marca, igual que Servicios, Proyectos,
- * Blog y Shop: es la misma cabecera y no había motivo para que esta fuera la
+ * Shop: es la misma cabecera y no había motivo para que esta fuera la
  * única en vino.
  */
 export function PageHeader({

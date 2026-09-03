@@ -33,7 +33,7 @@ export const LEGAL_MEASURE = "mx-auto w-full max-w-[36rem]";
  * out of Navbar's `hasHero` list and keep the normal solid sticky bar.
  *
  * Everything else is the site's own system: same Container, same side
- * margins, 60px from the navbar (as on the blog article and Contacto, the
+ * margins, 60px from the navbar (as on Contacto, the
  * site's other pages that open straight onto content), and 100px from the
  * title down to the body — the same gap every interior page leaves between
  * its hero and its content. The title runs at its own reduced scale (see

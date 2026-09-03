@@ -30,5 +30,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  // content-backup/ guarda copias de código retirado (ver su propósito en
+  // AGENTS.md/CLAUDE.md del proyecto): siguen sus propios imports, que dejan
+  // de resolver en cuanto lo que copiaban se quita del árbol activo. Como no
+  // se compilan ni se sirven, no hace falta que pasen el chequeo de tipos.
+  "exclude": ["node_modules", "content-backup"]
 }

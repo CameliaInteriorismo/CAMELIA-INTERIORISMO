@@ -23,6 +23,13 @@ const CREMA = "#fcf7ec";
  * garantías, así que la mezcla va calculada y escrita en firme.
  */
 const VINO_CLARO = "#816064";
+/**
+ * La línea fina bajo cada dato de una tabla. Vino al 12% mezclado con el
+ * fondo crema, calculado y escrito en firme por la misma razón que
+ * `VINO_CLARO`: en un correo `opacity` y el hex de 8 dígitos no son de fiar
+ * en todos los clientes (Outlook de escritorio, sobre todo).
+ */
+const LINEA = "#e5dbd3";
 
 /** El ancho de siempre en correo: cabe en cualquier panel de lectura. */
 const ANCHO = 600;
@@ -91,10 +98,17 @@ export function esc(value: unknown): string {
  */
 export function fila(label: string, value?: string | null): string {
   if (!value || !String(value).trim()) return "";
+  // Cada dato en su propia fila, con una línea fina debajo: antes solo
+  // llevaban 10px de aire y nada que separara un dato del siguiente, así que
+  // una tabla larga se leía como un bloque compacto. La línea va en las DOS
+  // celdas —no en una `<tr>` con `border-bottom`, que Outlook ignora— para
+  // que cruce las dos columnas sin depender de ese soporte.
+  const borde = `border-bottom:1px solid ${LINEA};`;
   return `<tr>
-    <td class="dato" align="left" width="44%" style="width:44%;padding:0 10px 10px 0;font-family:${TEXTO};font-size:14px;font-weight:300;line-height:1.5;color:${VINO};vertical-align:top;">${esc(label)}</td>
-    <td class="dato" align="right" width="56%" style="width:56%;padding:0 0 10px 10px;font-family:${TEXTO};font-size:14px;font-weight:300;line-height:1.5;color:${VINO};vertical-align:top;word-break:break-word;overflow-wrap:break-word;">${esc(value).replace(/\n/g, "<br>")}</td>
-  </tr>`;
+    <td class="dato" align="left" width="44%" style="width:44%;padding:0 10px 18px 0;${borde}font-family:${TEXTO};font-size:14px;font-weight:300;line-height:1.5;color:${VINO};vertical-align:top;">${esc(label)}</td>
+    <td class="dato" align="right" width="56%" style="width:56%;padding:0 0 18px 10px;${borde}font-family:${TEXTO};font-size:14px;font-weight:300;line-height:1.5;color:${VINO};vertical-align:top;word-break:break-word;overflow-wrap:break-word;">${esc(value).replace(/\n/g, "<br>")}</td>
+  </tr>
+  <tr><td colspan="2" style="line-height:18px;font-size:0;height:18px;">&nbsp;</td></tr>`;
 }
 
 /** La tabla que agrupa las filas. Vacía, no se pinta. */
@@ -193,15 +207,11 @@ function pie(c: Contacto): string {
 export function envoltorio({
   preheader,
   titular,
-  referenciaLabel,
-  referencia,
   cuerpo,
   contacto,
 }: {
   preheader: string;
   titular: string;
-  referenciaLabel: string;
-  referencia?: string;
   cuerpo: string;
   contacto: Contacto;
 }): string {
@@ -247,7 +257,6 @@ export function envoltorio({
     .dato    { font-size:13px !important; }
     .prod    { font-size:14px !important; }
     .det     { font-size:12px !important; }
-    .ref     { font-size:11px !important; }
     .pie-ancho { display:none !important; max-height:0 !important; overflow:hidden !important; }
     .pie-movil { display:block !important; max-height:none !important; overflow:visible !important; }
   }
@@ -270,14 +279,6 @@ export function envoltorio({
           <tr>
             <td class="bloque" style="padding:44px 40px 52px;background-color:${CREMA};" bgcolor="${CREMA}">
 
-              <!-- El número va arriba del todo y a la derecha, en su propia
-                   línea; el titular queda debajo con su aire, como en el
-                   diseño. No comparten línea base. -->
-              ${
-                referencia
-                  ? `<p class="ref" style="margin:0 0 26px;text-align:right;font-family:${TEXTO};font-size:12px;font-weight:300;letter-spacing:0.03em;line-height:1.4;color:${VINO};">${esc(referenciaLabel)} ${esc(referencia)}</p>`
-                  : ""
-              }
               <h1 class="titular" style="margin:0;font-family:${TITULO};font-size:30px;font-weight:300;line-height:1.2;letter-spacing:0.005em;color:${VINO};">${esc(titular)}</h1>
 
               <div style="height:38px;line-height:38px;font-size:0;">&nbsp;</div>
@@ -298,14 +299,10 @@ export function envoltorio({
 /** La versión en texto plano, para quien no pinta HTML. */
 export function textoPlano(
   titular: string,
-  referenciaLabel: string,
-  referencia: string | undefined,
   bloques: (string | [string, string | undefined | null])[],
   contacto: Contacto,
 ): string {
-  const lineas: string[] = [titular];
-  if (referencia) lineas.push(`${referenciaLabel} ${referencia}`);
-  lineas.push("");
+  const lineas: string[] = [titular, ""];
 
   for (const bloque of bloques) {
     if (typeof bloque === "string") {

@@ -32,7 +32,6 @@ export const structure: StructureResolver = (S) =>
               singleton(S, "serviciosPage", "Servicios"),
               singleton(S, "proyectosPage", "Proyectos"),
               singleton(S, "tiendaPage", "Shop"),
-              singleton(S, "blogPage", "Blog"),
               singleton(S, "contactPage", "Contacto"),
               singleton(S, "projectFormPage", "Formulario de proyecto"),
               singleton(S, "cartPage", "Carrito"),
@@ -45,7 +44,6 @@ export const structure: StructureResolver = (S) =>
 
       S.documentTypeListItem("project").title("Proyectos"),
       S.documentTypeListItem("product").title("Productos"),
-      S.documentTypeListItem("post").title("Blog"),
       S.documentTypeListItem("service").title("Servicios"),
 
       S.divider(),

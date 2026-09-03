@@ -52,11 +52,9 @@ export function Navbar({
     pathname === "/servicios" ||
     pathname === "/proyectos" ||
     pathname.startsWith("/proyectos/") ||
-    pathname === "/tienda" ||
-    // Only the listing owns a hero; a post opens straight on its title.
-    // Legal pages (see features/legal/LegalPage) have none at all — they
-    // open on a plain field, so they keep the normal solid bar too.
-    pathname === "/blog";
+    pathname === "/tienda";
+  // Legal pages (see features/legal/LegalPage) have none at all — they open
+  // on a plain field, so they keep the normal solid bar too.
   // Every page belonging to the shop (listing, product, cart, checkout —
   // whatever lives under /tienda or /carrito) shares this exact navbar:
   // the grid's own hero still floats the header over it (see `hasHero`

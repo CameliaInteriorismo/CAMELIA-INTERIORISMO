@@ -35,7 +35,7 @@ export const isNavFloating = (pathname: string) =>
  * volver arriba, aterriza exactamente donde estaba al cargar.
  *
  * Es la MISMA regla para todas —Inicio, Metodología, Servicios, Proyectos,
- * Shop, Blog, Estudio y Contacto—, sin casos especiales por página. Estudio ya
+ * Shop, Estudio y Contacto—, sin casos especiales por página. Estudio ya
  * no tiene barra clavada ni auto-ocultado propio.
  *
  * Se llama "en el flujo" porque es lo que necesita saber la portada: si la

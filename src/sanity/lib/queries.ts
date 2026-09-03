@@ -161,60 +161,6 @@ export const PRODUCT_CATEGORIES_QUERY = groq`
   }[count > 0].title
 `;
 
-// -------------------------------------------------------------------- blog
-
-export const POSTS_QUERY = groq`
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
-    _id,
-    title,
-    titleLines,
-    subtitle,
-    "slug": slug.current,
-    publishedAt,
-    image ${IMAGE}
-  }
-`;
-
-export const POST_SLUGS_QUERY = groq`
-  *[_type == "post" && defined(slug.current)].slug.current
-`;
-
-export const POST_QUERY = groq`
-  *[_type == "post" && slug.current == $slug][0] {
-    title,
-    titleLines,
-    subtitle,
-    "slug": slug.current,
-    publishedAt,
-    author,
-    categories,
-    image ${IMAGE},
-    leadImage ${IMAGE},
-    body[] {
-      ...,
-      _type == "galleryPair" => { _type, _key, left ${IMAGE}, right ${IMAGE} },
-      _type == "gallerySingle" => { _type, _key, image ${IMAGE} }
-    },
-    seo ${SEO}
-  }
-`;
-
-/**
- * El artículo anterior y el siguiente, por fecha.
- *
- * A propósito NO da la vuelta: en los extremos, el vecino que falta es lo que
- * hace que la ficha ofrezca "Volver" en vez de devolver al lector al primer
- * artículo en silencio. Mismo criterio que tenía getAdjacentPosts.
- */
-export const ADJACENT_POSTS_QUERY = groq`{
-  "previous": *[_type == "post" && publishedAt > $publishedAt] | order(publishedAt asc)[0] {
-    title, titleLines, "slug": slug.current
-  },
-  "next": *[_type == "post" && publishedAt < $publishedAt] | order(publishedAt desc)[0] {
-    title, titleLines, "slug": slug.current
-  }
-}`;
-
 /**
  * El catálogo que necesita el carrito para poner precio y descripción a cada
  * línea. Sin filtro de disponibilidad a propósito: si una pieza se retira
@@ -488,7 +434,7 @@ export const TIENDA_PAGE_QUERY = groq`
  * textos de siempre como respaldo, así que el correo nunca sale a medias.
  */
 const EMAIL_TEMPLATE = groq`{
-  subject, title, referenceLabel, intro, sections,
+  subject, title, intro, sections,
   labels[] { key, label },
   outro
 }`;

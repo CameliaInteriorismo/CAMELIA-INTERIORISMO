@@ -1,7 +1,6 @@
 /**
  * The one H1 scale every page title on the site renders at — the hero
- * banners (Servicios, Proyectos, Metodología, Blog, Shop…) and the blog
- * ficha alike.
+ * banners (Servicios, Proyectos, Metodología, Shop…).
  *
  * Kept as a shared constant rather than repeated per component so the
  * scale physically cannot drift between pages: change it here and every
@@ -11,14 +10,6 @@
  * no el CSS. Forzar mayúsculas aquí hacía imposible fijarla desde el panel.
  */
 export const PAGE_TITLE_SCALE = "text-3xl sm:text-4xl md:text-6xl lg:text-7xl";
-
-/**
- * A step down from PAGE_TITLE_SCALE for the blog ficha headline: it still
- * leads the article, but sits in better proportion to the body copy and
- * lead image beneath it than the full hero scale did (which overwhelmed
- * them at 72px).
- */
-export const ARTICLE_TITLE_SCALE = "text-3xl sm:text-4xl md:text-5xl";
 
 /**
  * In-page section headings that carry a page title's weight without being

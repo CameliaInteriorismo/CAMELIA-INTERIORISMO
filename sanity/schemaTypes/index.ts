@@ -17,10 +17,8 @@ import {
   project,
 } from "./documents/project";
 import { product, productCategory, productFinish } from "./documents/product";
-import { post } from "./documents/post";
 import { service } from "./documents/service";
 import { partner, testimonial } from "./documents/misc";
-import { requestCounter } from "./documents/requestCounter";
 import {
   legalDetails,
   legalDocument,
@@ -34,7 +32,6 @@ import {
 import { siteSettings } from "./singletons/siteSettings";
 import {
   aboutBlock,
-  blogPage,
   cartPage,
   confirmationPages,
   contactPage,
@@ -70,7 +67,6 @@ export const SINGLETON_TYPES = [
   "serviciosPage",
   "proyectosPage",
   "tiendaPage",
-  "blogPage",
   "contactPage",
   "projectFormPage",
   "cartPage",
@@ -96,7 +92,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   product,
   productFinish,
   productCategory,
-  post,
   service,
   testimonial,
   partner,
@@ -109,11 +104,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   legalDetails,
   legalLines,
   legalSubsection,
-
-  // Interno: el contador de números de solicitud. No sale en el panel —la
-  // barra lateral es una lista explícita— pero el tipo tiene que estar
-  // registrado para que sus documentos no aparezcan como desconocidos.
-  requestCounter,
 
   // Correos de los formularios
   emailsPage,
@@ -128,7 +118,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   serviciosPage,
   proyectosPage,
   tiendaPage,
-  blogPage,
   contactPage,
   projectFormPage,
   formStep,

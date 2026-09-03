@@ -33,10 +33,6 @@ const MAP: Record<string, Revalidation> = {
     tags: ["product"],
     paths: [page("/tienda"), page("/tienda/[slug]"), page("/carrito")],
   },
-  post: {
-    tags: ["post"],
-    paths: [page("/blog"), page("/blog/[slug]")],
-  },
   // Un servicio se lee desde la Home, desde /servicios y desde cada ficha de
   // proyecto, así que los tres tienen que refrescarse.
   service: {
@@ -59,7 +55,6 @@ const MAP: Record<string, Revalidation> = {
   serviciosPage: { tags: ["serviciosPage"], paths: [page("/servicios")] },
   proyectosPage: { tags: ["proyectosPage"], paths: [page("/proyectos")] },
   tiendaPage: { tags: ["tiendaPage"], paths: [page("/tienda")] },
-  blogPage: { tags: ["blogPage"], paths: [page("/blog")] },
   contactPage: { tags: ["contactPage"], paths: [page("/contacto")] },
   projectFormPage: {
     tags: ["projectFormPage"],
@@ -98,7 +93,6 @@ const SITE_SETTINGS: Revalidation = {
   tags: [
     "project",
     "product",
-    "post",
     "service",
     "testimonial",
     "partner",
@@ -110,7 +104,6 @@ const SITE_SETTINGS: Revalidation = {
     "serviciosPage",
     "proyectosPage",
     "tiendaPage",
-    "blogPage",
     "contactPage",
     "projectFormPage",
     "cartPage",

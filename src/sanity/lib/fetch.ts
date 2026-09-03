@@ -13,7 +13,6 @@ import { client } from "@/sanity/lib/client";
 export type SanityTag =
   | "project"
   | "product"
-  | "post"
   | "service"
   | "testimonial"
   | "partner"
@@ -25,7 +24,6 @@ export type SanityTag =
   | "serviciosPage"
   | "proyectosPage"
   | "tiendaPage"
-  | "blogPage"
   | "contactPage"
   | "projectFormPage"
   | "cartPage"

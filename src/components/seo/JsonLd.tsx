@@ -89,35 +89,6 @@ export function sitioWeb() {
   };
 }
 
-export function articulo(post: {
-  title: string;
-  slug: string;
-  subtitle?: string;
-  publishedAt?: string;
-  author?: string;
-  imagen?: string;
-}) {
-  return limpio({
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.subtitle,
-    image: post.imagen,
-    datePublished: post.publishedAt,
-    // Organización, no persona: los artículos los firma el estudio, no una
-    // persona concreta. El campo `author` de Sanity está hoy vacío en los dos
-    // artículos, así que se declara el estudio; si algún día se rellena en el
-    // panel, ese valor manda.
-    author: {
-      "@type": "Organization",
-      name: post.author || "Camelia Interiorismo",
-    },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
-    url: absoluteUrl(`/blog/${post.slug}`),
-  });
-}
-
 /**
  * `priceCurrency` es EUR: la tienda vende en euros y el símbolo ya se escribe
  * en la plantilla. `availability` sale del campo real `available` de Sanity,

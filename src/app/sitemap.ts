@@ -16,7 +16,6 @@ const ESTATICAS = [
   "/servicios",
   "/proyectos",
   "/tienda",
-  "/blog",
   "/contacto",
   "/cuentanos-tu-proyecto",
   "/aviso-legal",
@@ -28,22 +27,19 @@ const ESTATICAS = [
 /** Los slugs salen de Sanity, así que el sitemap no puede inventar URLs. */
 const SLUGS = `{
   "proyectos": *[_type == "project" && defined(slug.current)].slug.current,
-  "productos": *[_type == "product" && defined(slug.current)].slug.current,
-  "articulos": *[_type == "post" && defined(slug.current)].slug.current
+  "productos": *[_type == "product" && defined(slug.current)].slug.current
 }`;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { proyectos, productos, articulos } = await sanityFetch<{
+  const { proyectos, productos } = await sanityFetch<{
     proyectos: string[];
     productos: string[];
-    articulos: string[];
-  }>({ query: SLUGS, tags: ["project", "product", "post"] });
+  }>({ query: SLUGS, tags: ["project", "product"] });
 
   const rutas = [
     ...ESTATICAS,
     ...(proyectos ?? []).map((s) => `/proyectos/${s}`),
     ...(productos ?? []).map((s) => `/tienda/${s}`),
-    ...(articulos ?? []).map((s) => `/blog/${s}`),
   ];
 
   // Set: si un slug se repitiera en Sanity, la URL saldría una sola vez.

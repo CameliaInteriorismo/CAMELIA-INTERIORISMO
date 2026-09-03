@@ -822,38 +822,6 @@ export const cartPage = defineType({
   preview: { prepare: () => ({ title: "Página · Carrito" }) },
 });
 
-export const blogPage = defineType({
-  name: "blogPage",
-  title: "Página · Blog",
-  type: "document",
-  groups,
-  fields: [
-    defineField({
-      name: "title",
-      title: "Título de la página",
-      type: "string",
-      group: "content",
-    }),
-    defineField({
-      name: "heroImage",
-      title: "Imagen de cabecera",
-      type: "imageWithAlt",
-      group: "content",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "introText",
-      title: "Texto de introducción",
-      type: "text",
-      rows: 4,
-      group: "content",
-    }),
-    heroPositionField,
-    seoField,
-  ],
-  preview: { prepare: () => ({ title: "Página · Blog" }) },
-});
-
 export const contactPage = defineType({
   name: "contactPage",
   title: "Página · Contacto",
@@ -1341,13 +1309,6 @@ export const emailTemplate = defineType({
       description: "Lo que se lee en la bandeja antes de abrir.",
     }),
     defineField({ name: "title", title: "Titular", type: "string" }),
-    defineField({
-      name: "referenceLabel",
-      title: "Rótulo del número",
-      type: "string",
-      description:
-        'Va arriba a la derecha, delante del número. Por ejemplo "N.º DE PEDIDO".',
-    }),
     defineField({
       name: "intro",
       title: "Texto de entrada",

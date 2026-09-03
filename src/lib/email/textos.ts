@@ -15,7 +15,6 @@ import "server-only";
 export type Plantilla = {
   subject?: string;
   title?: string;
-  referenceLabel?: string;
   intro?: string[];
   sections?: string[];
   labels?: { key?: string; label?: string }[];
@@ -32,7 +31,6 @@ export type TextosCorreo = {
 type Defecto = {
   subject: string;
   title: string;
-  referenceLabel: string;
   intro: string[];
   sections: string[];
   labels: Record<string, string>;
@@ -43,7 +41,6 @@ export const POR_DEFECTO = {
   productoCliente: {
     subject: "Solicitud recibida · Camelia Interiorismo",
     title: "Solicitud recibida",
-    referenceLabel: "N.º DE PEDIDO",
     intro: [
       "Hola {nombre}, gracias por escribirnos.",
       "Hemos recibido tu solicitud y la estamos revisando. Te contactaremos en breve para confirmarte disponibilidad y plazos.",
@@ -55,7 +52,6 @@ export const POR_DEFECTO = {
   productoEstudio: {
     subject: "Nueva solicitud de artículo",
     title: "Nueva solicitud de artículo",
-    referenceLabel: "N.º DE PEDIDO",
     intro: [],
     sections: ["CLIENTE", "ARTÍCULOS", "ENTREGA", "SOLICITUD"],
     labels: {
@@ -75,7 +71,6 @@ export const POR_DEFECTO = {
   proyectoCliente: {
     subject: "Solicitud de proyecto recibida · Camelia Interiorismo",
     title: "Solicitud de proyecto recibida",
-    referenceLabel: "N.º DE PROYECTO",
     intro: [
       "Hola {nombre}, gracias por contarnos tu proyecto.",
       "Lo estamos revisando con calma. Nos pondremos en contacto contigo en un plazo de 24 horas para conocernos y hablarlo con más detalle.",
@@ -95,7 +90,6 @@ export const POR_DEFECTO = {
   proyectoEstudio: {
     subject: "Nueva solicitud de proyecto",
     title: "Nueva solicitud de proyecto",
-    referenceLabel: "N.º DE PROYECTO",
     intro: [],
     sections: ["CONTACTO", "EL PROYECTO", "SOLICITUD"],
     labels: {
@@ -123,7 +117,6 @@ export type Clave = keyof typeof POR_DEFECTO;
 export type Resuelto = {
   subject: string;
   title: string;
-  referenceLabel: string;
   intro: string[];
   seccion: (indice: number) => string;
   rotulo: (clave: string) => string;
@@ -150,7 +143,6 @@ export function resolver(clave: Clave, desdeSanity?: Plantilla): Resuelto {
   return {
     subject: usar(s.subject, d.subject),
     title: usar(s.title, d.title),
-    referenceLabel: usar(s.referenceLabel, d.referenceLabel),
     intro: intro?.length ? intro : d.intro,
     seccion: (i) => usar(s.sections?.[i], d.sections[i] ?? ""),
     rotulo: (k) =>
