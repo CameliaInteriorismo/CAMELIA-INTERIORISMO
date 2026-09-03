@@ -1,4 +1,15 @@
-export type Step =
+/**
+ * Encuadre de la foto en MÓVIL, cuando hace falta apartarse del general.
+ *
+ * Apilada, la caja es apaisada y las fotos son verticales, así que solo cabe
+ * una franja: por defecto se coge la de arriba. En alguna foto el motivo no
+ * está arriba, y ahí ese recorte se queda con el fondo desenfocado. Este campo
+ * dice qué franja coger en su lugar. Solo afecta a móvil; desde `md` la caja
+ * acompaña a la foto y el encuadre es el de siempre.
+ */
+export type EncuadreMovil = "top" | "center" | "bottom";
+
+export type Step = { encuadreMovil?: EncuadreMovil } & (
   | {
       kind: "intro";
       title: string[];
@@ -59,7 +70,8 @@ export type Step =
       help?: string;
       groups: { name: string; label: string; options: string[] }[];
       image: string;
-    };
+    }
+);
 
 const DIR = "/assets/contacto";
 
@@ -179,6 +191,10 @@ export const STEPS: Step[] = [
     help: "Nos ayuda a entender desde dónde llegan personas interesadas en nuestro trabajo.",
     options: ["Instagram", "TikTok", "Página web", "Recomendación", "Otros"],
     image: `${DIR}/como nos has conocido.jpg`,
+    // El rollo de tela está a media altura, no arriba: con el recorte por
+    // arriba el móvil se quedaba con la silla desenfocada y la tela apenas
+    // asomaba. Centrado entra el rollo entero.
+    encuadreMovil: "center",
   },
   {
     kind: "fields",

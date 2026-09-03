@@ -456,7 +456,17 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       // media y perdía el motivo de arriba. `max-md:` lo
                       // limita al móvil: desde md la caja ya acompaña a la
                       // foto y el encuadre centrado de siempre sigue igual.
-                      className="object-cover max-md:object-top"
+                      //
+                      // Salvo que el paso pida otra franja: no todas las fotos
+                      // tienen su motivo arriba (ver `encuadreMovil`).
+                      className={cn(
+                        "object-cover",
+                        step.encuadreMovil === "center"
+                          ? "max-md:object-center"
+                          : step.encuadreMovil === "bottom"
+                            ? "max-md:object-bottom"
+                            : "max-md:object-top",
+                      )}
                       sizes="(min-width: 768px) 50vw, 100vw"
                     />
                   </motion.div>
