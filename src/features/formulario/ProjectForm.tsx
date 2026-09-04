@@ -409,10 +409,15 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                           // vea excluido "intro" antes de pasar `s` a
                           // `StepFields`, que no lo acepta.
                           <div key={i} className={s.kind === "choice" ? "mt-block" : undefined}>
+                            {/* Mismo tamaño que el título de la primera
+                                pregunta del grupo: son dos preguntas del
+                                mismo peso, no una principal y una nota al
+                                pie. `h2`, no `h1` —ya hay uno en esta
+                                página—, pero con sus mismas clases. */}
                             {s.kind === "choice" && (
-                              <p className="text-primary mb-4 text-sm leading-relaxed">
+                              <h2 className="font-title text-primary text-2xl md:text-3xl">
                                 {s.title}
-                              </p>
+                              </h2>
                             )}
                             <StepFields
                               step={s}
