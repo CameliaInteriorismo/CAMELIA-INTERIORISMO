@@ -29,7 +29,6 @@ export type FormStepContent = {
   cta?: string;
   options?: string[];
   fieldLabels?: { name?: string; label?: string; placeholder?: string }[];
-  groupLabels?: { name?: string; label?: string; options?: string[] }[];
   image?: SanityImageSource;
 };
 
@@ -91,22 +90,6 @@ export function mergeSteps(content: FormStepContent[] = []): Step[] {
               placeholder: l.placeholder || field.placeholder,
             }
           : field;
-      });
-    }
-
-    if (merged.kind === "choiceGroups" && edited.groupLabels) {
-      const groups = new Map(
-        edited.groupLabels.filter((g) => g.name).map((g) => [g.name, g]),
-      );
-      merged.groups = merged.groups.map((group) => {
-        const g = groups.get(group.name);
-        return g
-          ? {
-              ...group,
-              label: g.label || group.label,
-              options: g.options?.length ? g.options : group.options,
-            }
-          : group;
       });
     }
 

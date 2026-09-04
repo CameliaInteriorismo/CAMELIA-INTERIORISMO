@@ -369,7 +369,6 @@ export const PROJECT_FORM_QUERY = groq`
       key, title, titleLines, paragraphs, help, helpBold, placeholder, cta,
       options,
       fieldLabels[] { name, label, placeholder },
-      groupLabels[] { name, label, options },
       image ${IMAGE}
     },
     seo ${SEO}

@@ -929,7 +929,7 @@ export const contactPage = defineType({
 });
 
 /**
- * El formulario de «Cuéntanos tu proyecto», 16 pasos.
+ * El formulario de «Cuéntanos tu proyecto», 13 pasos.
  *
  * Editable: títulos, ayudas, opciones, imágenes y textos de los campos.
  * Bloqueado en el código: `kind` (qué tipo de pantalla es) y `name` (la clave
@@ -1027,33 +1027,6 @@ export const formStep = defineType({
               name: "placeholder",
               title: "Texto guía",
               type: "string",
-            }),
-          ],
-          preview: { select: { title: "label", subtitle: "name" } },
-        }),
-      ],
-    }),
-    defineField({
-      name: "groupLabels",
-      title: "Rótulos de los grupos de opciones",
-      type: "array",
-      of: [
-        defineArrayMember({
-          type: "object",
-          name: "groupLabel",
-          fields: [
-            defineField({
-              name: "name",
-              title: "Clave técnica",
-              type: "string",
-              readOnly: true,
-            }),
-            defineField({ name: "label", title: "Rótulo", type: "string" }),
-            defineField({
-              name: "options",
-              title: "Opciones",
-              type: "array",
-              of: [defineArrayMember({ type: "string" })],
             }),
           ],
           preview: { select: { title: "label", subtitle: "name" } },

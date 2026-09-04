@@ -8,7 +8,8 @@
     "start": "next start -p 3001",
     "lint": "eslint",
     "format": "prettier --write .",
-    "sanity:migrate": "node --env-file=.env.local scripts/migrate.mjs"
+    "sanity:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "sanity:sync-form": "node --env-file=.env.local scripts/sync-project-form.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",

@@ -14,9 +14,9 @@ type Campo = { label: string; value: string };
 /**
  * Extrae de un paso los pares pregunta/respuesta que de verdad tienen algo
  * escrito. No inventa estructura: cada tipo de paso ya sabe cuáles son sus
- * datos (uno solo en "text"/"choice", varios en "long"/"fields"/
- * "choiceGroups"), así que esto solo los recorre y descarta los vacíos —
- * el paso "detalles" es opcional y puede llegar aquí sin ningún campo.
+ * datos (uno solo en "text"/"choice", varios en "long"/"fields"), así que
+ * esto solo los recorre y descarta los vacíos — "detalles"/"objetivos" son
+ * opcionales y pueden llegar aquí sin ningún campo.
  */
 function camposDe(step: Step, answers: Answers): Campo[] {
   const noVacio = (c: Campo) => c.value?.trim().length > 0;
@@ -31,10 +31,6 @@ function camposDe(step: Step, answers: Answers): Campo[] {
     case "fields":
       return step.fields
         .map((f) => ({ label: f.label, value: answers[f.name] ?? "" }))
-        .filter(noVacio);
-    case "choiceGroups":
-      return step.groups
-        .map((g) => ({ label: g.label, value: answers[g.name] ?? "" }))
         .filter(noVacio);
     default:
       return [];
@@ -104,10 +100,8 @@ export function ProjectReview({
         {secciones.map(({ step, index, campos }) => {
           const enEdicion = editando === index;
           return (
-            <div
-              key={index}
-              className="border-primary/15 border-t py-block first:pt-0"
-            >
+            <div key={index} className="border-primary/15 border-t py-block">
+
               <div className="flex items-baseline justify-between gap-4">
                 <h2 className="font-title text-primary text-base">
                   {tituloSeccion(step)}

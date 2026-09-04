@@ -9,7 +9,19 @@
  */
 export type EncuadreMovil = "top" | "center" | "bottom";
 
-export type Step = { encuadreMovil?: EncuadreMovil } & (
+export type Step = {
+  encuadreMovil?: EncuadreMovil;
+  /**
+   * Solo en móvil, une este paso a los de al lado que compartan el mismo
+   * valor en una sola pantalla (ver `agruparPasos` en ProjectForm). En
+   * desktop cada paso sigue siendo su propia pantalla — es lo que mantiene
+   * corta la foto compartida (ver el comentario junto a su `min-h`) — pero
+   * esa razón no existe en móvil, donde la foto ya tiene una proporción fija
+   * en vez de una altura mínima compartida. Agruparlos de vuelta ahí ahorra
+   * toques sin deshacer esa división.
+   */
+  mobileGroup?: string;
+} & (
   | {
       kind: "intro";
       title: string[];
@@ -49,9 +61,17 @@ export type Step = { encuadreMovil?: EncuadreMovil } & (
       fields: { name: string; label: string; placeholder?: string }[];
       image: string;
     }
-  /** Several labelled single-line inputs on one screen (the contact details). */
+  /**
+   * Several labelled single-line inputs on one screen (the contact details).
+   * `name` doesn't feed `answers` — each field has its own — it only gives
+   * the step a stable identity for Sanity's key, same reason `text`/`choice`/
+   * `long` carry one. Without it the key fell back to `fields-<índice>`,
+   * which shifted (and silently stopped matching Sanity's saved content)
+   * the moment another step was added earlier in the array.
+   */
   | {
       kind: "fields";
+      name: string;
       title: string;
       help?: string;
       fields: {
@@ -60,15 +80,9 @@ export type Step = { encuadreMovil?: EncuadreMovil } & (
         placeholder?: string;
         type?: "text" | "tel" | "email";
         inputMode?: "text" | "tel" | "email";
+        /** Shares its row with the next `half` field instead of stacking. */
+        half?: boolean;
       }[];
-      image: string;
-    }
-  /** Two radio groups on one screen (how to talk, and when to start). */
-  | {
-      kind: "choiceGroups";
-      title: string;
-      help?: string;
-      groups: { name: string; label: string; options: string[] }[];
       image: string;
     }
 );
@@ -76,8 +90,11 @@ export type Step = { encuadreMovil?: EncuadreMovil } & (
 const DIR = "/assets/contacto";
 
 // Transcribed from Diseño/FORMULARIO CONTACTO 1–11. (There is no screen 7
-// in the folder — the files jump 6 → 8 — so the flow has ten steps, not
-// eleven; flagged rather than invented.)
+// in the folder — the files jump 6 → 8 — so the reference itself has ten
+// steps, not eleven; flagged rather than invented.) The extra ones from here
+// on are ours, not the reference's: "detalles" and the old two-group
+// "¿Cómo prefieres que hablemos?" were each split into one question per
+// screen to bring down the shared photo height — see the comments below.
 //
 // Photography comes from the same Contacto folder. Four shots are matched to
 // their screen exactly — inversion.jpg and como nos has conocido.jpg by name,
@@ -157,12 +174,23 @@ export const STEPS: Step[] = [
     ],
     image: `${DIR}/Vesta Studio-5.jpg`,
   },
+  // Antes era un solo paso con las tres preguntas de esta sección. Repartido
+  // en tres pantallas —esta, "objetivos" y "referenciasVisuales" más abajo—
+  // porque incluso ya partido en dos (razón + objetivos juntos) seguía siendo
+  // el paso más alto con diferencia (613-658px según el ancho, frente a
+  // 461-468px del siguiente más alto una vez separado también "¿Cómo
+  // prefieres que hablemos?"). Con una pregunta por pantalla, cada una mide
+  // ~400-465px y la foto compartida puede bajar de 680px — ver la cifra final
+  // junto al `min-h` de la foto, más abajo en ProjectForm.
   {
     kind: "long",
     name: "detalles",
     title: "Algunos detalles más sobre el proyecto",
-    help: "Esta parte es completamente opcional, pero nos ayudará a entender mejor tu estilo, tus necesidades y la visión que tienes para el espacio.",
+    help: "Esta parte es completamente opcional, pero nos ayudará a entender mejor tu estilo y tus necesidades.",
     helpBold: "Esta parte es completamente opcional",
+    // Junto con "objetivos" y "referenciasVisuales" de abajo: las tres
+    // vuelven a compartir pantalla en móvil, como antes del reparto.
+    mobileGroup: "detalles",
     fields: [
       {
         name: "razonPrincipal",
@@ -170,11 +198,33 @@ export const STEPS: Step[] = [
           "¿Cuál es la razón principal por la que te gustaría contratar a un diseñador de interiores?",
         placeholder: "Háblanos de aquello que sientes que empieza a moverte",
       },
+    ],
+    image: `${DIR}/P Reels MoodBoard.jpg`,
+  },
+  {
+    kind: "long",
+    name: "objetivos",
+    title: "Tus objetivos para el proyecto",
+    help: "También es opcional, pero nos ayuda a entender qué buscas conseguir.",
+    helpBold: "También es opcional",
+    mobileGroup: "detalles",
+    fields: [
       {
         name: "objetivos",
         label: "¿Cuáles serían los objetivos principales del proyecto?",
         placeholder: "Queremos entender qué buscas para este proyecto",
       },
+    ],
+    image: `${DIR}/P Reels MoodBoard.jpg`,
+  },
+  {
+    kind: "long",
+    name: "referenciasVisuales",
+    title: "Alguna referencia visual",
+    help: "También es opcional, pero nos ayuda a entender mejor la visión que tienes para el espacio.",
+    helpBold: "También es opcional",
+    mobileGroup: "detalles",
+    fields: [
       {
         name: "referencias",
         label:
@@ -198,13 +248,20 @@ export const STEPS: Step[] = [
   },
   {
     kind: "fields",
+    name: "contacto",
     title: "Ya casi hemos terminado",
     help: "Solo necesitamos tus datos para poder revisar la información y ponernos en contacto contigo.",
     fields: [
+      // Nombre y teléfono comparten fila desde `md`: son los dos campos
+      // cortos, y emparejarlos es lo que baja este paso de 533-566px a
+      // ~445-467px sin quitar ninguno. Correo se queda a ancho completo
+      // debajo — emparejarlo también habría exigido partir el campo más
+      // ancho de los tres en dos columnas estrechas.
       {
         name: "nombre",
         label: "Nombre y apellidos",
         placeholder: "Ej. Laura Castillo",
+        half: true,
       },
       {
         name: "telefono",
@@ -212,6 +269,7 @@ export const STEPS: Step[] = [
         placeholder: "Ej. 601 53 1301",
         type: "tel",
         inputMode: "tel",
+        half: true,
       },
       {
         name: "email",
@@ -223,34 +281,34 @@ export const STEPS: Step[] = [
     ],
     image: `${DIR}/22 AUG 25 P.jpg`,
   },
+  // Antes un solo paso con dos grupos de radios ("¿Cómo prefieres que
+  // hablemos?"), y el más alto del formulario con diferencia (635-647px).
+  // Partido en dos pasos "choice" normales, cada uno mide 420-452px — ver el
+  // comentario junto a "detalles" más arriba, mismo razonamiento. Comparten
+  // `mobileGroup` para volver a aparecer juntos en móvil.
   {
-    kind: "choiceGroups",
-    title: "¿Cómo prefieres que hablemos?",
-    help: "Elige la forma que te resulte más cómoda y cuándo te gustaría comenzar el proyecto.",
-    groups: [
-      {
-        name: "canalContacto",
-        label: "¿Cómo prefieres que te contactemos?",
-        // FORMULARIO CONTACTO 11 lists a fifth option, "Otro"; dropped at
-        // the studio's request — the four channels here cover it.
-        options: [
-          "Teléfono",
-          "WhatsApp",
-          "Correo electrónico",
-          "Sin preferencia",
-        ],
-      },
-      {
-        name: "cuandoEmpezar",
-        label: "¿Cuándo te gustaría empezar?",
-        options: [
-          "Lo antes posible",
-          "En el próximo mes",
-          "En 2–3 meses",
-          "En más de 3 meses",
-          "Solo quiero informarme de momento",
-        ],
-      },
+    kind: "choice",
+    name: "canalContacto",
+    title: "¿Cómo prefieres que te contactemos?",
+    help: "Elige la forma que te resulte más cómoda.",
+    mobileGroup: "comoHablamos",
+    // FORMULARIO CONTACTO 11 lists a fifth option, "Otro"; dropped at the
+    // studio's request — the four channels here cover it.
+    options: ["Teléfono", "WhatsApp", "Correo electrónico", "Sin preferencia"],
+    image: `${DIR}/Vesta JAN 25-14.jpg`,
+  },
+  {
+    kind: "choice",
+    name: "cuandoEmpezar",
+    title: "¿Cuándo te gustaría empezar?",
+    help: "Cuéntanos cuándo te gustaría comenzar el proyecto.",
+    mobileGroup: "comoHablamos",
+    options: [
+      "Lo antes posible",
+      "En el próximo mes",
+      "En 2–3 meses",
+      "En más de 3 meses",
+      "Solo quiero informarme de momento",
     ],
     image: `${DIR}/Vesta JAN 25-14.jpg`,
   },

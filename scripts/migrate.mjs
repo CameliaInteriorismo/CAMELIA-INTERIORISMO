@@ -982,17 +982,6 @@ for (const [i, s] of formSteps.entries()) {
           `f${i}`,
         )
       : undefined,
-    groupLabels: s.groups
-      ? keyed(
-          s.groups.map((g) => ({
-            _type: "groupLabel",
-            name: g.name,
-            label: g.label,
-            options: g.options,
-          })),
-          `g${i}`,
-        )
-      : undefined,
     // `title` del paso de bienvenida es un ARRAY de líneas, no un texto:
     // pasarlo tal cual dejaba el texto alternativo como array y Sanity lo
     // marcaba como valor inválido («Expected String, got Array»), además de

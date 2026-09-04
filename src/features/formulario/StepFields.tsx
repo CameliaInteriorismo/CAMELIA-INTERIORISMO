@@ -50,7 +50,7 @@ export function StepFields({
   return (
     <>
       {step.kind === "text" && (
-        <div className="mt-block max-w-[30rem]">
+        <div className="mt-block md:max-w-[30rem]">
           {step.autocomplete === "address" ? (
             <AddressAutocomplete
               value={answers[step.name] ?? ""}
@@ -90,7 +90,7 @@ export function StepFields({
       )}
 
       {step.kind === "long" && (
-        <div className="mt-block space-y-block max-w-[30rem]">
+        <div className="mt-block space-y-block md:max-w-[30rem]">
           {step.fields.map((field) => (
             <div key={field.name}>
               <p className="text-primary mb-2 text-sm leading-relaxed">
@@ -109,11 +109,16 @@ export function StepFields({
       )}
 
       {/* Same label + input pairing as "long" above, just single-line —
-          the contact-details screen (FORMULARIO CONTACTO 10). */}
+          the contact-details screen (FORMULARIO CONTACTO 10). Grid, not a
+          plain stack: `half` fields (nombre, teléfono) share a row from
+          `md`, which is what keeps this the shortest it can be without
+          dropping a field. Below `md` it's one column regardless — `half`
+          only matters once there's room for two. The 480px cap is also
+          `md:`-only, same reason as the "text"/"long" fields above. */}
       {step.kind === "fields" && (
-        <div className="mt-block space-y-block max-w-[30rem]">
+        <div className="mt-block grid grid-cols-1 gap-x-6 gap-y-block md:grid-cols-2 md:max-w-[30rem]">
           {step.fields.map((field) => (
-            <div key={field.name}>
+            <div key={field.name} className={field.half ? "" : "md:col-span-2"}>
               <p className="text-primary mb-2 text-sm leading-relaxed">
                 {field.label}
               </p>
@@ -125,38 +130,6 @@ export function StepFields({
                 inputMode={field.inputMode}
                 className={cn(fieldClass, "h-11")}
               />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Two radio groups on one screen (FORMULARIO CONTACTO 11). Each group
-          renders exactly like a "choice" step's options — same spacing, same
-          control — under its own label, set like the field labels above. */}
-      {step.kind === "choiceGroups" && (
-        <div className="mt-block space-y-block">
-          {step.groups.map((group) => (
-            <div key={group.name}>
-              <p className="text-primary mb-4 text-sm leading-relaxed">
-                {group.label}
-              </p>
-              <div className="space-y-3">
-                {group.options.map((option) => (
-                  <label
-                    key={option}
-                    className="flex w-fit cursor-pointer items-center gap-3"
-                  >
-                    <input
-                      type="radio"
-                      name={group.name}
-                      checked={answers[group.name] === option}
-                      onChange={() => setAnswer(group.name, option)}
-                      className="accent-primary h-4 w-4"
-                    />
-                    <span className="text-primary text-sm">{option}</span>
-                  </label>
-                ))}
-              </div>
             </div>
           ))}
         </div>

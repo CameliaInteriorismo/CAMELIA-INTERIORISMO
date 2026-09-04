@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { enviarSolicitudProyecto } from "@/lib/requests/actions";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
@@ -48,14 +48,11 @@ function validarPaso(
   if (step.kind === "text" || step.kind === "choice") {
     if (!answers[step.name]?.trim()) return "Completa este campo para continuar";
   }
-  // The multi-answer screens gate on every one of their parts, so a
-  // half-filled contact block or a single picked group can't slip past.
-  if (step.kind === "fields" || step.kind === "choiceGroups") {
-    const parts = step.kind === "fields" ? step.fields : step.groups;
-    if (parts.some((part) => !answers[part.name]?.trim())) {
-      return step.kind === "fields"
-        ? "Completa todos los campos para continuar"
-        : "Elige una opción en cada apartado para continuar";
+  // El paso de contacto es el único con varias respuestas en una pantalla:
+  // se exige que las tres tengan algo, no basta con una.
+  if (step.kind === "fields") {
+    if (step.fields.some((field) => !answers[field.name]?.trim())) {
+      return "Completa todos los campos para continuar";
     }
   }
   // Email y teléfono, con forma además de con contenido: son las dos vías
@@ -79,12 +76,10 @@ function StepBody({
   step,
   answers,
   setAnswer,
-  error,
 }: {
   step: Step;
   answers: Answers;
   setAnswer: (name: string, value: string) => void;
-  error?: string;
 }) {
   if (step.kind === "intro") return null;
 
@@ -94,27 +89,62 @@ function StepBody({
         {step.title}
       </h1>
       {step.help && (
-        <p className="text-primary/70 mt-sm max-w-[30rem] text-sm leading-relaxed">
+        <p className="text-primary/70 mt-sm text-sm leading-relaxed md:max-w-[30rem]">
           {renderHelp(step)}
         </p>
       )}
 
       <StepFields step={step} answers={answers} setAnswer={setAnswer} />
-
-      {error && <p className="text-secondary mt-sm text-xs">{error}</p>}
     </>
   );
+}
+
+const MOVIL_QUERY = "(max-width: 767px)";
+
+function leerAnchoMovil(): boolean {
+  return window.matchMedia(MOVIL_QUERY).matches;
+}
+
+function suscribirAAnchoMovil(avisar: () => void): () => void {
+  const mql = window.matchMedia(MOVIL_QUERY);
+  mql.addEventListener("change", avisar);
+  return () => mql.removeEventListener("change", avisar);
+}
+
+/**
+ * Une en una sola página los pasos consecutivos que compartan
+ * `mobileGroup` — pero solo cuando `agruparEnMovil` es cierto. En desktop
+ * (o antes de saber en qué ancho estamos) cada paso es su propia página,
+ * uno a uno, igual que siempre.
+ */
+function agruparPasos(steps: Step[], agruparEnMovil: boolean): number[][] {
+  const paginas: number[][] = [];
+  for (let i = 0; i < steps.length; i++) {
+    const grupo = steps[i].mobileGroup;
+    const ultima = paginas[paginas.length - 1];
+    const mismoGrupo =
+      agruparEnMovil &&
+      grupo !== undefined &&
+      ultima !== undefined &&
+      steps[ultima[0]].mobileGroup === grupo;
+    if (mismoGrupo) {
+      ultima.push(i);
+    } else {
+      paginas.push([i]);
+    }
+  }
+  return paginas;
 }
 
 export function ProjectForm({ steps }: { steps: Step[] }) {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
   const shift = reduceMotion ? 0 : STEP_SHIFT;
-  const [index, setIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [error, setError] = useState<string>();
   // Al terminar el último paso no se envía todavía: se enseña una revisión
-  // de todo lo contestado. `answers`/`index` no se tocan al entrar ni al
+  // de todo lo contestado. `answers`/`pageIndex` no se tocan al entrar ni al
   // salir de este modo, así que "Editar" y "Volver" son gratis — es el
   // mismo formulario, solo cambia qué se pinta.
   const [revisando, setRevisando] = useState(false);
@@ -122,9 +152,32 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   // doble clic en FINALIZAR dispara dos solicitudes, y serían dos números y
   // dos pares de correos por el mismo proyecto.
   const [enviando, setEnviando] = useState(false);
+  // `false` en el servidor (no hay `matchMedia` ahí) y en el primer render
+  // del cliente, así que hidratación no tiene nada que reconciliar; en
+  // cuanto React puede leer el media query de verdad, se actualiza sola —
+  // sin el `useEffect` + `setState` de montaje que dispara un render en
+  // cascada evitable.
+  const agruparEnMovil = useSyncExternalStore(
+    suscribirAAnchoMovil,
+    leerAnchoMovil,
+    () => false,
+  );
 
-  const step = steps[index];
-  const isLast = index === steps.length - 1;
+  const pages = agruparPasos(steps, agruparEnMovil);
+  // `agruparEnMovil` puede cambiar en vivo si alguien redimensiona la
+  // ventana cruzando los 768px a mitad de formulario — raro, pero real. El
+  // acotamiento es solo para no reventar contra un índice que ya no existe;
+  // no intenta aterrizar en la pregunta "equivalente" de la nueva agrupación.
+  const pagina = pages[Math.min(pageIndex, pages.length - 1)];
+  const pageSteps = pagina.map((i) => steps[i]);
+  const primero = pageSteps[0];
+  const isLast = pageIndex === pages.length - 1;
+  // La primera página es la intro, sin dato que contestar; el resto son las
+  // preguntas reales, numeradas desde 1. Se oculta en la intro (nada
+  // empezado aún) y en la revisión (ya no es "un paso más", es otra cosa).
+  const totalPasos = pages.length - 1;
+  const pasoActual = pageIndex;
+  const mostrarProgreso = !revisando && pageIndex >= 1;
 
   function setAnswer(name: string, value: string) {
     setAnswers((prev) => ({ ...prev, [name]: value }));
@@ -132,10 +185,12 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   }
 
   function next() {
-    const problema = validarPaso(step, answers);
-    if (problema) {
-      setError(problema);
-      return;
+    for (const s of pageSteps) {
+      const problema = validarPaso(s, answers);
+      if (problema) {
+        setError(problema);
+        return;
+      }
     }
     if (isLast) {
       setError(undefined);
@@ -143,16 +198,18 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
       return;
     }
     setError(undefined);
-    setIndex((i) => i + 1);
+    setPageIndex((i) => i + 1);
   }
 
   /**
-   * Revalida los diez pasos de un tirón antes de enviar. Editar en la propia
-   * revisión ya no pasa por `next()`, así que sin esto alguien podría vaciar
-   * un campo obligatorio ahí y llegar a confirmar con la solicitud a medias.
-   * Si algo falla, se sale de la revisión y se aterriza justo en ese paso —
-   * el mismo criterio de siempre: nunca "vuelve al principio del
-   * formulario", vuelve al apartado exacto.
+   * Revalida los pasos reales de un tirón antes de enviar — uno por uno, no
+   * página por página: agrupar en móvil cambia cómo se enseñan, no qué hace
+   * falta rellenar. Editar en la propia revisión ya no pasa por `next()`,
+   * así que sin esto alguien podría vaciar un campo obligatorio ahí y llegar
+   * a confirmar con la solicitud a medias. Si algo falla, se sale de la
+   * revisión y se aterriza en la página que contiene ese paso — el mismo
+   * criterio de siempre: nunca "vuelve al principio del formulario", vuelve
+   * al apartado exacto.
    */
   function revisarYEnviar() {
     for (let i = 0; i < steps.length; i++) {
@@ -160,7 +217,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
       if (problema) {
         setError(problema);
         setRevisando(false);
-        setIndex(i);
+        setPageIndex(pages.findIndex((p) => p.includes(i)));
         return;
       }
     }
@@ -189,7 +246,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
     <div className="flex min-h-dvh flex-col">
       <header className="border-primary/15 border-b">
         <Container>
-          <div className="flex h-20 items-center">
+          <div className="flex h-20 items-center justify-between">
             <Link href="/" aria-label="Camelia — inicio">
               <Image
                 src="/images/logos/trimmed/Camelia logo sin fondo vino actualizado.png"
@@ -200,17 +257,59 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                 className="h-5 w-auto"
               />
             </Link>
+            {/* Un numeral discreto, no una cuenta atrás ostentosa: la misma
+                voz que "N.º DE PEDIDO" en los correos, aplicada aquí a
+                dónde va la persona dentro del formulario. Sin aria-hidden:
+                es justo el dato que alguien con lector de pantalla necesita
+                para saber cuánto le queda, igual que lo ve quien mira la
+                pantalla. */}
+            {mostrarProgreso && (
+              <p className="text-primary/60 text-xs tracking-[0.08em]">
+                {String(pasoActual).padStart(2, "0")}
+                <span className="text-primary/30" aria-hidden>
+                  {" "}
+                  ·{" "}
+                </span>
+                {String(totalPasos).padStart(2, "0")}
+              </p>
+            )}
           </div>
         </Container>
       </header>
 
+      {/* La misma línea fina que ya separa la cabecera del resto —aquí se le
+          da uso: el tramo recorrido se pinta en vino sólido, el resto se
+          queda en el mismo vino al 10% que usan las demás rayas del sitio
+          (el pie, los separadores de la revisión). A todo el ancho, como el
+          borde de la cabecera del que cuelga — no dentro del Container,
+          que la encogería a los 1120px del contenido y perdería el
+          apoyo visual de venir "de la propia cabecera". */}
+      {mostrarProgreso && (
+        <div
+          className="bg-primary/10 h-px w-full"
+          role="progressbar"
+          aria-label="Progreso del formulario"
+          aria-valuemin={0}
+          aria-valuemax={totalPasos}
+          aria-valuenow={pasoActual}
+          aria-valuetext={`Pregunta ${pasoActual} de ${totalPasos}`}
+        >
+          <motion.div
+            className="bg-primary h-px"
+            animate={{ width: `${(pasoActual / totalPasos) * 100}%` }}
+            transition={{ duration: STEP_IN, ease: EASE }}
+          />
+        </div>
+      )}
+
       <main className="py-section flex flex-1 items-center">
         <Container className="w-full">
-          {/* Stretch, not centre: the row's height is set by the photo (see
-              its min-h below) and the copy is centred against it by its own
-              `justify-center`. Centring the grid items instead would let the
-              row collapse to the taller column, which is exactly what made
-              the photo shorter than the text on the long steps. */}
+          {/* Stretch, not centre en la fila: la altura la marca la foto (ver
+              su min-h más abajo), y el texto arranca arriba dentro de ese
+              alto —`justify-start`, no `justify-center`— para que cada
+              pregunta empiece siempre en el mismo punto, sea corta o larga.
+              Centrarla verticalmente es lo que hacía que una pregunta corta
+              pareciera "flotando" en mitad del hueco. */}
           <Grid className="items-stretch">
             {/* 6 columns, not 5: the reference gives the copy ~520px of a
                 1440 page, and at 5/12 (442px) the intro headline no longer
@@ -221,7 +320,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                 sentirse apretada. */}
             <div
               className={cn(
-                "col-span-12 flex flex-col justify-center",
+                "col-span-12 flex flex-col justify-start",
                 !revisando && "md:col-span-6",
               )}
             >
@@ -231,7 +330,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                   con la misma transición, como un paso más del mismo viaje. */}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
-                  key={revisando ? "revision" : index}
+                  key={revisando ? "revision" : pageIndex}
                   initial={{ opacity: 0, x: shift }}
                   animate={{
                     opacity: 1,
@@ -257,47 +356,66 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       }}
                       onConfirmar={revisarYEnviar}
                     />
-                  ) : step.kind === "intro" ? (
+                  ) : primero.kind === "intro" ? (
                     <>
                       {/* ~60px at desktop, matching the reference — one
                           step under the hero scale, which at 72px broke
                           "Hablemos de" onto a second line. */}
                       <h1 className="font-title text-primary text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                        {step.title.map((line) => (
+                        {primero.title.map((line) => (
                           <span key={line} className="block">
                             {line}
                           </span>
                         ))}
                       </h1>
-                      <div className="text-primary/75 mt-block max-w-[30rem] space-y-6 text-sm leading-relaxed">
-                        {step.paragraphs.map((p) => (
+                      <div className="text-primary/75 mt-block space-y-6 text-sm leading-relaxed md:max-w-[30rem]">
+                        {primero.paragraphs.map((p) => (
                           <p key={p}>{p}</p>
                         ))}
                       </div>
                       <Button onClick={next} className="mt-block">
-                        {step.cta}
+                        {primero.cta}
                       </Button>
                     </>
                   ) : (
                     <>
-                      <StepBody
-                        step={step}
-                        answers={answers}
-                        setAnswer={setAnswer}
-                        error={error}
-                      />
+                      {/* Casi siempre un único paso. Cuando `agruparPasos` ha
+                          unido varios (móvil, mismo `mobileGroup`), se
+                          apilan aquí con un salto grande entre uno y el
+                          siguiente — más que el que separa el título de sus
+                          propios campos, para que se lea como "aquí empieza
+                          la próxima pregunta" y no como parte de la
+                          anterior. */}
+                      {pageSteps.map((s, i) => (
+                        <div key={i} className={i > 0 ? "mt-section" : undefined}>
+                          <StepBody step={s} answers={answers} setAnswer={setAnswer} />
+                        </div>
+                      ))}
+                      {error && (
+                        <p className="text-secondary mt-sm text-xs">{error}</p>
+                      )}
                       {/* Right-aligned to the same edge the fields end on
-                          (max-w-[30rem]), not to the column — that's the
-                          composition in every mockup: copy set left, the
-                          pair of buttons pushed to the far right of the
-                          text block with 60px of air above them. */}
-                      <div className="mt-block flex max-w-[30rem] items-center justify-end gap-4">
+                          (max-w-[30rem]) from `md`, not to the column —
+                          that's the composition in every mockup: copy set
+                          left, the pair of buttons pushed to the far right
+                          of the text block with 60px of air above them.
+                          Below `md` that cap is off: the text column is the
+                          full stacked width there (no fixed column to match),
+                          and capping it at 480px anyway is what left the
+                          field and this row visibly short of the photo's own
+                          edge on any phone wider than ~530px.
+
+                          Only below `sm` the two spread to each edge instead
+                          — on a small phone the pair sitting together on the
+                          right left a dead stretch of empty width on the
+                          left that ATRÁS had no reason to leave unused. */}
+                      <div className="mt-block flex items-center justify-between gap-4 sm:justify-end md:max-w-[30rem]">
                         <Button
                           disabled={enviando}
                           className="disabled:cursor-not-allowed disabled:opacity-60"
                           onClick={() => {
                             setError(undefined);
-                            setIndex((i) => Math.max(0, i - 1));
+                            setPageIndex((i) => Math.max(0, i - 1));
                           }}
                         >
                           ATRÁS
@@ -344,14 +462,18 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
 
                   `h-full` in a stretched row means the photo always fills
                   whatever height the row takes, so the text can't run past
-                  its bottom edge at any width. The 810px floor is what makes
-                  that height identical from step to step: the tallest block
-                  in the whole form ("Algunos detalles…", three textareas)
-                  measures 767px at 1440 and 803px at 1280, so every step
-                  clears the floor and lands on exactly 810px. Below 1280 the
-                  container's 160px side padding squeezes the copy tall
-                  enough to push past it, and there the photo grows with it
-                  rather than letting the text overflow.
+                  its bottom edge at any width. The 500px floor is what makes
+                  that height identical from step to step — down from 810px,
+                  then 680px, now that "detalles" and the old two-group
+                  "¿Cómo prefieres que hablemos?" are one question per screen
+                  each: measured live at 768/1280px across all twelve steps,
+                  the tallest ones left standing ("Tengo en mente el
+                  siguiente proyecto…" and "Inversión estimada", both
+                  six-option choices, neither touched by this round) never
+                  exceed 468px, so 500px clears them with room to spare.
+                  Below 768 the container's side padding can still squeeze
+                  the copy taller than that, and there the photo grows with
+                  it rather than letting the text overflow.
 
                   The aspect ratio only governs the stacked mobile layout,
                   where there is no second column to match. */}
@@ -359,11 +481,15 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                   de alto y se comía la pantalla entera antes de llegar a la
                   primera pregunta. Apaisada acompaña sin tapar el
                   formulario. `object-cover` recorta, nunca deforma, y desde
-                  `md` sigue mandando `md:aspect-auto`. */}
-              <div className="relative aspect-[3/2] w-full overflow-hidden md:aspect-auto md:h-full md:min-h-[810px]">
+                  `md` sigue mandando `md:aspect-auto`.
+
+                  Por debajo de `sm` (móvil pequeño) sube a 4/3, un poco más
+                  alta: en pantallas así de estrechas 3/2 se quedaba
+                  demasiado baja. De `sm` a `md` sigue en 3/2, sin tocar. */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[3/2] md:aspect-auto md:h-full md:min-h-[500px]">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
-                    key={step.image}
+                    key={primero.image}
                     // Pure crossfade — no drift. The photo stays put while
                     // the copy slides, and it runs on the same clock as the
                     // left column so both halves settle together.
@@ -379,7 +505,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                     className="absolute inset-0"
                   >
                     <Image
-                      src={step.image}
+                      src={primero.image}
                       alt=""
                       aria-hidden
                       fill
@@ -391,12 +517,14 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       // foto y el encuadre centrado de siempre sigue igual.
                       //
                       // Salvo que el paso pida otra franja: no todas las fotos
-                      // tienen su motivo arriba (ver `encuadreMovil`).
+                      // tienen su motivo arriba (ver `encuadreMovil`). Los
+                      // pasos que comparten `mobileGroup` comparten también
+                      // foto, así que leerlo del primero basta.
                       className={cn(
                         "object-cover",
-                        step.encuadreMovil === "center"
+                        primero.encuadreMovil === "center"
                           ? "max-md:object-center"
-                          : step.encuadreMovil === "bottom"
+                          : primero.encuadreMovil === "bottom"
                             ? "max-md:object-bottom"
                             : "max-md:object-top",
                       )}
