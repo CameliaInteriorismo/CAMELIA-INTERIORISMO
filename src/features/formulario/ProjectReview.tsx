@@ -168,7 +168,11 @@ export function ProjectReview({
 
       {error && <p className="text-secondary mt-sm text-xs">{error}</p>}
 
-      <div className="mt-block flex items-center justify-end gap-4">
+      {/* Mismo criterio que el asistente: juntos a la derecha desde `sm`,
+          pero en un móvil pequeño cada uno a un extremo — el par pegado a
+          la derecha ahí dejaba un tramo de ancho muerto a la izquierda que
+          VOLVER no tenía motivo para dejar sin usar. */}
+      <div className="mt-block flex items-center justify-between gap-4 sm:justify-end">
         <Button
           disabled={enviando}
           className="disabled:cursor-not-allowed disabled:opacity-60"

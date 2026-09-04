@@ -380,17 +380,48 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                   ) : (
                     <>
                       {/* Casi siempre un único paso. Cuando `agruparPasos` ha
-                          unido varios (móvil, mismo `mobileGroup`), se
-                          apilan aquí con un salto grande entre uno y el
-                          siguiente — más que el que separa el título de sus
-                          propios campos, para que se lea como "aquí empieza
-                          la próxima pregunta" y no como parte de la
-                          anterior. */}
-                      {pageSteps.map((s, i) => (
-                        <div key={i} className={i > 0 ? "mt-section" : undefined}>
-                          <StepBody step={s} answers={answers} setAnswer={setAnswer} />
-                        </div>
-                      ))}
+                          unido varios (móvil, mismo `mobileGroup`), solo el
+                          primero lleva título y ayuda — es lo que da
+                          contexto a todo el grupo, como antes de partirlos.
+                          Los siguientes enseñan solo la pregunta: para
+                          "long"/"fields" ya es lo que hace `StepFields`
+                          (el rótulo de cada campo), así que basta con no
+                          llamar a `StepBody`; "choice" no trae ese rótulo
+                          propio, así que aquí se le pone uno con el mismo
+                          tratamiento que ya usaban los grupos de radios
+                          antes de separarse en pasos. El espaciado entre
+                          preguntas lo pone el propio `mt-block` con el que
+                          ya arranca cada bloque de campos — el mismo salto
+                          que separaba los campos dentro de un único paso
+                          "long" cuando "detalles" era uno solo. */}
+                      {pageSteps.map((s, i) =>
+                        i === 0 ? (
+                          <StepBody
+                            key={i}
+                            step={s}
+                            answers={answers}
+                            setAnswer={setAnswer}
+                          />
+                        ) : s.kind === "intro" ? null : (
+                          // La intro nunca comparte grupo (no lleva
+                          // `mobileGroup`), así que un `i > 0` real jamás cae
+                          // aquí — esta rama solo existe para que TypeScript
+                          // vea excluido "intro" antes de pasar `s` a
+                          // `StepFields`, que no lo acepta.
+                          <div key={i} className={s.kind === "choice" ? "mt-block" : undefined}>
+                            {s.kind === "choice" && (
+                              <p className="text-primary mb-4 text-sm leading-relaxed">
+                                {s.title}
+                              </p>
+                            )}
+                            <StepFields
+                              step={s}
+                              answers={answers}
+                              setAnswer={setAnswer}
+                            />
+                          </div>
+                        ),
+                      )}
                       {error && (
                         <p className="text-secondary mt-sm text-xs">{error}</p>
                       )}
