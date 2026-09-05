@@ -8,15 +8,19 @@ import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import type { SeoFields } from "@/sanity/lib/seo";
 import "@/styles/globals.css";
 
+// WOFF2 junto al .otf/.ttf originales: mismo dibujo de letra, solo
+// comprimido — 344 KB combinados bajan a 127 KB. Los originales se quedan en
+// el repo porque public/fonts/ los sirve tal cual para el @font-face de los
+// correos, donde WOFF2 no es fiable entre clientes.
 const arizonaFlare = localFont({
-  src: "../fonts/ABCArizonaFlare-Light-Trial.otf",
+  src: "../fonts/ABCArizonaFlare-Light-Trial.woff2",
   variable: "--font-arizona-flare",
   weight: "300",
   display: "swap",
 });
 
 const plusJakarta = localFont({
-  src: "../fonts/PlusJakartaSans-VariableFont_wght.ttf",
+  src: "../fonts/PlusJakartaSans-VariableFont_wght.woff2",
   variable: "--font-plus-jakarta",
   weight: "200 800",
   display: "swap",
