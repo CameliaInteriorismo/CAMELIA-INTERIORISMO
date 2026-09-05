@@ -60,6 +60,3 @@ export const EMAIL_ASSETS = {
   /** Logotipo suelto, por si el pie se compone con texto en vez de imagen. */
   logo: asset("/images/logos/trimmed/Camelia%20logo%20naranja%20actualizado.png"),
 } as const;
-
-/** ¿Hay de dónde servir las imágenes? La plantilla decide con esto. */
-export const tieneAssets = Boolean(BASE);

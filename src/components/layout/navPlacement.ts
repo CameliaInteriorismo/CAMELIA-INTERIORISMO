@@ -19,9 +19,6 @@
  * deja un hueco de 80px o una portada tapada — justo lo que hay que evitar.
  */
 
-/** Alto de la barra, en píxeles. */
-export const NAV_H = 80;
-
 /**
  * Ficha de proyecto: la barra flota sobre la portada. Ojo, es la ficha
  * (`/proyectos/lo-que-sea`), NO el listado `/proyectos`, que va como el resto.

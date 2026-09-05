@@ -153,14 +153,6 @@ export const PRODUCT_QUERY = groq`
   }
 `;
 
-/** Categorías presentes en el catálogo, para el filtro del Shop. */
-export const PRODUCT_CATEGORIES_QUERY = groq`
-  *[_type == "productCategory"] | order(order asc) {
-    "title": title,
-    "count": count(*[_type == "product" && available != false && references(^._id)])
-  }[count > 0].title
-`;
-
 /**
  * El catálogo que necesita el carrito para poner precio y descripción a cada
  * línea. Sin filtro de disponibilidad a propósito: si una pieza se retira

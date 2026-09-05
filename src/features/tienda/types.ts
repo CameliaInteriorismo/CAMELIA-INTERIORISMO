@@ -15,11 +15,6 @@ export type Finish = {
   images?: SanityImageSource[];
 };
 
-/** La foto que representa a un acabado: la primera de su lista. */
-export function finishImage(finish?: Finish): SanityImageSource | undefined {
-  return finish?.images?.[0];
-}
-
 /** Lo que necesita una tarjeta del listado. */
 export type ProductCardData = {
   _id: string;
