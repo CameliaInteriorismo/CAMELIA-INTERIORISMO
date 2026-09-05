@@ -133,7 +133,9 @@ export function AccompanimentSection({
                                     objectPosition: imageProps(item.image)!
                                       .objectPosition,
                                   }}
-                                  sizes="100vw"
+                                  // Visible hasta lg dentro del Container, que
+                                  // cambia de px-6 a md:px-10 — nunca es 100vw.
+                                  sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(100vw - 80px), 100vw"
                                 />
                               ) : (
                                 <PlaceholderImage

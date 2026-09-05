@@ -248,7 +248,9 @@ export function ProcesoTabs({
                               fill
                               className="object-cover"
                               style={{ objectPosition: foto.objectPosition }}
-                              sizes="100vw"
+                              // Solo se ve bajo md, dentro del Container
+                              // (px-6): el ancho real nunca es 100vw.
+                              sizes="(max-width: 767px) calc(100vw - 48px), 100vw"
                             />
                           </div>
                         ) : (

@@ -153,7 +153,9 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                       fill
                       className="object-cover"
                       style={{ objectPosition: foto.objectPosition }}
-                      sizes="100vw"
+                      // Container (px-6) + el pl-8 propio de esta columna:
+                      // el ancho real nunca es el 100vw declarado por defecto.
+                      sizes="(max-width: 767px) calc(100vw - 80px), 100vw"
                     />
                   </div>
                 ) : (

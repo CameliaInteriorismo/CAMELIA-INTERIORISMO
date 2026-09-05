@@ -93,7 +93,9 @@ export function ServiceTabs({
                     style={{
                       objectPosition: imageProps(tab.image)?.objectPosition,
                     }}
-                    sizes="100vw"
+                    // Solo se ve bajo md, dentro del Container (px-6): el
+                    // ancho real nunca es el 100vw declarado por defecto.
+                    sizes="(max-width: 767px) calc(100vw - 48px), 100vw"
                   />
                 </div>
 
