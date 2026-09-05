@@ -74,6 +74,15 @@ export function ProjectReview({
   // El primer paso es la intro (sin datos); el resto son las preguntas
   // reales. Una sección por paso contestado — nada de agrupar a mano, así
   // esto se queda al día solo si el formulario gana o pierde una pregunta.
+  //
+  // `editando === index` se cuela también en la condición: sin eso, borrar
+  // el campo para reescribirlo (seleccionar todo + suprimir) vaciaba
+  // `campos` a mitad de tecleo y la sección entera —título, botón "Hecho" y
+  // el propio input en el que se estaba escribiendo— desaparecía del DOM.
+  // Una sección abierta para editar se queda visible aunque su valor esté
+  // momentáneamente vacío; solo se oculta al cerrarla si de verdad no tiene
+  // nada, que es el caso real que este filtro quiere resolver (los pasos
+  // opcionales sin contestar).
   const secciones = steps
     .map((step, index) => ({ step, index, campos: camposDe(step, answers) }))
     .filter(
@@ -83,7 +92,9 @@ export function ProjectReview({
         step: Exclude<Step, { kind: "intro" }>;
         index: number;
         campos: Campo[];
-      } => s.step.kind !== "intro" && s.campos.length > 0,
+      } =>
+        s.step.kind !== "intro" &&
+        (s.campos.length > 0 || editando === s.index),
     );
 
   return (

@@ -59,10 +59,17 @@ export const useCartStore = create<CartState>()(
   ),
 );
 
+// Fuera del hook y no un arrow inline: `useSyncExternalStore` resuscribe
+// cada vez que `subscribe` cambia de identidad, y una función inline es una
+// identidad nueva en cada render de cada componente que use el hook.
+function suscribirAHidratacion(callback: () => void) {
+  return useCartStore.persist.onFinishHydration(callback);
+}
+
 /** Guards against SSR/client hydration mismatches on persisted state (e.g. cart badge count). */
 export function useCartHasHydrated() {
   return useSyncExternalStore(
-    (callback) => useCartStore.persist.onFinishHydration(callback),
+    suscribirAHidratacion,
     () => useCartStore.persist.hasHydrated(),
     () => false,
   );

@@ -25,7 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
   // El título ya lleva la marca delante, así que se emite en ABSOLUTO: la
   // plantilla `%s | Camelia` del layout lo dejaría con la marca repetida al
   // final. Un título escrito en Sanity sigue pasando por la plantilla.
-  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/estudio");
+  const { title, ...resto } = await metadataFrom(
+    page?.seo,
+    FALLBACK,
+    "/estudio",
+  );
   return page?.seo?.title
     ? { ...resto, title }
     : { ...resto, title: { absolute: FALLBACK.title } };

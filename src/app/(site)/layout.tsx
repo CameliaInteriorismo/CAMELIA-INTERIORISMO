@@ -20,7 +20,6 @@ type SiteSettings = Parameters<typeof toContactDetails>[0] & {
   menuLabel?: string;
   cartLabel?: string;
   footerTagline?: string;
-  footerNavTitle?: string;
   footerContactTitle?: string;
   footerScheduleTitle?: string;
   footerColumns?: { title: string; links?: LinkData[] }[];
@@ -43,6 +42,19 @@ export default async function SiteLayout({
   const contact = toContactDetails(settings);
   const navLinks = settings.navLinks ?? [];
   const socials = settings.socials ?? [];
+  // El pie admite varias columnas de enlaces (`footerColumns` en el panel,
+  // cada una con su propio título) — antes solo se leía la primera y su
+  // título se descartaba a favor de un campo `footerNavTitle` aparte que
+  // pedía escribir el mismo texto dos veces. Sin ninguna columna cargada,
+  // cae en una sola "Navegación" con el menú de la cabecera, que es lo que
+  // había antes de que existiera este campo.
+  const footerColumns =
+    settings.footerColumns && settings.footerColumns.length > 0
+      ? settings.footerColumns.map((column) => ({
+          title: column.title,
+          links: column.links ?? [],
+        }))
+      : [{ title: "Navegación", links: navLinks }];
 
   return (
     <>
@@ -67,10 +79,7 @@ export default async function SiteLayout({
       <Footer
         data={{
           tagline: settings.footerTagline,
-          navTitle: settings.footerNavTitle,
-          // La columna de navegación del pie es su propia lista: puede tener
-          // menos entradas que el menú (hoy no lleva Contacto).
-          navLinks: settings.footerColumns?.[0]?.links ?? navLinks,
+          columns: footerColumns,
           contactTitle: settings.footerContactTitle,
           scheduleTitle: settings.footerScheduleTitle,
           legalLinks: settings.footerLegalLinks ?? [],

@@ -13,11 +13,15 @@ import { FaqSection, type FaqItem } from "@/features/servicios/FaqSection";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { SERVICIOS_PAGE_QUERY } from "@/sanity/lib/queries";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
+import type { SanityImageSource } from "@/sanity/lib/image";
 import type { CtaBannerData } from "@/features/shared/types";
 
 export const revalidate = 3600;
 
 type ServiciosPage = {
+  title?: string;
+  heroImage?: SanityImageSource;
+  heroImagePosition?: string;
   introTitle?: string;
   introText?: string;
   phasesTitle?: string;
@@ -46,7 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
   // El título ya lleva la marca al final, así que se emite en ABSOLUTO: la
   // plantilla `%s | Camelia` del layout la repetiría. Mismo patrón que Home,
   // Estudio y Metodología.
-  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/servicios");
+  const { title, ...resto } = await metadataFrom(
+    page?.seo,
+    FALLBACK,
+    "/servicios",
+  );
   return page?.seo?.title
     ? { ...resto, title }
     : { ...resto, title: { absolute: FALLBACK.title } };
@@ -60,7 +68,11 @@ export default async function ServiciosPage() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        title={page?.title}
+        image={page?.heroImage}
+        imagePosition={page?.heroImagePosition}
+      />
       <ProjectPhases
         phases={page?.phases ?? []}
         title={page?.phasesTitle}

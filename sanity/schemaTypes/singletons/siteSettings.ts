@@ -126,12 +126,6 @@ export const siteSettings = defineType({
       description: "El párrafo bajo el logotipo, en la primera columna.",
     }),
     defineField({
-      name: "footerNavTitle",
-      title: "Rótulo de la columna de navegación",
-      type: "string",
-      group: "footer",
-    }),
-    defineField({
       name: "footerContactTitle",
       title: "Rótulo de la columna de contacto",
       type: "string",
@@ -150,6 +144,8 @@ export const siteSettings = defineType({
       title: "Columnas del pie",
       type: "array",
       group: "footer",
+      description:
+        "Añade tantas columnas como haga falta; cada una sale en el pie con su propio título y su lista de enlaces. Con una sola, hoy suele llamarse «Navegación».",
       of: [
         defineArrayMember({
           type: "object",

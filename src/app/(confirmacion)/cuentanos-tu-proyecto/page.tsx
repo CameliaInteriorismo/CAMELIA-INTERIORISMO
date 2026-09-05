@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: PROJECT_FORM_QUERY,
     tags: ["projectFormPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK, "/cuentanos-tu-proyecto");
+  return await metadataFrom(page?.seo, FALLBACK, "/cuentanos-tu-proyecto");
 }
 
 export default async function CuentanosTuProyectoPage() {

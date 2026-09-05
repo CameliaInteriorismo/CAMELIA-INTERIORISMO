@@ -2,12 +2,15 @@
  * Encuadre de la foto en MÓVIL, cuando hace falta apartarse del general.
  *
  * Apilada, la caja es apaisada y las fotos son verticales, así que solo cabe
- * una franja: por defecto se coge la de arriba. En alguna foto el motivo no
- * está arriba, y ahí ese recorte se queda con el fondo desenfocado. Este campo
- * dice qué franja coger en su lugar. Solo afecta a móvil; desde `md` la caja
- * acompaña a la foto y el encuadre es el de siempre.
+ * una franja: por defecto se coge la de arriba (0). En alguna foto el motivo
+ * no está arriba, y ahí ese recorte se queda con el fondo desenfocado o corta
+ * lo que se quiere ver. Este campo dice qué franja coger en su lugar — un
+ * porcentaje vertical (el eje X del recorte siempre va centrado), no solo
+ * top/center/bottom: algún motivo pedía un punto intermedio exacto que esas
+ * tres franjas fijas no daban. Solo afecta a móvil; desde `md` la caja
+ * acompaña a la foto y el encuadre es el general de siempre.
  */
-export type EncuadreMovil = "top" | "center" | "bottom";
+export type EncuadreMovil = number;
 
 export type Step = {
   encuadreMovil?: EncuadreMovil;
@@ -113,6 +116,9 @@ export const STEPS: Step[] = [
     ],
     cta: "COMENZAR",
     image: `${DIR}/Vesta Studio-3.jpg`,
+    // Las sillas ganan protagonismo bajando un poco desde arriba: al 0% por
+    // defecto entraba demasiado techo/pared vacíos antes de llegar a ellas.
+    encuadreMovil: 20,
   },
   {
     kind: "text",
@@ -122,12 +128,19 @@ export const STEPS: Step[] = [
     placeholder: "Ej. Calle Campanar, Valencia, España",
     autocomplete: "address",
     image: `${DIR}/Vesta JAN 25-7.jpg`,
+    // La planta está hacia el tercio inferior de la foto, no arriba: al 0%
+    // por defecto solo entraban las cortinas.
+    encuadreMovil: 80,
   },
   {
     kind: "choice",
     name: "tipoProyecto",
     title: "Tengo en mente el siguiente proyecto…",
     help: "Desde pequeños cambios hasta una reforma completa, cada proyecto parte de necesidades diferentes.",
+    // Las manos con los azulejos están hacia la mitad inferior de la foto,
+    // no arriba: arriba solo entraba el jarrón. Ver medida real en el
+    // navegador, junto al resto de encuadres de este mismo cambio.
+    encuadreMovil: 60,
     options: [
       "Reforma integral",
       "Reforma parcial",
@@ -167,6 +180,8 @@ export const STEPS: Step[] = [
     name: "formaTrabajo",
     title: "Forma de trabajar del proyecto",
     help: "Queremos entender cómo te gustaría vivir y participar en todo el proceso.",
+    // Las dos baldas con las tazas están a media altura del mueble.
+    encuadreMovil: 40,
     options: [
       "Prefiero delegarlo completamente",
       "Me gustaría participar de forma activa",
@@ -191,6 +206,12 @@ export const STEPS: Step[] = [
     // Junto con "objetivos" y "referenciasVisuales" de abajo: las tres
     // vuelven a compartir pantalla en móvil, como antes del reparto.
     mobileGroup: "detalles",
+    // La silla de madera asoma por debajo de la mesa de mármol, no arriba.
+    // Al máximo (100) a propósito: el recorte que ya trae este fichero desde
+    // Sanity (su `rect`) se queda corto por abajo — un poco más de silla que
+    // esto pediría subir ese recorte en el propio Studio, no solo el
+    // encuadre de aquí.
+    encuadreMovil: 100,
     fields: [
       {
         name: "razonPrincipal",
@@ -224,6 +245,12 @@ export const STEPS: Step[] = [
     help: "También es opcional, pero nos ayuda a entender mejor la visión que tienes para el espacio.",
     helpBold: "También es opcional",
     mobileGroup: "detalles",
+    // Sin `encuadreMovil` a propósito, no por olvido: en móvil este paso
+    // comparte pantalla con "detalles" y "objetivos", y solo se pinta la
+    // foto del PRIMERO del grupo (`primero.image` en ProjectForm) — la de
+    // este paso (la planta) no llega a mostrarse hoy en ningún encuadre.
+    // Ponerle un número aquí no cambiaría nada en pantalla y daría a
+    // entender que está resuelto sin estarlo.
     fields: [
       {
         name: "referencias",
@@ -244,7 +271,7 @@ export const STEPS: Step[] = [
     // El rollo de tela está a media altura, no arriba: con el recorte por
     // arriba el móvil se quedaba con la silla desenfocada y la tela apenas
     // asomaba. Centrado entra el rollo entero.
-    encuadreMovil: "center",
+    encuadreMovil: 50,
   },
   {
     kind: "fields",

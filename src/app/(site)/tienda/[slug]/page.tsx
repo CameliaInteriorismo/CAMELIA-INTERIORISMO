@@ -49,7 +49,7 @@ export async function generateMetadata({
   });
   if (!product) return {};
 
-  return metadataFrom(
+  return await metadataFrom(
     product.seo,
     {
       title: product.name,

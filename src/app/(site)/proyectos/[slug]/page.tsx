@@ -88,7 +88,7 @@ export async function generateMetadata({
 
   // El SEO del panel manda; si está vacío, se mantienen exactamente los
   // textos que la web ya generaba.
-  return metadataFrom(
+  return await metadataFrom(
     project.seo,
     {
       title: `Proyecto ${project.name}`,

@@ -9,6 +9,7 @@ import { CtaBanner } from "@/features/proyectos/CtaBanner";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { PROJECTS_QUERY, PROYECTOS_PAGE_QUERY } from "@/sanity/lib/queries";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
+import type { SanityImageSource } from "@/sanity/lib/image";
 import type { CtaBannerData } from "@/features/shared/types";
 
 /**
@@ -20,6 +21,9 @@ import type { CtaBannerData } from "@/features/shared/types";
 export const revalidate = 3600;
 
 type ProyectosPage = {
+  title?: string;
+  heroImage?: SanityImageSource;
+  heroImagePosition?: string;
   introTitle?: string;
   introText?: string;
   cta?: CtaBannerData;
@@ -37,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
     query: PROYECTOS_PAGE_QUERY,
     tags: ["proyectosPage"],
   });
-  return metadataFrom(page?.seo, FALLBACK, "/proyectos");
+  return await metadataFrom(page?.seo, FALLBACK, "/proyectos");
 }
 
 export default async function ProyectosPage() {
@@ -53,7 +57,11 @@ export default async function ProyectosPage() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        title={page?.title}
+        image={page?.heroImage}
+        imagePosition={page?.heroImagePosition}
+      />
       <IntroSection title={page?.introTitle} text={page?.introText} />
       <ProjectsGrid projects={projects} />
       <CtaBanner cta={page?.cta} />

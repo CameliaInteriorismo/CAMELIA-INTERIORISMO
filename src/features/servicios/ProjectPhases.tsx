@@ -133,7 +133,16 @@ export function ProjectPhases({
         )}
         {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
             bloque de acompañamiento: 24px, no un titular grande. Aquí solo
-            encabeza las fases, no abre la página. */}
+            encabeza las fases, no abre la página.
+
+            `phasesTitle` llegaba desde Sanity y desde la propia página, pero
+            este componente nunca lo pintaba — el campo existe en el panel,
+            se puede editar, y no cambiaba nada en la web. */}
+        {title && (
+          <h3 className="font-title text-primary mt-content text-2xl">
+            <Multiline text={title} />
+          </h3>
+        )}
         <div
           ref={rowRef}
           className="mt-md flex flex-col lg:flex-row lg:items-stretch"

@@ -275,6 +275,16 @@ export const PROYECTOS_PAGE_QUERY = groq`
   }
 `;
 
+/**
+ * Solo el nombre del sitio, para las páginas que únicamente necesitan eso
+ * (el `og:site_name` de cada `generateMetadata` — ver metadataFrom). Pedir
+ * el documento entero ahí traería la barra, el pie y las redes sociales sin
+ * usar ninguno.
+ */
+export const SITE_NAME_QUERY = groq`
+  *[_id == "siteSettings"][0] { siteName }
+`;
+
 /** Los datos globales: barra, pie, contacto y redes. */
 export const SITE_SETTINGS_QUERY = groq`
   *[_id == "siteSettings"][0] {
@@ -286,7 +296,7 @@ export const SITE_SETTINGS_QUERY = groq`
     headerCta,
     menuLabel, cartLabel, loadingLabel,
     footerTagline,
-    footerNavTitle, footerContactTitle, footerScheduleTitle,
+    footerContactTitle, footerScheduleTitle,
     footerColumns[] { _key, title, links[] { _key, label, href } },
     footerLegalLinks[] { _key, label, href },
     copyright,

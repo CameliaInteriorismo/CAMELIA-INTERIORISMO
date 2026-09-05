@@ -12,8 +12,8 @@ import type { LinkData } from "@/features/shared/types";
 
 export type FooterData = {
   tagline?: string;
-  navTitle?: string;
-  navLinks: LinkData[];
+  /** Una o varias columnas de enlaces, cada una con su propio título. */
+  columns: { title?: string; links: LinkData[] }[];
   contactTitle?: string;
   scheduleTitle?: string;
   /**
@@ -93,29 +93,28 @@ export function Footer({ data }: { data: FooterData }) {
             </div>
           </div>
 
-          {/* Navegación se cae en tablet: con cuatro columnas entre 768 y
-              1023 todo quedaba apretado, y estos enlaces ya están en el menú.
-              Al desaparecer, el `justify-between` reparte de verdad el ancho
-              entre las tres que quedan. */}
-          {/* Siempre presente: apilado cabe, y desde lg las cuatro columnas
-              tienen sitio. */}
-          <div>
-            <p className="text-sm font-normal tracking-[0.06em]">
-              {data.navTitle}
-            </p>
-            <ul className="mt-4 space-y-3 text-sm font-light tracking-[-0.01em]">
-              {data.navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="transition-opacity hover:opacity-70"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Casi siempre una sola columna ("Navegación"), pero el panel deja
+              cargar varias — cada una con el mismo tratamiento, para que
+              añadir una segunda no dependa de tocar este componente. */}
+          {data.columns.map((column, index) => (
+            <div key={column.title ?? index}>
+              <p className="text-sm font-normal tracking-[0.06em]">
+                {column.title}
+              </p>
+              <ul className="mt-4 space-y-3 text-sm font-light tracking-[-0.01em]">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="transition-opacity hover:opacity-70"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
           <div>
             <p className="text-sm font-normal tracking-[0.06em]">

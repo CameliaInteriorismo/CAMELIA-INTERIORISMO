@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     params: { slug: SLUG },
     tags: ["legalDocument"],
   });
-  return metadataFrom(doc?.seo, FALLBACK, "/aviso-legal");
+  return await metadataFrom(doc?.seo, FALLBACK, "/aviso-legal");
 }
 
 export default async function AvisoLegalPage() {

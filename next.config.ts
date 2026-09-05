@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Endurecimiento estándar, sin coste real para esta web: nada aquí necesita
+  // ser embebido en un iframe ajeno, así que denegarlo por completo no rompe
+  // nada. `nosniff` evita que el navegador reinterprete un fichero como un
+  // tipo distinto del que declara su `Content-Type`. El `Referrer-Policy`
+  // solo iguala por escrito lo que los navegadores ya traen por defecto.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     // 75 is Next's own default, for anything at card size or below.
     //

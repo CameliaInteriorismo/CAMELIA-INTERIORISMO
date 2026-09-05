@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // ABSOLUTO: pasarlo por la plantilla `%s | Camelia` del layout lo dejaría
   // en "... | Camelia" con la marca repetida al final. Si alguien escribe uno
   // propio en el panel, ese sí se comporta como el del resto de páginas.
-  const { title, ...resto } = metadataFrom(page?.seo, FALLBACK, "/");
+  const { title, ...resto } = await metadataFrom(page?.seo, FALLBACK, "/");
   return page?.seo?.title
     ? { ...resto, title }
     : { ...resto, title: { absolute: FALLBACK.title } };

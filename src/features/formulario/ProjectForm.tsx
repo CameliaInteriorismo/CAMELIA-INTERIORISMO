@@ -547,23 +547,22 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                       fill
                       priority
                       // Apilada, la caja es apaisada y la foto vertical, así
-                      // que el recorte centrado se quedaba con la franja
-                      // media y perdía el motivo de arriba. `max-md:` lo
-                      // limita al móvil: desde md la caja ya acompaña a la
-                      // foto y el encuadre centrado de siempre sigue igual.
-                      //
-                      // Salvo que el paso pida otra franja: no todas las fotos
-                      // tienen su motivo arriba (ver `encuadreMovil`). Los
-                      // pasos que comparten `mobileGroup` comparten también
-                      // foto, así que leerlo del primero basta.
-                      className={cn(
-                        "object-cover",
-                        primero.encuadreMovil === "center"
-                          ? "max-md:object-center"
-                          : primero.encuadreMovil === "bottom"
-                            ? "max-md:object-bottom"
-                            : "max-md:object-top",
-                      )}
+                      // que el recorte de arriba se queda con lo primero que
+                      // haya en la foto y puede perder el motivo real, que no
+                      // siempre está arriba (ver `encuadreMovil`, un
+                      // porcentaje vertical por paso; 0 si no se indica). Solo
+                      // se aplica en móvil —`agruparEnMovil`, la misma
+                      // comprobación que decide si se agrupan preguntas—:
+                      // desde `md` la caja ya acompaña a la foto entera y el
+                      // encuadre centrado de siempre sigue igual, sin tocar.
+                      // Los pasos que comparten `mobileGroup` comparten
+                      // también foto, así que leerlo del primero basta.
+                      className="object-cover"
+                      style={
+                        agruparEnMovil
+                          ? { objectPosition: `50% ${primero.encuadreMovil ?? 0}%` }
+                          : undefined
+                      }
                       sizes="(min-width: 768px) 50vw, 100vw"
                     />
                   </motion.div>

@@ -5,6 +5,7 @@ import { CookieConsent } from "@/components/consent/CookieConsent";
 import { NavigationLoader } from "@/components/layout/NavigationLoader";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import type { SeoFields } from "@/sanity/lib/seo";
 import "@/styles/globals.css";
 
 const arizonaFlare = localFont({
@@ -21,20 +22,36 @@ const plusJakarta = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  // Sin `metadataBase`, Next resuelve las imágenes de Open Graph como rutas
-  // relativas y ninguna red social las llega a cargar. Apunta al dominio
-  // definitivo, no al de Vercel: ver src/lib/site.ts.
-  metadataBase: new URL(SITE_URL),
-  title: { default: "Camelia", template: "%s | Camelia" },
-  description: "Camelia — Diseñamos espacios que cuentan historias",
-  // Declared here (from public/) rather than as app/favicon.ico: the
-  // file-based convention injects its <link> into every route and can't be
-  // overridden, which left the request-sent screen emitting both the vino
-  // and the orange icon. As metadata, a page-level `icons` replaces this
-  // outright — see (confirmacion)/carrito/gracias/page.tsx.
-  icons: { icon: "/images/logos/trimmed/FAVICON-VINO actualizado.png" },
-};
+/**
+ * `defaultSeo` en Sanity ("SEO por defecto") existía en el panel y se
+ * consultaba, pero nada lo leía: el título de la pestaña estaba escrito
+ * aquí a mano y el campo no cambiaba nada al editarlo. Sigue habiendo un
+ * valor de reserva — "Camelia" — para que la pestaña nunca se quede vacía
+ * si el campo está sin rellenar.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await sanityFetch<{ defaultSeo?: SeoFields } | null>({
+    query: SITE_SETTINGS_QUERY,
+    tags: ["siteSettings"],
+  });
+  const seo = settings?.defaultSeo;
+
+  return {
+    // Sin `metadataBase`, Next resuelve las imágenes de Open Graph como rutas
+    // relativas y ninguna red social las llega a cargar. Apunta al dominio
+    // definitivo, no al de Vercel: ver src/lib/site.ts.
+    metadataBase: new URL(SITE_URL),
+    title: { default: seo?.title || "Camelia", template: "%s | Camelia" },
+    description:
+      seo?.description || "Camelia — Diseñamos espacios que cuentan historias",
+    // Declared here (from public/) rather than as app/favicon.ico: the
+    // file-based convention injects its <link> into every route and can't be
+    // overridden, which left the request-sent screen emitting both the vino
+    // and the orange icon. As metadata, a page-level `icons` replaces this
+    // outright — see (confirmacion)/carrito/gracias/page.tsx.
+    icons: { icon: "/images/logos/trimmed/FAVICON-VINO actualizado.png" },
+  };
+}
 
 /**
  * El aviso de carga es lo único que este layout necesita de Sanity, y por eso

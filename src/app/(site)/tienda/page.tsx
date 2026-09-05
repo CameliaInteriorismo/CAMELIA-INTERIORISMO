@@ -28,11 +28,17 @@ const FALLBACK = {
  *
  * "Tienda" y no "Shop": el rótulo de la sección sigue siendo Shop, pero en el
  * título buscamos la palabra que se busca.
+ *
+ * `generateMetadata`, no un objeto estático: `metadataFrom` ahora lee el
+ * nombre del sitio de Sanity para el `og:site_name`, y eso ya no puede
+ * resolverse en el momento en que se carga el módulo.
  */
-export const metadata: Metadata = {
-  ...metadataFrom(undefined, FALLBACK, "/tienda"),
-  title: { absolute: FALLBACK.title },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    ...(await metadataFrom(undefined, FALLBACK, "/tienda")),
+    title: { absolute: FALLBACK.title },
+  };
+}
 
 export default async function TiendaPage() {
   // La consulta ya descarta las piezas marcadas como no disponibles, así que

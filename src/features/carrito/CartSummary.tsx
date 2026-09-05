@@ -26,13 +26,13 @@ export function CartSummary({
       <section className="pt-section">
         <Container>
           <h1 className="font-title text-primary text-3xl md:text-4xl">
-            Resumen del pedido
+            {copy.title ?? "Resumen del pedido"}
           </h1>
           <p className="text-primary/75 mt-block text-sm">
-            Tu carrito está vacío.
+            {copy.emptyText ?? "Tu carrito está vacío."}
           </p>
           <ButtonLink href="/tienda" className="mt-block">
-            Ver productos
+            {copy.emptyActionLabel ?? "Ver productos"}
           </ButtonLink>
         </Container>
       </section>
