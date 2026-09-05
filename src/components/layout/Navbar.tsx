@@ -148,13 +148,18 @@ export function Navbar({
               <button
                 type="button"
                 onClick={() => setOpen(true)}
+                aria-label={menuLabel ?? "Menu"}
                 className="flex h-11 items-center gap-2 text-base font-light tracking-wide uppercase"
               >
                 <MenuIcon className="h-3 w-[18px]" />
                 {/* TODO(mobile): sin referencia de Figma para mobile; el texto
                   "Menu" se oculta bajo sm para no chocar con el logo
-                  centrado — el icono por sí solo ya es reconocible. */}
-                <span className="hidden sm:inline">{menuLabel ?? "Menu"}</span>
+                  centrado — el icono por sí solo ya es reconocible visualmente,
+                  pero sin texto en el DOM el botón no tenía nombre accesible
+                  para lectores de pantalla; el aria-label cubre justo eso. */}
+                <span className="hidden sm:inline" aria-hidden="true">
+                  {menuLabel ?? "Menu"}
+                </span>
               </button>
             )}
 
