@@ -64,8 +64,14 @@ export function PartnerLogos({ partners }: { partners: Partner[] }) {
       {/* De derecha a izquierda, sin `reverse`: es el sentido que se quiere
           aquí. 50s en vez de 70: un poco más de velocidad mientras se sigue
           leyendo cada marca al pasar, no un scroll que se lea de un vistazo
-          borroso. */}
-      <Marquee items={logos} duration={50} gapClassName="gap-16 md:gap-24" />
+          borroso. En móvil va más rápido (24s): la fila cabe entera en menos
+          ancho de pantalla, así que a los mismos 50s se sentía arrastrada. */}
+      <Marquee
+        items={logos}
+        duration={50}
+        mobileDuration={24}
+        gapClassName="gap-16 md:gap-24"
+      />
     </section>
   );
 }

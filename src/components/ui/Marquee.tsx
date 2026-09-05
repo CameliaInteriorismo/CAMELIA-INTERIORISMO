@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 /**
  * The shared endless ticker. The track is the item list duplicated once
@@ -22,6 +23,7 @@ import { cn } from "@/utils/cn";
 export function Marquee({
   items,
   duration = 42,
+  mobileDuration,
   reverse = false,
   gapClassName = "gap-16",
   className,
@@ -29,12 +31,17 @@ export function Marquee({
 }: {
   items: ReactNode[];
   duration?: number;
+  /** Duración en móvil, si debe ir distinta a la de escritorio. */
+  mobileDuration?: number;
   reverse?: boolean;
   gapClassName?: string;
   className?: string;
   separator?: ReactNode;
 }) {
   const shouldReduceMotion = useReducedMotion();
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const effectiveDuration =
+    isMobile && mobileDuration !== undefined ? mobileDuration : duration;
   const track = [...items, ...items];
 
   return (
@@ -49,7 +56,7 @@ export function Marquee({
           ? undefined
           : { x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }
       }
-      transition={{ duration, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: effectiveDuration, repeat: Infinity, ease: "linear" }}
     >
       {track.map((item, index) => (
         <span key={index} className={cn("flex items-center", gapClassName)}>
