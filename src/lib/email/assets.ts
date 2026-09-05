@@ -6,11 +6,8 @@ import "server-only";
  * En un correo no valen rutas relativas: el HTML se abre en Gmail o en Mail,
  * no en el sitio, así que cada imagen necesita una URL absoluta y pública.
  *
- * Va en su propia variable y NO en `SITE_URL` porque hoy no son lo mismo:
- * `SITE_URL` apunta al dominio definitivo —que de momento sirve una página de
- * aparcamiento, no la web— mientras que estas imágenes tienen que salir de
- * donde estén realmente accesibles. Cuando el dominio se conecte, se cambia
- * esta variable y nada más.
+ * Va en su propia variable y no directamente en `SITE_URL` por si algún día
+ * dejan de coincidir; hoy son el mismo dominio.
  */
 const BASE = (process.env.EMAIL_ASSETS_URL ?? "").replace(/\/$/, "");
 

@@ -49,8 +49,10 @@ export function DetailGrid({
                   style={{ objectPosition: image.objectPosition }}
                   sizes="(min-width: 768px) 50vw, 100vw"
                 />
-                <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/30" />
-                <span className="font-title text-background absolute bottom-6 left-6 text-2xl uppercase opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                {/* En móvil no hay hover: `:active` (dedo pulsado) reproduce
+                    el mismo revelado que el ratón dispara en desktop. */}
+                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-active:bg-black/30 group-hover:bg-black/30" />
+                <span className="font-title text-background absolute bottom-6 left-6 text-2xl uppercase opacity-0 transition-opacity duration-300 group-active:opacity-100 group-hover:opacity-100">
                   {project.name}
                 </span>
               </Link>
