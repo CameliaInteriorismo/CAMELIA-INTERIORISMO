@@ -133,22 +133,6 @@ export function ArrowRightIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function CloseIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.4}
-      strokeLinecap="round"
-      {...props}
-    >
-      <line x1="5" y1="5" x2="19" y2="19" />
-      <line x1="19" y1="5" x2="5" y2="19" />
-    </svg>
-  );
-}
-
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
