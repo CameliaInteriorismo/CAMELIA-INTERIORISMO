@@ -108,7 +108,9 @@ export function Hero({
       className="relative h-[calc(100dvh-var(--nav-h))] w-full"
     >
       {video ? (
-        <VideoBackground src={video} />
+        // La foto de portada de Sanity hace de póster del vídeo: se ve al
+        // instante y el vídeo la sustituye en cuanto arranca.
+        <VideoBackground src={video} poster={photo?.src} />
       ) : photo ? (
         <Image
           src={photo.src}

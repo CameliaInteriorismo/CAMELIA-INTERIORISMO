@@ -45,6 +45,11 @@ export async function generateMetadata(): Promise<Metadata> {
     // relativas y ninguna red social las llega a cargar. Apunta al dominio
     // definitivo, no al de Vercel: ver src/lib/site.ts.
     metadataBase: new URL(SITE_URL),
+    // Search Console: etiqueta que demuestra a Google que la web es nuestra
+    // (cuenta del estudio, alta del 2026-09-07). No es un secreto: va en el
+    // HTML público. Hay además un archivo de verificación en public/ por si
+    // esta etiqueta desapareciera; Google acepta cualquiera de los dos.
+    verification: { google: "in38v8Dbb-S_ePXCESiGnlKypK6QwPs_vkZ71aaOpMQ" },
     title: { default: seo?.title || "Camelia", template: "%s | Camelia" },
     description:
       seo?.description || "Camelia — Diseñamos espacios que cuentan historias",

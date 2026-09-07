@@ -5,7 +5,7 @@ import type { ProductCardData, ShopCopy } from "@/features/tienda/types";
 import type { SanityImageSource } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { PRODUCTS_QUERY, TIENDA_PAGE_QUERY } from "@/sanity/lib/queries";
-import { metadataFrom } from "@/sanity/lib/seo";
+import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
 
 /**
  * La página se sirve ya renderizada y se rehace, como mucho, una vez por
@@ -34,9 +34,23 @@ const FALLBACK = {
  * resolverse en el momento en que se carga el módulo.
  */
 export async function generateMetadata(): Promise<Metadata> {
+  // La pestaña "SEO" de la página Tienda existía en Sanity pero no se leía:
+  // ahora manda, como en el resto de páginas.
+  const [page, products] = await Promise.all([
+    sanityFetch<{ seo?: SeoFields } | null>({
+      query: TIENDA_PAGE_QUERY,
+      tags: ["tiendaPage"],
+    }),
+    sanityFetch<ProductCardData[]>({ query: PRODUCTS_QUERY, tags: ["product"] }),
+  ]);
+  const { title, ...resto } = await metadataFrom(page?.seo, FALLBACK, "/tienda");
   return {
-    ...(await metadataFrom(undefined, FALLBACK, "/tienda")),
-    title: { absolute: FALLBACK.title },
+    ...resto,
+    title: page?.seo?.title ? title : { absolute: FALLBACK.title },
+    // Mientras no haya piezas publicadas, la tienda es una página vacía y
+    // Google la trataría como contenido pobre. Se deja fuera del índice (los
+    // enlaces sí se siguen) y vuelve sola en cuanto se publique la primera.
+    robots: products.length === 0 ? { index: false, follow: true } : undefined,
   };
 }
 

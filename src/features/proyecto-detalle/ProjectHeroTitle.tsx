@@ -43,7 +43,12 @@ export function ProjectHeroTitle({
   return (
     <section ref={heroRef} className="relative h-dvh w-full overflow-hidden">
       {heroVideo ? (
-        <VideoBackground src={heroVideo} objectPosition={heroVideoPosition} />
+        // La foto de portada (Sanity) hace de póster mientras llega el vídeo.
+        <VideoBackground
+          src={heroVideo}
+          poster={hero?.src}
+          objectPosition={heroVideoPosition}
+        />
       ) : hero ? (
         <Image
           src={hero.src}

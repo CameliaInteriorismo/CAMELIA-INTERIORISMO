@@ -86,13 +86,19 @@ export async function generateMetadata({
   });
   if (!project) return {};
 
-  // El SEO del panel manda; si está vacío, se mantienen exactamente los
-  // textos que la web ya generaba.
+  // El SEO del panel manda. Si está vacío, la descripción de reserva dice al
+  // menos dónde está la vivienda y qué se hizo, que es lo que alguien busca
+  // ("interiorismo en Alzira"); antes solo repetía el nombre del proyecto.
+  const servicios = (project.services ?? []).map((s) => s.toLowerCase());
+  const queSeHizo =
+    servicios.length > 0
+      ? servicios.join(", ")
+      : "interiorismo, reforma y decoración";
   return await metadataFrom(
     project.seo,
     {
-      title: `Proyecto ${project.name}`,
-      description: `Camelia — proyecto de interiorismo ${project.name}.`,
+      title: `Proyecto ${project.name}, ${formatLocation(project)}`,
+      description: `${queSeHizo.charAt(0).toUpperCase()}${queSeHizo.slice(1)} de una vivienda en ${project.location}, por Camelia, estudio de interiorismo en Alzira (Valencia). Descubre el proyecto ${project.name} y sus fotografías.`,
       image: imageProps(project.heroImage)?.src,
     },
     `/proyectos/${slug}`,

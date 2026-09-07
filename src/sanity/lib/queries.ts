@@ -277,6 +277,17 @@ export const SITE_NAME_QUERY = groq`
   *[_id == "siteSettings"][0] { siteName }
 `;
 
+/**
+ * Lo que `metadataFrom` necesita de los ajustes globales: el nombre del sitio
+ * para `og:site_name` y la imagen por defecto para compartir. Esa imagen
+ * ("SEO por defecto" en Sanity) se consultaba desde el layout pero nada la
+ * usaba: por eso la web se compartía sin foto en WhatsApp o redes salvo en
+ * las páginas con imagen propia.
+ */
+export const SITE_SEO_DEFAULTS_QUERY = groq`
+  *[_id == "siteSettings"][0] { siteName, "defaultOgImage": defaultSeo.ogImage ${IMAGE} }
+`;
+
 /** Los datos globales: barra, pie, contacto y redes. */
 export const SITE_SETTINGS_QUERY = groq`
   *[_id == "siteSettings"][0] {
@@ -423,7 +434,8 @@ export const TIENDA_PAGE_QUERY = groq`
     addToCartLabel,
     addedLabel,
     relatedTitle,
-    detailLabels { detallesDeLaPieza, materialesYMedidas, envioYEntrega }
+    detailLabels { detallesDeLaPieza, materialesYMedidas, envioYEntrega },
+    seo ${SEO}
   }
 `;
 
