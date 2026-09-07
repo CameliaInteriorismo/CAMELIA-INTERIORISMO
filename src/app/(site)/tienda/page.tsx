@@ -35,22 +35,16 @@ const FALLBACK = {
  */
 export async function generateMetadata(): Promise<Metadata> {
   // La pestaña "SEO" de la página Tienda existía en Sanity pero no se leía:
-  // ahora manda, como en el resto de páginas.
-  const [page, products] = await Promise.all([
-    sanityFetch<{ seo?: SeoFields } | null>({
-      query: TIENDA_PAGE_QUERY,
-      tags: ["tiendaPage"],
-    }),
-    sanityFetch<ProductCardData[]>({ query: PRODUCTS_QUERY, tags: ["product"] }),
-  ]);
+  // ahora manda, como en el resto de páginas. La tienda se indexa siempre,
+  // también sin piezas publicadas: decisión de Adrian (2026-09-07).
+  const page = await sanityFetch<{ seo?: SeoFields } | null>({
+    query: TIENDA_PAGE_QUERY,
+    tags: ["tiendaPage"],
+  });
   const { title, ...resto } = await metadataFrom(page?.seo, FALLBACK, "/tienda");
   return {
     ...resto,
     title: page?.seo?.title ? title : { absolute: FALLBACK.title },
-    // Mientras no haya piezas publicadas, la tienda es una página vacía y
-    // Google la trataría como contenido pobre. Se deja fuera del índice (los
-    // enlaces sí se siguen) y vuelve sola en cuanto se publique la primera.
-    robots: products.length === 0 ? { index: false, follow: true } : undefined,
   };
 }
 
