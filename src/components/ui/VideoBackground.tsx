@@ -20,8 +20,10 @@ import { cn } from "@/utils/cn";
  *    <Image> propio y no solo como `poster` porque, si el elemento medido es
  *    el <video>, las herramientas de Google le atribuyen la descarga del
  *    vídeo entero y la portada sigue puntuando como lenta.
- *  - `poster` con la misma imagen, para que el hueco del vídeo nunca esté
- *    en blanco mientras arranca.
+ *  - Sin atributo `poster` a propósito: el <video> es transparente hasta su
+ *    primer fotograma y deja ver la imagen de debajo. Con `poster`, el
+ *    navegador pintaba primero el vídeo (con esa misma foto) y volvía a ser
+ *    él el elemento medido, con la descarga del mp4 a cuestas.
  *  - `preload="metadata"`: el navegador pide solo la cabecera y va trayendo
  *    el resto conforme reproduce, en vez de bloquear la carga con el archivo
  *    completo. En cuanto reproduce, el vídeo tapa la imagen.
@@ -60,7 +62,6 @@ export function VideoBackground({
         muted
         playsInline
         preload="metadata"
-        poster={poster}
         src={src}
         style={{ objectPosition }}
         className={cn(
