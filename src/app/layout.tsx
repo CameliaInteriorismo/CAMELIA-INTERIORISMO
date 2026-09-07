@@ -53,7 +53,19 @@ export async function generateMetadata(): Promise<Metadata> {
     // overridden, which left the request-sent screen emitting both the vino
     // and the orange icon. As metadata, a page-level `icons` replaces this
     // outright — see (confirmacion)/carrito/gracias/page.tsx.
-    icons: { icon: "/images/logos/trimmed/FAVICON-VINO actualizado.png" },
+    // Favicon: la flor del kit de marca de agosto de 2026 ("1_LOGOS
+    // ACTUALIZADOS") en vino sobre fondo transparente, recortada para que
+    // llene la pestaña. El .ico lleva 16/32/48/64 px. El PNG de 180 es el
+    // icono de iOS al añadir la web a la pantalla de inicio y va sobre blanco
+    // porque iOS pinta de negro cualquier zona transparente.
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icons/icon-32.png", type: "image/png", sizes: "32x32" },
+        { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      ],
+      apple: "/icons/apple-icon-180.png",
+    },
   };
 }
 
