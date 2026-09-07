@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/utils/cn";
 
 /**
@@ -13,13 +14,17 @@ import { cn } from "@/utils/cn";
  * Rendimiento (auditoría SEO de 2026-09-07): este vídeo era el elemento más
  * grande de la portada y el navegador lo descargaba ENTERO antes de pintar
  * nada (`preload="auto"`), así que en móvil la portada tardaba 8 s en verse.
- * Dos cambios:
- *  - `poster`: un fotograma en imagen que se ve al instante mientras llega
- *    el vídeo. Es lo que Google mide como "contenido principal", y se
- *    precarga con prioridad para que gane a los scripts.
+ * Tres piezas:
+ *  - Un fotograma en imagen DEBAJO del vídeo, con prioridad de carga: se ve
+ *    al instante y es lo que Google mide como "contenido principal". Va como
+ *    <Image> propio y no solo como `poster` porque, si el elemento medido es
+ *    el <video>, las herramientas de Google le atribuyen la descarga del
+ *    vídeo entero y la portada sigue puntuando como lenta.
+ *  - `poster` con la misma imagen, para que el hueco del vídeo nunca esté
+ *    en blanco mientras arranca.
  *  - `preload="metadata"`: el navegador pide solo la cabecera y va trayendo
  *    el resto conforme reproduce, en vez de bloquear la carga con el archivo
- *    completo.
+ *    completo. En cuanto reproduce, el vídeo tapa la imagen.
  */
 export function VideoBackground({
   src,
@@ -36,10 +41,18 @@ export function VideoBackground({
 }) {
   return (
     <>
-      {/* React sube este <link> al <head> del HTML inicial: el póster empieza
-          a descargarse antes de que el navegador llegue al <video>. */}
       {poster ? (
-        <link rel="preload" as="image" href={poster} fetchPriority="high" />
+        <Image
+          src={poster}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className={cn("object-cover", className)}
+          style={{ objectPosition }}
+        />
       ) : null}
       <video
         autoPlay
