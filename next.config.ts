@@ -21,6 +21,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Dirección de la web antigua en WordPress que Google aún conoce.
+  async redirects() {
+    return [
+      {
+        source: "/politica-de-privacidad-1",
+        destination: "/politica-de-privacidad",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     // 75 is Next's own default, for anything at card size or below.
     //
