@@ -69,6 +69,14 @@ export function ProjectPhases({
   introTitle?: string;
   introText?: string;
 }) {
+  // Sanity guarda el título en dos líneas separadas por un salto; la primera
+  // se pone en mayúscula desde aquí (ver el comentario junto al <h2>), la
+  // segunda se deja tal cual la escriban.
+  const [tituloPrimeraLinea, ...tituloRestoLineas] = (introTitle ?? "").split(
+    "\n",
+  );
+  const tituloResto = tituloRestoLineas.join("\n");
+
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
   // Solo para el acordeón apilado. En el carrusel sigue habiendo siempre una
   // única fase activa (activeIndex) — aquí cada fase se abre y se cierra
@@ -146,30 +154,27 @@ export function ProjectPhases({
   return (
     <section className="pt-section">
       <Container>
-        {/* PRUEBA: título en dos líneas fijado en código, sin pasar por
-            `introTitle` — mismo tamaño y color en las dos líneas; la única
-            diferencia es la mayúscula, que ya basta para marcar cuál es la
-            palabra clave ("integral") sin restarle peso a la aclaración de
-            debajo. Si se confirma este texto, hay que decidir si se deja así
-            de fijo o se vuelve a conectar con Sanity (un campo de texto
-            simple no puede llevar dos tratamientos de caja). */}
-        <h2 className="font-title text-primary text-3xl md:text-4xl">
-          <span className="block uppercase">Diseño integral</span>
-          <span className="block">de interiores</span>
-        </h2>
+        {/* El título viene de Sanity (`introTitle`), con un salto de línea
+            entre "Diseño integral" y "de interiores". Las dos líneas
+            comparten tamaño y color; la única diferencia es la mayúscula en
+            la primera, que ya basta para marcar cuál es la palabra clave sin
+            restarle peso a la aclaración de debajo — por eso esa mayúscula
+            se aplica aquí, en el código, y no se escribe a mano en el campo
+            de Sanity. */}
+        {introTitle && (
+          <h2 className="font-title text-primary text-3xl md:text-4xl">
+            <span className="block uppercase">{tituloPrimeraLinea}</span>
+            {tituloResto && <span className="block">{tituloResto}</span>}
+          </h2>
+        )}
         {/* max-w-4xl y no 2xl: a 42rem la frase se partía justo detrás de
             "completo" y parecía un salto puesto a mano. A 56rem cabe de una
-            vez, sin irse al ancho completo del contenedor.
-
-            PRUEBA: mismo motivo que el titular — el subrayado en
-            "inseparables" no cabe en un campo de texto plano de Sanity, así
-            que de momento el párrafo entero va fijo aquí. */}
-        <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
-          Un proyecto de interiorismo completo con tres fases{" "}
-          <span className="underline underline-offset-2">inseparables</span>,
-          desde la primera idea hasta el último detalle, para crear el hogar
-          que quieres vivir.
-        </p>
+            vez, sin irse al ancho completo del contenedor. */}
+        {introText && (
+          <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
+            <Multiline text={introText} />
+          </p>
+        )}
         {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
             bloque de acompañamiento: 24px, no un titular grande. Aquí solo
             encabeza las fases, no abre la página.
