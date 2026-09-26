@@ -7,7 +7,7 @@ import { Container, Grid } from "@/components/layout/Container";
 import { Multiline } from "@/features/shared/MultilineText";
 import { ButtonLink } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
-import { PlusMinusIcon } from "@/components/ui/Accordion";
+import { ChevronDisclosure } from "@/components/ui/Accordion";
 
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 import type { LinkData } from "@/features/shared/types";
@@ -43,14 +43,16 @@ export function ServiceTabs({
   const current = activeIndex === null ? undefined : tabs[activeIndex];
   /** La foto que se ve mientras no hay servicio elegido. */
   const visible = current ?? tabs[0];
-  // Móvil: acordeón. Mismo patrón que AccompanimentSection —pulsar la abierta
-  // la cierra, así que pueden quedar las tres cerradas—. En md+ manda el
-  // sistema de pestañas de siempre, que no se toca.
+  // Móvil: acordeón. Cada servicio se abre y se cierra por su cuenta, sin
+  // afectar a los demás, así que pueden quedar varios abiertos a la vez. En
+  // md+ manda el sistema de pestañas de siempre, que no se toca.
   //
   // Arranca con las tres cerradas: abría en Interiorismo, y el texto de esa
   // primera aparecía sin que nadie lo hubiera pedido. El contenido se muestra
   // ahora solo como consecuencia de abrir su punto.
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndices, setOpenIndices] = useState<Set<number>>(
+    () => new Set(),
+  );
 
   return (
     // 100px sobre el título, el mismo hueco que dejan /proyectos y /tienda
@@ -67,13 +69,18 @@ export function ServiceTabs({
             una pestaña de otra columna. */}
         <div className="mt-content space-y-6 md:hidden">
           {tabs.map((tab, index) => {
-            const abierto = index === openIndex;
+            const abierto = openIndices.has(index);
             return (
               <div key={tab._id} className="border-primary/15 border-t pt-6">
                 <button
                   type="button"
                   onClick={() =>
-                    setOpenIndex((prev) => (prev === index ? null : index))
+                    setOpenIndices((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(index)) next.delete(index);
+                      else next.add(index);
+                      return next;
+                    })
                   }
                   aria-expanded={abierto}
                   className="flex w-full items-center justify-between gap-4 text-left"
@@ -81,7 +88,7 @@ export function ServiceTabs({
                   <span className="font-title text-primary text-2xl">
                     {tab.title}
                   </span>
-                  <PlusMinusIcon open={abierto} />
+                  <ChevronDisclosure open={abierto} />
                 </button>
 
                 <div className="relative mt-4 aspect-square w-full overflow-hidden">

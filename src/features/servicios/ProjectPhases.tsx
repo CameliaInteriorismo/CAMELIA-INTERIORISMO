@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
+import { ChevronDisclosure } from "@/components/ui/Accordion";
 import { Multiline } from "@/features/shared/MultilineText";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils/cn";
 
 // TODO(content): en Diseño/SERVICIOS.png el texto de "Fase 02. Ejecución y
@@ -23,14 +23,25 @@ export type ServicePhase = {
   image?: SanityImageSource;
 };
 
-/** Width of a collapsed spine, and the gap between panels. */
+/** Width of a collapsed spine, and the gap between panels en el carrusel. */
 const SPINE_W = 72;
 const GAP = 8;
+/** Separación entre recuadros cuando van apilados (mobile). */
+const GAP_STACKED = 16;
+/**
+ * Ancho mínimo de fila para que el carrusel siga viéndose bien: por debajo
+ * de esto, la mitad de foto del panel abierto baja de ~260px y deja de
+ * leerse como una foto real. No es un breakpoint de viewport — se mide el
+ * ancho real de la fila, así que tablet sigue viendo el carrusel de
+ * escritorio mientras quepa, y solo cae al acordeón apilado si de verdad
+ * deja de caber.
+ */
+const MIN_CAROUSEL_ROW = 700;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const DURATION = 600;
 
 /**
- * The three services as a horizontal accordion: one panel open, the rest
+ * The three services as a horizontal carousel: one panel open, the rest
  * collapsed to vino spines that hold their reading order — the phases before
  * the open one sit to its left, the ones after to its right. Clicking a
  * spine opens it and the row rearranges around it.
@@ -39,11 +50,13 @@ const DURATION = 600;
  * the expansion itself and React only ever changes which index is active.
  * The row is measured once (and on resize) because the open panel's content
  * needs a fixed width of its own: without it the copy would re-wrap on every
- * frame of the animation, which reads as the text squirming.
+ * frame of the animation, which reads as the text squirming. Esa misma
+ * medición decide `isCarousel` — ver `MIN_CAROUSEL_ROW` — así que el propio
+ * ancho disponible es lo que elige el modo, no un punto de corte fijo.
  *
- * Below md the row becomes a column and nothing rotates — each phase is a
- * full-width bar that expands downward, the ordinary accordion a phone
- * expects.
+ * Apilado (acordeón), cada fase es su propio recuadro con borde — ninguna
+ * abierta por defecto ni fila conectada entre ellas — y cada una se abre y
+ * cierra de forma independiente, sin afectar a las demás.
  */
 export function ProjectPhases({
   phases,
@@ -57,7 +70,14 @@ export function ProjectPhases({
   introText?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  // Solo para el acordeón apilado. En el carrusel sigue habiendo siempre una
+  // única fase activa (activeIndex) — aquí cada fase se abre y se cierra
+  // sola, sin afectar a las demás, así que pueden quedar varias abiertas a
+  // la vez. Ninguna abierta por defecto: el propio chevron ya dice que se
+  // puede abrir.
+  const [openIndices, setOpenIndices] = useState<Set<number>>(
+    () => new Set(),
+  );
   const reduceMotion = useReducedMotion();
   // The panels still rearrange for someone who asked for less motion — they
   // just arrive instead of sliding.
@@ -73,7 +93,13 @@ export function ProjectPhases({
   const [tallest, setTallest] = useState(0);
   const baseId = useId();
 
-  useEffect(() => {
+  // El ancho real de la fila decide el modo — ver MIN_CAROUSEL_ROW. Antes de
+  // la primera medición (rowWidth en 0) se asume apilado, el modo más
+  // seguro; `useLayoutEffect` mide y corrige ANTES de que el navegador
+  // pinte, así que esa suposición inicial nunca llega a verse en pantalla.
+  const isCarousel = rowWidth >= MIN_CAROUSEL_ROW;
+
+  useLayoutEffect(() => {
     const el = rowRef.current;
     if (!el) return;
     const measure = () => {
@@ -120,17 +146,30 @@ export function ProjectPhases({
   return (
     <section className="pt-section">
       <Container>
+        {/* PRUEBA: título en dos líneas fijado en código, sin pasar por
+            `introTitle` — mismo tamaño y color en las dos líneas; la única
+            diferencia es la mayúscula, que ya basta para marcar cuál es la
+            palabra clave ("integral") sin restarle peso a la aclaración de
+            debajo. Si se confirma este texto, hay que decidir si se deja así
+            de fijo o se vuelve a conectar con Sanity (un campo de texto
+            simple no puede llevar dos tratamientos de caja). */}
         <h2 className="font-title text-primary text-3xl md:text-4xl">
-          <Multiline text={introTitle ?? "Diseño de interiores integral"} />
+          <span className="block uppercase">Diseño integral</span>
+          <span className="block">de interiores</span>
         </h2>
         {/* max-w-4xl y no 2xl: a 42rem la frase se partía justo detrás de
             "completo" y parecía un salto puesto a mano. A 56rem cabe de una
-            vez, sin irse al ancho completo del contenedor. */}
-        {introText && (
-          <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
-            {introText}
-          </p>
-        )}
+            vez, sin irse al ancho completo del contenedor.
+
+            PRUEBA: mismo motivo que el titular — el subrayado en
+            "inseparables" no cabe en un campo de texto plano de Sanity, así
+            que de momento el párrafo entero va fijo aquí. */}
+        <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
+          Un proyecto de interiorismo completo, tres fases{" "}
+          <span className="underline underline-offset-2">inseparables</span>,
+          desde la primera idea hasta el último detalle, para crear el hogar
+          que quieres vivir.
+        </p>
         {/* Mismo tratamiento que "Sea cual sea el punto en el que estés." del
             bloque de acompañamiento: 24px, no un titular grande. Aquí solo
             encabeza las fases, no abre la página.
@@ -145,24 +184,42 @@ export function ProjectPhases({
         )}
         <div
           ref={rowRef}
-          className="mt-md flex flex-col lg:flex-row lg:items-stretch"
-          style={{ gap: `${GAP}px` }}
+          className={cn(
+            "mt-md flex",
+            isCarousel ? "flex-row items-stretch" : "flex-col",
+          )}
+          style={{ gap: isCarousel ? `${GAP}px` : `${GAP_STACKED}px` }}
         >
           {phases.map((phase, index) => {
-            const open = index === activeIndex;
+            const open = isCarousel
+              ? index === activeIndex
+              : openIndices.has(index);
+            // Acordeón apilado + abierta: el recuadro entero pasa a vino, el
+            // color de marca, para que se lea de un vistazo cuál es la que
+            // estás leyendo ahora — sobre todo importante ahora que pueden
+            // quedar varias abiertas a la vez. El carrusel de escritorio no
+            // se toca: su panel abierto sigue en crema, como siempre.
+            const stackedOpen = !isCarousel && open;
             const panelId = `${baseId}-panel-${index}`;
             const tabId = `${baseId}-tab-${index}`;
 
             return (
               <div
                 key={phase._id}
-                className="relative overflow-hidden lg:flex lg:shrink-0 lg:flex-col"
+                className={cn(
+                  "relative overflow-hidden",
+                  isCarousel
+                    ? "flex shrink-0 flex-col"
+                    : stackedOpen
+                      ? "bg-primary"
+                      : "border-primary/15 border",
+                )}
                 style={
                   {
-                    ...(isDesktop && tallest ? { minHeight: tallest } : {}),
-                    // Only drive width on desktop; stacked, each item is
-                    // simply full width.
-                    ...(isDesktop && rowWidth
+                    ...(isCarousel && tallest ? { minHeight: tallest } : {}),
+                    // Only drive width on the carousel; stacked, each item
+                    // is simply full width.
+                    ...(isCarousel && rowWidth
                       ? { width: open ? openWidth : SPINE_W }
                       : {}),
                     transitionProperty: "width",
@@ -176,36 +233,74 @@ export function ProjectPhases({
                 <button
                   type="button"
                   id={tabId}
-                  onClick={() =>
-                    // Apiladas, volver a tocar la abierta la cierra —el mismo
-                    // gesto que en AccompanimentSection—. En escritorio no:
-                    // la fila reparte anchos y sin ninguna abierta quedaría
-                    // un vacío a la derecha.
-                    setActiveIndex((prev) =>
-                      !isDesktop && prev === index ? null : index,
-                    )
-                  }
+                  onClick={() => {
+                    if (isCarousel) {
+                      // En el carrusel sigue habiendo siempre una fase
+                      // activa: la fila reparte anchos y sin ninguna abierta
+                      // quedaría un vacío a la derecha.
+                      setActiveIndex(index);
+                      return;
+                    }
+                    // Acordeón apilado: cada fase se abre y se cierra por sí
+                    // sola. Volver a tocar la que ya está abierta la cierra;
+                    // abrir otra no toca las demás — pueden quedar varias a
+                    // la vez.
+                    setOpenIndices((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(index)) next.delete(index);
+                      else next.add(index);
+                      return next;
+                    });
+                  }}
                   aria-expanded={open}
                   aria-controls={panelId}
                   className={cn(
-                    "bg-primary text-background flex w-full items-center gap-4 px-5 py-4 text-left transition-opacity lg:absolute lg:inset-0 lg:w-[72px] lg:flex-col lg:items-center lg:justify-start lg:gap-6 lg:px-0 lg:py-6",
-                    open && "lg:pointer-events-none lg:opacity-0",
-                    !open && "hover:opacity-90",
+                    "flex w-full items-center text-left transition-opacity",
+                    isCarousel
+                      ? "absolute inset-0 w-[72px] flex-col items-center justify-start gap-6 bg-primary px-0 py-6 text-background"
+                      : "gap-4 px-5 py-5",
+                    open && isCarousel && "pointer-events-none opacity-0",
+                    !open &&
+                      (isCarousel ? "hover:opacity-90" : "hover:opacity-70"),
                   )}
                   style={{ transitionDuration: `${duration}ms` }}
                 >
-                  <span className="font-title text-xl leading-none">
+                  <span
+                    className={cn(
+                      "font-title text-xl leading-none",
+                      isCarousel || stackedOpen
+                        ? "text-background"
+                        : "text-primary",
+                    )}
+                  >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  {/* Vertical only from md up — on a phone the bar is
-                      horizontal and the title reads normally. */}
-                  <span className="font-title text-sm tracking-wide uppercase lg:[writing-mode:vertical-rl]">
+                  {/* Vertical solo en el carrusel — apilado, la barra es
+                      horizontal y el título se lee normal. */}
+                  <span
+                    className={cn(
+                      "font-title text-sm tracking-wide uppercase",
+                      isCarousel
+                        ? "text-background [writing-mode:vertical-rl]"
+                        : stackedOpen
+                          ? "text-background flex-1"
+                          : "text-primary flex-1",
+                    )}
+                  >
                     {phase.title}
                   </span>
+                  {/* Chevron solo en el acordeón apilado: en el carrusel el
+                      propio ensanchado de la fase ya dice que está abierta. */}
+                  {!isCarousel && (
+                    <ChevronDisclosure
+                      open={open}
+                      color={stackedOpen ? "text-background" : "text-primary"}
+                    />
+                  )}
                 </button>
 
-                {/* The open panel's content. Fixed width on desktop so the
-                    copy keeps its line breaks while the panel resizes. */}
+                {/* The open panel's content. Fixed width on the carousel so
+                    the copy keeps its line breaks while the panel resizes. */}
                 <div
                   id={panelId}
                   data-phase-panel
@@ -220,11 +315,15 @@ export function ProjectPhases({
                     // la fila (`items-stretch`) los estira hasta el más alto,
                     // así que todos miden lo mismo y cambiar de fase no da
                     // ningún salto. Añadir o quitar fases no cambia nada.
-                    "border-primary/[0.13] bg-background lg:relative lg:ml-auto lg:flex-1 lg:overflow-hidden lg:border",
-                    open ? "lg:opacity-100" : "lg:opacity-0",
+                    isCarousel
+                      ? "border-primary/[0.13] bg-background relative ml-auto flex-1 overflow-hidden border"
+                      : stackedOpen
+                        ? "bg-primary"
+                        : "border-primary/[0.13] bg-background",
+                    isCarousel && (open ? "opacity-100" : "opacity-0"),
                   )}
                   style={
-                    isDesktop && rowWidth
+                    isCarousel && rowWidth
                       ? {
                           width: openWidth,
                           transitionProperty: "opacity",
@@ -234,22 +333,44 @@ export function ProjectPhases({
                       : undefined
                   }
                 >
-                  <div className="flex h-full flex-col gap-8 p-8 lg:flex-row lg:items-stretch lg:gap-10 lg:p-12">
+                  <div
+                    className={cn(
+                      "flex h-full gap-8 p-8",
+                      isCarousel ? "flex-row items-stretch gap-10 p-12" : "flex-col",
+                    )}
+                  >
                     <div
                       data-phase-text
-                      className="lg:flex lg:w-1/2 lg:flex-col lg:justify-center"
+                      className={cn(
+                        isCarousel && "flex w-1/2 flex-col justify-center",
+                      )}
                     >
-                      <h3 className="font-title text-primary/25 text-2xl uppercase">
+                      <h3
+                        className={cn(
+                          "font-title text-2xl uppercase",
+                          stackedOpen ? "text-background/40" : "text-primary/25",
+                        )}
+                      >
                         FASE {String(index + 1).padStart(2, "0")}. {phase.title}
                       </h3>
-                      <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
+                      <div
+                        className={cn(
+                          "mt-md space-y-md text-sm leading-relaxed",
+                          stackedOpen ? "text-background/90" : "text-primary/75",
+                        )}
+                      >
                         {(phase.longDescription ?? []).map((paragraph, i) => (
                           <p key={i}>{paragraph}</p>
                         ))}
                       </div>
                     </div>
 
-                    <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:h-full lg:w-1/2">
+                    <div
+                      className={cn(
+                        "relative w-full overflow-hidden",
+                        isCarousel ? "h-full w-1/2" : "aspect-[4/5]",
+                      )}
+                    >
                       <Image
                         src={imageProps(phase.image)?.src ?? ""}
                         alt={phase.title}
@@ -259,7 +380,7 @@ export function ProjectPhases({
                           objectPosition: imageProps(phase.image)
                             ?.objectPosition,
                         }}
-                        sizes="(min-width: 1024px) 40vw, 100vw"
+                        sizes="(min-width: 768px) 40vw, 100vw"
                       />
                     </div>
                   </div>

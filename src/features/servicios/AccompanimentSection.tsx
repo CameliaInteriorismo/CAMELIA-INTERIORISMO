@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import { PlusMinusIcon } from "@/components/ui/Accordion";
+import { ChevronDisclosure } from "@/components/ui/Accordion";
 import { cn } from "@/utils/cn";
 
 // TODO(asset): solo "Decoración de espacios" tiene foto real (la única
@@ -34,15 +34,16 @@ export function AccompanimentSection({
 }) {
   // Dos estados distintos a propósito, porque no responden a lo mismo:
   //
-  //   openIndex   — qué desplegable está abierto. Puede no haber ninguno:
-  //                 volver a pulsar el abierto lo cierra.
+  //   openIndices — qué desplegables están abiertos. Cada uno se abre y se
+  //                 cierra por su cuenta, sin afectar a los demás — ninguno
+  //                 abierto por defecto: el chevron ya dice que se puede
+  //                 abrir, no hace falta forzar el primero.
   //   shownIndex  — de quién es la foto de al lado. Recuerda el ÚLTIMO que se
-  //                 abrió y no se borra al cerrarlo.
-  //
-  // Con un solo estado, cerrar un desplegable dejaba la columna sin foto o la
-  // devolvía a la del primero, que no era el que se había mirado. Así la foto
-  // sigue acompañando a lo último que abriste.
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  //                 abrió y no se borra al cerrarlo; empieza en la primera
+  //                 ficha para que la columna nunca se quede sin imagen.
+  const [openIndices, setOpenIndices] = useState<Set<number>>(
+    () => new Set(),
+  );
   const [shownIndex, setShownIndex] = useState(0);
   const displayed = items[shownIndex];
   const displayedImage = imageProps(displayed?.image);
@@ -82,23 +83,29 @@ export function AccompanimentSection({
                   ritmo entre ellas. Ninguna altura fija. */}
             <div className="border-primary/15 mt-content border-t">
               {items.map((item, index) => {
-                const open = index === openIndex;
+                const open = openIndices.has(index);
                 return (
                   <div key={item._key} className="border-primary/15 border-b">
                     <button
                       type="button"
                       onClick={() => {
-                        // Pulsar el abierto lo cierra; pulsar otro cambia.
-                        setOpenIndex((prev) => (prev === index ? null : index));
+                        // Cada fila se abre y se cierra por su cuenta, sin
+                        // tocar las demás.
+                        setOpenIndices((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(index)) next.delete(index);
+                          else next.add(index);
+                          return next;
+                        });
                         // La foto solo cambia al ABRIR, nunca al cerrar.
-                        if (openIndex !== index) setShownIndex(index);
+                        if (!open) setShownIndex(index);
                       }}
                       className="flex w-full items-center justify-between gap-8 py-8 text-left"
                     >
                       <span className="font-title text-primary text-xl">
                         {item.question}
                       </span>
-                      <PlusMinusIcon open={open} />
+                      <ChevronDisclosure open={open} />
                     </button>
                     <AnimatePresence initial={false}>
                       {open && (

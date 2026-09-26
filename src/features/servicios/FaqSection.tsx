@@ -18,7 +18,12 @@ export function FaqSection({
           <Multiline text={title} />
         </h2>
 
-        <Accordion items={items} className="mt-content" />
+        <Accordion
+          items={items}
+          independent
+          icon="chevron"
+          className="mt-content"
+        />
       </Container>
     </section>
   );

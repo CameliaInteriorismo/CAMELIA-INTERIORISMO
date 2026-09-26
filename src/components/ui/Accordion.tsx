@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDownRightIcon } from "@/components/ui/icons";
+import { ArrowDownRightIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { cn } from "@/utils/cn";
 
 export interface AccordionItem {
@@ -36,6 +36,33 @@ function DisclosureArrow({ open }: { open: boolean }) {
 }
 
 /**
+ * Chevron que gira 180° al abrir — el "> hacia abajo" que reemplaza al +/-
+ * donde se pide un acabado más discreto. Mismo timing que los otros dos
+ * disclosures, para que cambiar de icono en un sitio no desafine el resto.
+ *
+ * `color` por defecto es el vino de siempre; existe para los sitios donde el
+ * propio fondo pasa a vino al abrir (ver ProjectPhases) y el icono necesita
+ * ir en claro para seguir viéndose.
+ */
+export function ChevronDisclosure({
+  open,
+  color = "text-primary",
+}: {
+  open: boolean;
+  color?: string;
+}) {
+  return (
+    <motion.span
+      animate={{ rotate: open ? 180 : 0 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className="block h-4 w-4 shrink-0"
+    >
+      <ChevronDownIcon className={cn(color, "h-full w-full")} />
+    </motion.span>
+  );
+}
+
+/**
  * Shared FAQ-style accordion — used by Servicios ("Antes de empezar el
  * proyecto") and Producto's detail sections. Two selection modes:
  * - default (single `openIndex`): only one item open at a time, opening
@@ -60,7 +87,7 @@ export function Accordion({
   defaultOpenIndex?: number;
   independent?: boolean;
   compact?: boolean;
-  icon?: "plusminus" | "arrow";
+  icon?: "plusminus" | "arrow" | "chevron";
   className?: string;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(
@@ -101,6 +128,8 @@ export function Accordion({
               </span>
               {icon === "arrow" ? (
                 <DisclosureArrow open={open} />
+              ) : icon === "chevron" ? (
+                <ChevronDisclosure open={open} />
               ) : (
                 <PlusMinusIcon open={open} />
               )}

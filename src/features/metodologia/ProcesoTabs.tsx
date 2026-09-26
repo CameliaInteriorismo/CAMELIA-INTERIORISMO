@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
 import { Multiline } from "@/features/shared/MultilineText";
+import { ChevronDisclosure } from "@/components/ui/Accordion";
 import { HorizontalTabs } from "@/components/ui/HorizontalTabs";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -82,6 +83,13 @@ export function ProcesoTabs({
   title?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  // Solo para el acordeón móvil (<md): estado propio, independiente del
+  // `activeIndex` de la barra de escritorio, para que cada fase se abra y se
+  // cierre por su cuenta sin desincronizar la barra de pestañas de arriba.
+  // Ninguna abierta por defecto — el chevron ya dice que se puede abrir.
+  const [openIndices, setOpenIndices] = useState<Set<number>>(
+    () => new Set(),
+  );
   const current = steps[activeIndex];
   const image = imageProps(current?.image);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -204,22 +212,29 @@ export function ProcesoTabs({
 
         {/* MÓVIL: la barra horizontal envolvía en cuatro filas y ocupaba
             media pantalla antes de llegar al contenido. Aquí cada fase es su
-            propio punto: se toca y abre debajo su texto y su foto. El estado
-            es el mismo `activeIndex` que usa la barra, así que las dos vistas
-            no pueden desincronizarse, y el texto lo pinta el mismo `StepText`
-            que en escritorio. */}
+            propio punto: se toca y abre debajo su texto y su foto. Estado
+            propio (`openIndices`, ver arriba) — cada fase se abre y se cierra
+            sola, sin tocar la barra de escritorio ni a las demás. El texto lo
+            pinta el mismo `StepText` que en escritorio. */}
         <div className="mt-content md:hidden">
           {steps.map((step, index) => {
-            const abierta = index === activeIndex;
+            const abierta = openIndices.has(index);
             const foto = imageProps(step.image);
             return (
               <div key={step._key} className="border-primary/15 border-b">
                 <button
                   type="button"
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() =>
+                    setOpenIndices((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(index)) next.delete(index);
+                      else next.add(index);
+                      return next;
+                    })
+                  }
                   aria-expanded={abierta}
                   className={cn(
-                    "font-title py-content flex w-full items-center text-left text-xl transition-colors duration-300",
+                    "font-title py-content flex w-full items-center justify-between gap-4 text-left text-xl transition-colors duration-300",
                     // El primero pega arriba: su `pt` se sumaba al `mt-content`
                     // del contenedor y dejaba 64px donde La experiencia, en la
                     // misma página, abre con 32.
@@ -227,7 +242,10 @@ export function ProcesoTabs({
                     abierta ? "text-primary" : "text-primary/50",
                   )}
                 >
-                  {index + 1}. {step.label}
+                  <span>
+                    {index + 1}. {step.label}
+                  </span>
+                  <ChevronDisclosure open={abierta} />
                 </button>
 
                 <AnimatePresence initial={false}>

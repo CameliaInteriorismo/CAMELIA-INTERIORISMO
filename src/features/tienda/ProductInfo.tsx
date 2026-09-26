@@ -35,7 +35,7 @@ export function ProductInfo({
       items={items}
       independent
       compact
-      icon="arrow"
+      icon="chevron"
       className="mt-block"
     />
   );
