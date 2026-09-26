@@ -165,7 +165,7 @@ export function ProjectPhases({
             "inseparables" no cabe en un campo de texto plano de Sanity, así
             que de momento el párrafo entero va fijo aquí. */}
         <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
-          Un proyecto de interiorismo completo, tres fases{" "}
+          Un proyecto de interiorismo completo con tres fases{" "}
           <span className="underline underline-offset-2">inseparables</span>,
           desde la primera idea hasta el último detalle, para crear el hogar
           que quieres vivir.
