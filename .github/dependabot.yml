@@ -1,0 +1,17 @@
+# Dependabot abre solo los PR de actualización cuando sale una versión
+# parcheada de una dependencia. Las vulnerabilidades que hoy marca `npm audit`
+# no tienen parche publicado (vienen de las herramientas de línea de comandos
+# de Sanity), así que esto es lo que las cerrará cuando exista.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Un solo PR con las subidas menores y de parche, para no recibir uno
+      # por paquete. Las mayores (Next, Sanity, React) llegan por separado.
+      minor-and-patch:
+        update-types: [minor, patch]
