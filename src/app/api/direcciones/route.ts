@@ -1,5 +1,6 @@
 import { resolveAddressProvider } from "@/lib/address/providers";
 import type { AddressSuggestion } from "@/lib/address/types";
+import { clientIp, createLimiter } from "@/lib/security/rateLimit";
 
 /**
  * Address type-ahead for the project form.
@@ -15,6 +16,16 @@ import type { AddressSuggestion } from "@/lib/address/types";
 
 /** Below this, the query is too broad to be worth a round trip. */
 const MIN_QUERY_LENGTH = 3;
+/** Above this it is not an address, it is somebody poking the endpoint. */
+const MAX_QUERY_LENGTH = 120;
+
+/**
+ * Esta ruta es pública y cada petición cuesta una llamada al proveedor de
+ * direcciones (gratuito hoy, de pago si se configura Google o Mapbox), así
+ * que se limita por IP. 60 por minuto cubre de sobra a quien escribe una
+ * dirección con la pausa de teclado ya aplicada en el cliente.
+ */
+const permitir = createLimiter({ max: 60, windowMs: 60_000 });
 
 /**
  * Geocoders happily return the same address twice under different internal
@@ -35,8 +46,15 @@ function dedupe(suggestions: AddressSuggestion[]) {
 export async function GET(request: Request) {
   const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
 
-  if (query.length < MIN_QUERY_LENGTH) {
+  if (query.length < MIN_QUERY_LENGTH || query.length > MAX_QUERY_LENGTH) {
     return Response.json({ suggestions: [] });
+  }
+
+  if (!permitir(await clientIp())) {
+    return Response.json(
+      { suggestions: [], error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": "60" } },
+    );
   }
 
   const { name, search } = resolveAddressProvider();

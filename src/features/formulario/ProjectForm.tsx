@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { enviarSolicitudProyecto } from "@/lib/requests/actions";
+import { useFormGuard } from "@/features/shared/useFormGuard";
 import { useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container, Grid } from "@/components/layout/Container";
@@ -140,6 +141,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
   const shift = reduceMotion ? 0 : STEP_SHIFT;
+  const { guard, campoTrampa } = useFormGuard();
   const [pageIndex, setPageIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [error, setError] = useState<string>();
@@ -229,7 +231,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
     setEnviando(true);
     setError(undefined);
 
-    const resultado = await enviarSolicitudProyecto({ answers });
+    const resultado = await enviarSolicitudProyecto({ answers }, guard());
 
     // Solo se pasa a la pantalla de gracias si los correos han salido. Si
     // fallan, la persona se queda aquí con sus respuestas y puede reintentar
@@ -244,6 +246,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
 
   return (
     <div className="flex min-h-dvh flex-col">
+      {campoTrampa}
       <header className="border-primary/15 border-b">
         <Container>
           <div className="flex h-20 items-center justify-between">

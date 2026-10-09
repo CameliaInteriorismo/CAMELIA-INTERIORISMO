@@ -14,6 +14,7 @@ import type { ContactDetails } from "@/features/contacto/types";
 import type { ProductCardData } from "@/features/tienda/types";
 import { useCartStore } from "@/stores/cartStore";
 import { enviarSolicitudProducto } from "@/lib/requests/actions";
+import { useFormGuard } from "@/features/shared/useFormGuard";
 
 const schema = z
   .object({
@@ -75,6 +76,7 @@ export function ContactForm({
   // `enviando` hace dos cosas a la vez: apaga el botón —así un doble clic no
   // dispara dos solicitudes, que serían dos números y dos correos— y cambia
   // su rótulo para que se note que algo está pasando.
+  const { guard, campoTrampa } = useFormGuard();
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string>();
   // Al validar el formulario no se envía todavía: se guardan sus datos aquí
@@ -126,7 +128,8 @@ export function ContactForm({
     // persona se queda en la revisión con sus datos y su carrito intactos,
     // y puede reintentar. Mostrar "enviado" sin haber enviado sería perder
     // la solicitud sin que nadie se entere.
-    const resultado = await enviarSolicitudProducto({
+    const resultado = await enviarSolicitudProducto(
+      {
       name: data.name,
       taxId: data.taxId,
       email: data.email,
@@ -144,7 +147,9 @@ export function ContactForm({
         quantity: item.quantity,
         notes: item.notes,
       })),
-    });
+      },
+      guard(),
+    );
 
     if (!resultado.ok) {
       setErrorEnvio(resultado.error);
@@ -224,6 +229,7 @@ export function ContactForm({
           noValidate
           className="mt-block"
         >
+          {campoTrampa}
           <CamposEntrega
             register={register}
             errors={errors}

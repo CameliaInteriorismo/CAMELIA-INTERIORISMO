@@ -12,6 +12,7 @@ import type { Contacto } from "@/lib/email/layout";
 import type { TextosCorreo } from "@/lib/email/textos";
 import * as producto from "@/lib/email/productRequest";
 import * as proyecto from "@/lib/email/projectRequest";
+import { revisarGuard } from "@/lib/security/formGuard";
 
 /**
  * Las dos acciones que envían los correos de los formularios.
@@ -59,7 +60,11 @@ const esquemaProducto = z.object({
 });
 
 const esquemaProyecto = z.object({
-  answers: z.record(z.string(), z.string().trim().max(5000)),
+  answers: z
+    .record(z.string(), z.string().trim().max(5000))
+    // Un formulario real tiene unas decenas de campos; sin tope, un envío
+    // directo podría mandar miles y convertirlos en un correo gigante.
+    .refine((a) => Object.keys(a).length <= 80),
 });
 
 /** Fecha y hora en horario peninsular, que es donde está el estudio. */
@@ -126,12 +131,21 @@ async function enviarPar(
 
 export async function enviarSolicitudProducto(
   payload: unknown,
+  guard: unknown,
 ): Promise<ResultadoEnvio> {
   const parsed = esquemaProducto.safeParse(payload);
   if (!parsed.success) {
     return { ok: false, error: "Revisa los datos del formulario." };
   }
   const datos = parsed.data;
+
+  const veredicto = await revisarGuard(guard, datos.email);
+  if (!veredicto.pasa) {
+    // Un bot recibe un "ok" falso: no sabe qué le ha delatado y no insiste.
+    return veredicto.silencioso
+      ? { ok: true }
+      : { ok: false, error: veredicto.error };
+  }
 
   try {
     assertEmailConfig();
@@ -153,6 +167,7 @@ export async function enviarSolicitudProducto(
 
 export async function enviarSolicitudProyecto(
   payload: unknown,
+  guard: unknown,
 ): Promise<ResultadoEnvio> {
   const parsed = esquemaProyecto.safeParse(payload);
   if (!parsed.success) {
@@ -170,6 +185,13 @@ export async function enviarSolicitudProyecto(
       ok: false,
       error: "Revisa el nombre, el email y el teléfono antes de enviar.",
     };
+  }
+
+  const veredicto = await revisarGuard(guard, datosContacto.data.email);
+  if (!veredicto.pasa) {
+    return veredicto.silencioso
+      ? { ok: true }
+      : { ok: false, error: veredicto.error };
   }
 
   try {
