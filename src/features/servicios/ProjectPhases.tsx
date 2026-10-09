@@ -37,6 +37,18 @@ const GAP_STACKED = 16;
  * acordeón apilado si de verdad deja de caber.
  */
 const MIN_CAROUSEL_ROW = 900;
+/**
+ * En el carrusel la foto se estira hasta la altura del texto, y a anchos de
+ * escritorio justos queda más alta que ancha: `object-cover` recorta los
+ * lados, y centrado se llevaba por delante a la chica de la fase 01 (está en
+ * el tercio izquierdo de la foto). Se sesga el encuadre horizontal hacia ese
+ * lado y se respeta el vertical que marque el punto de interés del Studio.
+ */
+function carouselObjectPosition(fromStudio?: string) {
+  const y = fromStudio?.split(" ")[1] ?? "50%";
+  return `12% ${y}`;
+}
+
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const DURATION = 600;
 
@@ -338,21 +350,22 @@ export function ProjectPhases({
                       : undefined
                   }
                 >
+                  {/* Carrusel: rejilla de dos columnas (el texto ocupa lo que
+                      deja la foto, que va al 45 %) con la fila ajustada al
+                      contenido (`content-center`, no estirada): su alto es el
+                      del texto, y la foto — que se pinta con `fill`, así que
+                      no aporta alto propio — se estira hasta él. Resultado: la
+                      foto empieza donde el título de la fase y acaba donde
+                      acaba el texto, siempre. */}
                   <div
                     className={cn(
-                      "flex h-full gap-8 p-8",
-                      isCarousel ? "flex-row items-stretch gap-14 p-12" : "flex-col",
+                      "h-full",
+                      isCarousel
+                        ? "grid grid-cols-[minmax(0,1fr)_45%] content-center gap-x-14 p-12"
+                        : "flex flex-col gap-8 p-8",
                     )}
                   >
-                    {/* El texto ocupa lo que deja la foto (flex-1), no una
-                        mitad fija: así respira a lo ancho y la foto no lo
-                        aprieta. */}
-                    <div
-                      data-phase-text
-                      className={cn(
-                        isCarousel && "flex min-w-0 flex-1 flex-col justify-center",
-                      )}
-                    >
+                    <div data-phase-text>
                       <h3
                         className={cn(
                           "font-title text-2xl uppercase",
@@ -373,20 +386,14 @@ export function ProjectPhases({
                       </div>
                     </div>
 
-                    {/* El 45 % del ancho, con proporción propia (5/6) y centrada
-                        en vertical, en vez de estirarse a toda la altura del
-                        panel: así la foto de la fase 01 se ve ENTERA (la chica
-                        incluida) a cualquier ancho de escritorio, en lugar de
-                        recortarse a los lados cuando el panel es más alto que
-                        ancho. Sin `w-full` en el carrusel: `cn` no resuelve
-                        conflictos y ese ancho ganaba al 45 %, comprimiendo el
-                        texto. */}
+                    {/* Sin `w-full` en el carrusel: `cn` no resuelve conflictos
+                        y ese ancho ganaba a la columna del 45 %, comprimiendo
+                        el texto. Apilado, la foto va a todo el ancho con
+                        proporción 4/5. */}
                     <div
                       className={cn(
                         "relative overflow-hidden",
-                        isCarousel
-                          ? "aspect-[5/6] w-[45%] shrink-0 self-center"
-                          : "aspect-[4/5] w-full",
+                        !isCarousel && "aspect-[4/5] w-full",
                       )}
                     >
                       <Image
@@ -395,8 +402,11 @@ export function ProjectPhases({
                         fill
                         className="object-cover"
                         style={{
-                          objectPosition: imageProps(phase.image)
-                            ?.objectPosition,
+                          objectPosition: isCarousel
+                            ? carouselObjectPosition(
+                                imageProps(phase.image)?.objectPosition,
+                              )
+                            : imageProps(phase.image)?.objectPosition,
                         }}
                         sizes="(min-width: 768px) 40vw, 100vw"
                       />
