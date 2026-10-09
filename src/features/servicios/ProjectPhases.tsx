@@ -30,13 +30,13 @@ const GAP = 8;
 const GAP_STACKED = 16;
 /**
  * Ancho mínimo de fila para que el carrusel siga viéndose bien: por debajo
- * de esto, la mitad de foto del panel abierto baja de ~260px y deja de
- * leerse como una foto real. No es un breakpoint de viewport — se mide el
- * ancho real de la fila, así que tablet sigue viendo el carrusel de
- * escritorio mientras quepa, y solo cae al acordeón apilado si de verdad
- * deja de caber.
+ * de esto, el texto del panel abierto baja de ~300px y se lee como una tira
+ * (y la foto, al 45 %, deja de verse como una foto real). No es un
+ * breakpoint de viewport — se mide el ancho real de la fila, así que tablet
+ * sigue viendo el carrusel de escritorio mientras quepa, y solo cae al
+ * acordeón apilado si de verdad deja de caber.
  */
-const MIN_CAROUSEL_ROW = 700;
+const MIN_CAROUSEL_ROW = 900;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const DURATION = 600;
 
@@ -341,13 +341,16 @@ export function ProjectPhases({
                   <div
                     className={cn(
                       "flex h-full gap-8 p-8",
-                      isCarousel ? "flex-row items-stretch gap-10 p-12" : "flex-col",
+                      isCarousel ? "flex-row items-stretch gap-14 p-12" : "flex-col",
                     )}
                   >
+                    {/* El texto ocupa lo que deja la foto (flex-1), no una
+                        mitad fija: así respira a lo ancho y la foto no lo
+                        aprieta. */}
                     <div
                       data-phase-text
                       className={cn(
-                        isCarousel && "flex w-1/2 flex-col justify-center",
+                        isCarousel && "flex min-w-0 flex-1 flex-col justify-center",
                       )}
                     >
                       <h3
@@ -370,10 +373,20 @@ export function ProjectPhases({
                       </div>
                     </div>
 
+                    {/* El 45 % del ancho, con proporción propia (5/6) y centrada
+                        en vertical, en vez de estirarse a toda la altura del
+                        panel: así la foto de la fase 01 se ve ENTERA (la chica
+                        incluida) a cualquier ancho de escritorio, en lugar de
+                        recortarse a los lados cuando el panel es más alto que
+                        ancho. Sin `w-full` en el carrusel: `cn` no resuelve
+                        conflictos y ese ancho ganaba al 45 %, comprimiendo el
+                        texto. */}
                     <div
                       className={cn(
-                        "relative w-full overflow-hidden",
-                        isCarousel ? "h-full w-1/2" : "aspect-[4/5]",
+                        "relative overflow-hidden",
+                        isCarousel
+                          ? "aspect-[5/6] w-[45%] shrink-0 self-center"
+                          : "aspect-[4/5] w-full",
                       )}
                     >
                       <Image
