@@ -111,6 +111,7 @@ export function ProjectPhases({
   // buscaba la altura fija que había antes, pero sin dejar comprimida a la
   // fase más larga.
   const [tallest, setTallest] = useState(0);
+  const [photoH, setPhotoH] = useState(0);
   const baseId = useId();
 
   // El ancho real de la fila decide el modo — ver MIN_CAROUSEL_ROW. Antes de
@@ -149,6 +150,12 @@ export function ProjectPhases({
           parseFloat(panel.borderTopWidth) +
           parseFloat(panel.borderBottomWidth);
         setTallest((prev) => (h > prev ? h : prev));
+        // Alto del texto más largo, sin padding: es el alto que se da a la
+        // foto de TODAS las fases, para que no cambie de tamaño al pasar de
+        // una a otra.
+        setPhotoH((prev) =>
+          texto.scrollHeight > prev ? texto.scrollHeight : prev,
+        );
       }
     };
     measure();
@@ -395,6 +402,9 @@ export function ProjectPhases({
                         "relative overflow-hidden",
                         !isCarousel && "aspect-[4/5] w-full",
                       )}
+                      style={
+                        isCarousel && photoH ? { height: photoH } : undefined
+                      }
                     >
                       <Image
                         src={imageProps(phase.image)?.src ?? ""}
