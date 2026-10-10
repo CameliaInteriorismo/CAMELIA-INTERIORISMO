@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
@@ -89,12 +89,12 @@ export function ContactForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
-  const deliveryMode = watch("deliveryMode");
+  const deliveryMode = useWatch({ control, name: "deliveryMode" });
 
   function pasarARevision(data: FormValues) {
     setDatosRevision(data);

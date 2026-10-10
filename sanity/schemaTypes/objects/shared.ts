@@ -1,4 +1,21 @@
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, type StringRule } from "sanity";
+
+/**
+ * Solo se aceptan destinos que lleven a una página de la web (/ruta), a una
+ * web segura (https://), a un correo (mailto:), a un teléfono (tel:) o a un
+ * ancla (#). Rechaza el resto —`javascript:`, `data:`, `http://`, rutas
+ * escritas sin barra— para que un destino mal pegado (o un panel
+ * comprometido) no pueda convertir un botón en un enlace que ejecute código.
+ */
+const DESTINO_VALIDO = /^(\/(?!\/)|https:\/\/|mailto:|tel:|#)/;
+export const validarDestino = (rule: StringRule) =>
+  rule
+    .required()
+    .custom((valor?: string) =>
+      !valor || DESTINO_VALIDO.test(valor.trim())
+        ? true
+        : "Debe empezar por / (página de la web), https://, mailto: o tel:",
+    );
 
 /**
  * Imagen con texto alternativo obligatorio.
@@ -45,7 +62,7 @@ export const link = defineType({
       type: "string",
       description:
         "Ruta interna como /contacto, o una URL completa que empiece por https://",
-      validation: (rule) => rule.required(),
+      validation: validarDestino,
     }),
   ],
   preview: {
@@ -137,12 +154,12 @@ export const richText = defineType({
             type: "object",
             title: "Enlace",
             fields: [
-              {
+              defineField({
                 name: "href",
                 type: "string",
                 title: "Destino",
-                validation: (rule) => rule.required(),
-              },
+                validation: validarDestino,
+              }),
             ],
           },
         ],
