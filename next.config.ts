@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Next añade por defecto `X-Powered-By: Next.js`: no aporta nada al visitante
+  // y le dice a quien escanea la web qué tecnología (y qué avisos de
+  // seguridad) buscar.
+  poweredByHeader: false,
   // Endurecimiento estándar, sin coste real para esta web: nada aquí necesita
   // ser embebido en un iframe ajeno, así que denegarlo por completo no rompe
   // nada. `nosniff` evita que el navegador reinterprete un fichero como un
@@ -16,6 +20,26 @@ const nextConfig: NextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+          // La web no usa cámara, micrófono, geolocalización, pagos ni
+          // sensores: se desactivan para que ni un script de terceros ni un
+          // iframe puedan pedirlos en su nombre.
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()",
+          },
+          // Parte de la Content-Security-Policy que NO depende de qué scripts
+          // carga la página y por tanto no puede romperla: nadie puede
+          // enmarcar la web, cambiar su <base>, enviar formularios a otro
+          // dominio ni cargar plugins (`object`); y todo lo que sea http se
+          // sube solo a https. La política completa con `script-src` queda
+          // pendiente: en Next obliga a renderizar cada página en cada visita
+          // (nonce) y hay que probarla con Analytics, el Pixel y el Studio.
+          {
+            key: "Content-Security-Policy",
+            value:
+              "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
           },
         ],
       },
