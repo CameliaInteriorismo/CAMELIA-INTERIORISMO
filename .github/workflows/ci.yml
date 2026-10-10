@@ -1,0 +1,28 @@
+# Comprueba cada subida y cada PR antes de que llegue a producción: tipos,
+# lint y compilación. Vercel ya compila al desplegar, pero no pasa el lint ni
+# los tipos por separado, y avisa tarde.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Públicos (viajan al navegador), no son secretos.
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 7s90c55i
+      NEXT_PUBLIC_SANITY_DATASET: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm run build
