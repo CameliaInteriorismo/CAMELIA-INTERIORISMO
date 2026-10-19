@@ -44,11 +44,10 @@ export function Navbar({
   const pathname = usePathname();
   const isHome = pathname === "/";
   // Pages that own a full-bleed hero section (see Home's Hero.tsx and
-  // Metodología's PageHeader.tsx) drive `heroActive` in the shared store —
+  // Servicios' PageHeader.tsx) drive `heroActive` in the shared store —
   // every other route ignores it and keeps the standard sticky/solid header.
   const hasHero =
     isHome ||
-    pathname === "/metodologia" ||
     pathname === "/servicios" ||
     pathname === "/proyectos" ||
     pathname.startsWith("/proyectos/") ||

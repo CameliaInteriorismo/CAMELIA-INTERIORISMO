@@ -106,7 +106,7 @@ function ExperienciaRow({
         <div className="relative aspect-[9/10] w-full overflow-hidden">
           <Image
             src={imageProps(step.image)?.src ?? ""}
-            alt={step.title}
+            alt={imageProps(step.image)?.alt || step.title}
             fill
             className="object-cover"
             style={{ objectPosition: imageProps(step.image)?.objectPosition }}
@@ -160,9 +160,9 @@ export function ExperienciaScroll({
   return (
     <section className="pt-section">
       <Container>
-        {/* Mismo tratamiento que el titular de "El proceso": a la izquierda
-            y con tope de medida, para que las dos secciones de la página
-            abran igual. */}
+        {/* A la izquierda y con tope de medida. Vivía en Metodología, detrás
+            de "El proceso"; desde octubre de 2026 cierra Estudio y el proceso
+            se cuenta solo en Servicios. */}
         <h2 className="font-title text-primary max-w-3xl text-3xl md:text-4xl">
           <Multiline text={title} />
         </h2>

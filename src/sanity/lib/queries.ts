@@ -175,17 +175,6 @@ export const ESTUDIO_PAGE_QUERY = groq`
       blocks[] { _key, heading, paragraphs },
       image ${IMAGE}
     },
-    seo ${SEO}
-  }
-`;
-
-export const METODOLOGIA_PAGE_QUERY = groq`
-  *[_id == "metodologiaPage"][0] {
-    title,
-    heroImage ${IMAGE},
-    heroImagePosition,
-    processTitle,
-    process[] { _key, label, title, paragraphs, image ${IMAGE} },
     experienceTitle,
     experienceText,
     experience[] { _key, title, paragraphs, imageRight, image ${IMAGE} },

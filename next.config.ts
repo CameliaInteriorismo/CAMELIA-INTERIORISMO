@@ -45,12 +45,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Dirección de la web antigua en WordPress que Google aún conoce.
   async redirects() {
     return [
+      // Dirección de la web antigua en WordPress que Google aún conoce.
       {
         source: "/politica-de-privacidad-1",
         destination: "/politica-de-privacidad",
+        permanent: true,
+      },
+      // Metodología se quitó en octubre de 2026: repetía el proceso que ya
+      // cuenta Servicios. Su parte propia, «La experiencia», pasó a Estudio.
+      {
+        source: "/metodologia",
+        destination: "/servicios",
         permanent: true,
       },
     ];

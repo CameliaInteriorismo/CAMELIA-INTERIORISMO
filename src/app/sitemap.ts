@@ -12,7 +12,6 @@ export const revalidate = 3600;
 const ESTATICAS = [
   "/",
   "/estudio",
-  "/metodologia",
   "/servicios",
   "/proyectos",
   "/tienda",

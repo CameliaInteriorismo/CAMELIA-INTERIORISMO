@@ -3,13 +3,23 @@ import {
   AboutSections,
   type AboutSection,
 } from "@/features/estudio/AboutSections";
+import {
+  ExperienciaScroll,
+  type ExperienceStep,
+} from "@/features/estudio/ExperienciaScroll";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { ESTUDIO_PAGE_QUERY } from "@/sanity/lib/queries";
 import { metadataFrom, type SeoFields } from "@/sanity/lib/seo";
 
 export const revalidate = 3600;
 
-type EstudioPage = { sections?: AboutSection[]; seo?: SeoFields };
+type EstudioPage = {
+  sections?: AboutSection[];
+  experienceTitle?: string;
+  experienceText?: string;
+  experience?: ExperienceStep[];
+  seo?: SeoFields;
+};
 
 const FALLBACK = {
   title: "Sobre Camelia | Interiorismo en Alzira, Valencia",
@@ -40,5 +50,18 @@ export default async function EstudioPage() {
     query: ESTUDIO_PAGE_QUERY,
     tags: ["estudioPage"],
   });
-  return <AboutSections sections={page?.sections ?? []} />;
+  // «La experiencia» venía de Metodología, que se quitó en octubre de 2026
+  // porque repetía el proceso de Servicios. Sin pasos no se pinta nada.
+  return (
+    <>
+      <AboutSections sections={page?.sections ?? []} />
+      {page?.experience?.length ? (
+        <ExperienciaScroll
+          steps={page.experience}
+          title={page.experienceTitle}
+          text={page.experienceText}
+        />
+      ) : null}
+    </>
+  );
 }

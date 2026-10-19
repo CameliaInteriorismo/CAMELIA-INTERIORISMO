@@ -28,7 +28,6 @@ export const structure: StructureResolver = (S) =>
             .items([
               singleton(S, "homePage", "Inicio"),
               singleton(S, "estudioPage", "Estudio"),
-              singleton(S, "metodologiaPage", "Metodología"),
               singleton(S, "serviciosPage", "Servicios"),
               singleton(S, "proyectosPage", "Proyectos"),
               singleton(S, "tiendaPage", "Shop"),

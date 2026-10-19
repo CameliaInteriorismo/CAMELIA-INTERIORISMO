@@ -20,7 +20,6 @@ export type SanityTag =
   | "legalDocument"
   | "homePage"
   | "estudioPage"
-  | "metodologiaPage"
   | "serviciosPage"
   | "proyectosPage"
   | "tiendaPage"

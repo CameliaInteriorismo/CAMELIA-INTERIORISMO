@@ -60,10 +60,6 @@ const MAP: Record<string, Revalidation> = {
 
   homePage: { tags: ["homePage"], paths: [page("/")] },
   estudioPage: { tags: ["estudioPage"], paths: [page("/estudio")] },
-  metodologiaPage: {
-    tags: ["metodologiaPage"],
-    paths: [page("/metodologia")],
-  },
   serviciosPage: { tags: ["serviciosPage"], paths: [page("/servicios")] },
   proyectosPage: { tags: ["proyectosPage"], paths: [page("/proyectos")] },
   tiendaPage: { tags: ["tiendaPage"], paths: [page("/tienda")] },
@@ -112,7 +108,6 @@ const SITE_SETTINGS: Revalidation = {
     "legalDocument",
     "homePage",
     "estudioPage",
-    "metodologiaPage",
     "serviciosPage",
     "proyectosPage",
     "tiendaPage",

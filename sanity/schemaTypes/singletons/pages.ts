@@ -314,78 +314,6 @@ export const estudioPage = defineType({
         }),
       ],
     }),
-    seoField,
-  ],
-  preview: { prepare: () => ({ title: "Página · Estudio" }) },
-});
-
-export const metodologiaPage = defineType({
-  name: "metodologiaPage",
-  title: "Página · Metodología",
-  type: "document",
-  groups,
-  fields: [
-    defineField({
-      name: "title",
-      title: "Título de la página",
-      type: "string",
-      group: "content",
-    }),
-    defineField({
-      name: "heroImage",
-      title: "Imagen de cabecera",
-      type: "imageWithAlt",
-      group: "content",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "processTitle",
-      title: "Título del proceso",
-      type: "string",
-      group: "content",
-    }),
-    defineField({
-      name: "process",
-      title: "Fases del proceso",
-      type: "array",
-      group: "content",
-      description:
-        "La numeración la pone la web sola, según el orden de esta lista.",
-      of: [
-        defineArrayMember({
-          type: "object",
-          name: "processStep",
-          fields: [
-            defineField({
-              name: "label",
-              title: "Nombre corto (pestaña)",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "title",
-              title: "Titular",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "paragraphs",
-              title: "Texto",
-              type: "paragraphs",
-            }),
-            defineField({
-              name: "image",
-              title: "Imagen",
-              type: "imageWithAlt",
-              validation: (rule) => rule.required(),
-            }),
-          ],
-          preview: {
-            select: { title: "label", subtitle: "title", media: "image" },
-          },
-        }),
-      ],
-    }),
     defineField({
       name: "experienceTitle",
       title: "Título de la experiencia",
@@ -399,7 +327,7 @@ export const metodologiaPage = defineType({
       rows: 4,
       group: "content",
       description:
-        "El párrafo que va bajo el título, antes de los pasos que se revelan al bajar.",
+        "El párrafo que va bajo el título, antes de los pasos que se revelan al bajar. Va al final de la página, después de los bloques.",
     }),
     defineField({
       name: "experience",
@@ -443,10 +371,9 @@ export const metodologiaPage = defineType({
         }),
       ],
     }),
-    heroPositionField,
     seoField,
   ],
-  preview: { prepare: () => ({ title: "Página · Metodología" }) },
+  preview: { prepare: () => ({ title: "Página · Estudio" }) },
 });
 
 export const serviciosPage = defineType({
