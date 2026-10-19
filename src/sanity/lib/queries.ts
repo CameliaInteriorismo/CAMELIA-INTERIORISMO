@@ -200,8 +200,13 @@ export const SERVICIOS_PAGE_QUERY = groq`
     heroImagePosition,
     // Los servicios se resuelven por referencia: su texto e imagen se editan
     // en el propio servicio, no aquí, así que no hay dos versiones.
-    "phases": phases[]-> { _id, title, longDescription, image ${IMAGE} },
+    "phases": phases[]-> {
+      _id, title, shortDescription, longDescription, includes, note,
+      image ${IMAGE}
+    },
     introTitle, introText, phasesTitle,
+    stepsTitle,
+    steps[] { _key, title, text, result },
     accompanimentTitle,
     accompanimentSubtitle,
     accompanimentText,

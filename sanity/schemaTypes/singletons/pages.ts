@@ -500,6 +500,48 @@ export const serviciosPage = defineType({
       of: [defineArrayMember({ type: "reference", to: [{ type: "service" }] })],
     }),
     defineField({
+      name: "stepsTitle",
+      title: "Título de «Cómo trabajamos»",
+      type: "text",
+      rows: 2,
+      group: "content",
+    }),
+    defineField({
+      name: "steps",
+      title: "Cómo trabajamos, paso a paso",
+      type: "array",
+      group: "content",
+      description:
+        "Los pasos del proceso, en orden. Cada uno dice qué pasa y qué se lleva el cliente. Si se deja vacío, la sección no aparece.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "processStep",
+          fields: [
+            defineField({
+              name: "title",
+              title: "Paso",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "text",
+              title: "Qué pasa",
+              type: "text",
+              rows: 3,
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "result",
+              title: "Qué te llevas",
+              type: "string",
+            }),
+          ],
+          preview: { select: { title: "title", subtitle: "result" } },
+        }),
+      ],
+    }),
+    defineField({
       name: "accompanimentTitle",
       title: "Título del acompañamiento",
       type: "string",

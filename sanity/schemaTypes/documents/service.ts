@@ -47,6 +47,21 @@ export const service = defineType({
         "La que se despliega en el acordeón de /servicios. Si la dejas vacía se usa la corta.",
     }),
     defineField({
+      name: "includes",
+      title: "Qué incluye",
+      type: "array",
+      of: [{ type: "string" }],
+      description:
+        "La lista de la tarjeta de /servicios: cosas concretas que recibe el cliente, una por línea. Cortas.",
+    }),
+    defineField({
+      name: "note",
+      title: "Nota de la tarjeta",
+      type: "string",
+      description:
+        "Una frase al pie de la tarjeta. Por ejemplo: «Se puede contratar solo».",
+    }),
+    defineField({
       name: "image",
       title: "Imagen en Servicios",
       type: "imageWithAlt",

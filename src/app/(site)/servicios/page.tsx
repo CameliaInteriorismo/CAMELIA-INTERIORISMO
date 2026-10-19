@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/features/servicios/PageHeader";
+import { LandingIntro } from "@/features/zonas/LandingSections";
 import {
-  ProjectPhases,
-  type ServicePhase,
-} from "@/features/servicios/ProjectPhases";
+  ServiceCards,
+  type ServiceCard,
+} from "@/features/servicios/ServiceCards";
+import {
+  ProcessSteps,
+  type ProcessStep,
+} from "@/features/servicios/ProcessSteps";
 import {
   AccompanimentSection,
   type AccompanimentItem,
@@ -25,7 +30,9 @@ type ServiciosPage = {
   introTitle?: string;
   introText?: string;
   phasesTitle?: string;
-  phases?: ServicePhase[];
+  phases?: ServiceCard[];
+  stepsTitle?: string;
+  steps?: ProcessStep[];
   accompanimentTitle?: string;
   accompanimentSubtitle?: string;
   accompanimentText?: string;
@@ -73,12 +80,15 @@ export default async function ServiciosPage() {
         image={page?.heroImage}
         imagePosition={page?.heroImagePosition}
       />
-      <ProjectPhases
-        phases={page?.phases ?? []}
-        title={page?.phasesTitle}
-        introTitle={page?.introTitle}
-        introText={page?.introText}
+      {/* Qué hacemos, los tres servicios a la vista y el proceso paso a paso.
+          Antes iba todo en el carrusel de fases (ProjectPhases), donde solo
+          se leía la primera: no se entendía qué hacemos ni cómo. */}
+      <LandingIntro
+        title={page?.introTitle}
+        paragraphs={page?.introText ? [page.introText] : []}
       />
+      <ServiceCards services={page?.phases ?? []} title={page?.phasesTitle} />
+      <ProcessSteps steps={page?.steps ?? []} title={page?.stepsTitle} />
       <AccompanimentSection
         items={page?.accompaniment ?? []}
         title={page?.accompanimentTitle}
