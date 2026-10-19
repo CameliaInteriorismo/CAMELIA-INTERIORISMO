@@ -130,3 +130,39 @@ export function producto(p: {
     offers: oferta,
   });
 }
+
+/** Las preguntas de una página de zona, tal como se leen en ella. */
+export function preguntasFrecuentes(
+  preguntas: { question: string; answer: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: preguntas.map((p) => ({
+      "@type": "Question",
+      name: p.question,
+      acceptedAnswer: { "@type": "Answer", text: p.answer },
+    })),
+  };
+}
+
+/** Un artículo. El autor es el estudio: los firma Camelia, no una persona. */
+export function articulo(a: {
+  title: string;
+  slug: string;
+  date: string;
+  excerpt?: string;
+  imagen?: string;
+}) {
+  return limpio({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.title,
+    description: a.excerpt,
+    image: a.imagen,
+    datePublished: a.date,
+    url: absoluteUrl(`/articulos/${a.slug}`),
+    author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  });
+}

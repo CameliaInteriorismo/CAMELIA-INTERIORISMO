@@ -464,3 +464,59 @@ export const EMAILS_PAGE_QUERY = groq`
     proyectoEstudio ${EMAIL_TEMPLATE}
   }
 `;
+
+// ------------------------------------------------- páginas de zona o servicio
+
+/** Los proyectos que enseña una página de zona o un artículo, como tarjeta. */
+const PROJECT_CARD = groq`{ _id, name, "slug": slug.current, cardImage ${IMAGE} }`;
+
+export const LANDING_SLUGS_QUERY = groq`
+  *[_type == "landingPage" && defined(slug.current)].slug.current
+`;
+
+export const LANDING_QUERY = groq`
+  *[_type == "landingPage" && slug.current == $slug][0] {
+    title,
+    "slug": slug.current,
+    heroImage ${IMAGE},
+    heroImagePosition,
+    introTitle,
+    introText,
+    sections[] { _key, title, paragraphs },
+    projectsTitle,
+    "projects": projects[@->slug.current != null]-> ${PROJECT_CARD},
+    faqTitle,
+    faq[] { _key, question, answer },
+    cta { title, text, button, image ${IMAGE} },
+    seo ${SEO}
+  }
+`;
+
+// --------------------------------------------------------------- artículos
+
+export const ARTICLE_SLUGS_QUERY = groq`
+  *[_type == "article" && defined(slug.current)].slug.current
+`;
+
+/** El listado, del más reciente al más antiguo. */
+export const ARTICLES_QUERY = groq`
+  *[_type == "article" && defined(slug.current)] | order(date desc) {
+    _id, title, "slug": slug.current, date, excerpt, coverImage ${IMAGE}
+  }
+`;
+
+export const ARTICLE_QUERY = groq`
+  *[_type == "article" && slug.current == $slug][0] {
+    title,
+    "slug": slug.current,
+    date,
+    excerpt,
+    coverImage ${IMAGE},
+    body[] {
+      ...,
+      _type == "imageWithAlt" => ${IMAGE}
+    },
+    "projects": projects[@->slug.current != null]-> ${PROJECT_CARD},
+    seo ${SEO}
+  }
+`;

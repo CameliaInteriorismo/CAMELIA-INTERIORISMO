@@ -266,7 +266,18 @@ export const STEPS: Step[] = [
     name: "comoNosConociste",
     title: "¿Cómo nos has conocido?",
     help: "Nos ayuda a entender desde dónde llegan personas interesadas en nuestro trabajo.",
-    options: ["Instagram", "TikTok", "Página web", "Recomendación", "Otros"],
+    // «Google» y «Arquitecto o inmobiliaria» para saber de dónde llegan las
+    // consultas: sin ellas, quien nos encontraba buscando o por un profesional
+    // acababa en «Otros».
+    options: [
+      "Instagram",
+      "Google",
+      "Recomendación",
+      "Arquitecto o inmobiliaria",
+      "TikTok",
+      "Página web",
+      "Otros",
+    ],
     image: `${DIR}/como nos has conocido.jpg`,
     // El rollo de tela está a media altura, no arriba: con el recorte por
     // arriba el móvil se quedaba con la silla desenfocada y la tela apenas

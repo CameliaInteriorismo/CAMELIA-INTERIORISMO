@@ -27,7 +27,13 @@ const page = (path: string) => ({ path, type: "page" as const });
 const MAP: Record<string, Revalidation> = {
   project: {
     tags: ["project"],
-    paths: [page("/proyectos"), page("/proyectos/[slug]"), page("/")],
+    paths: [
+      page("/proyectos"),
+      page("/proyectos/[slug]"),
+      page("/"),
+      page("/[pagina]"),
+      page("/articulos/[slug]"),
+    ],
   },
   product: {
     tags: ["product"],
@@ -38,6 +44,12 @@ const MAP: Record<string, Revalidation> = {
   service: {
     tags: ["service", "project", "homePage", "serviciosPage"],
     paths: [page("/"), page("/servicios"), page("/proyectos/[slug]")],
+  },
+  // Las páginas de zona cuelgan de la raíz: /interiorismo-alzira.
+  landingPage: { tags: ["landingPage"], paths: [page("/[pagina]")] },
+  article: {
+    tags: ["article"],
+    paths: [page("/articulos"), page("/articulos/[slug]")],
   },
   testimonial: { tags: ["testimonial", "homePage"], paths: [page("/")] },
   partner: { tags: ["partner", "homePage"], paths: [page("/")] },

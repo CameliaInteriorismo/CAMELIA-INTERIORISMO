@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { Multiline } from "@/features/shared/MultilineText";
 import { imageProps, type SanityImageSource } from "@/sanity/lib/image";
 
 export type ProjectCard = {
@@ -17,11 +18,25 @@ export type ProjectCard = {
  * Ya no lleva la tarjeta de "Próximamente": era un hueco de relleno y la
  * cuadrícula se cierra ahora con el último proyecto real.
  */
-export function ProjectsGrid({ projects }: { projects: ProjectCard[] }) {
+export function ProjectsGrid({
+  projects,
+  title,
+}: {
+  projects: ProjectCard[];
+  /** Opcional: en /proyectos no lleva; en las páginas de zona, sí. */
+  title?: string;
+}) {
   return (
     <section className="pt-section">
       <Container>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {title && (
+          <h2 className="font-title text-primary text-3xl md:text-4xl">
+            <Multiline text={title} />
+          </h2>
+        )}
+        <div
+          className={`grid grid-cols-1 gap-8 md:grid-cols-2 ${title ? "mt-content" : ""}`}
+        >
           {projects.map((project) => {
             const image = imageProps(project.cardImage);
             return (
@@ -44,10 +59,10 @@ export function ProjectsGrid({ projects }: { projects: ProjectCard[] }) {
                 )}
                 {/* En móvil no hay hover: `:active` (dedo pulsado) reproduce
                     el mismo revelado que el ratón dispara en desktop. */}
-                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-active:bg-black/30 group-hover:bg-black/30" />
+                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/30 group-active:bg-black/30" />
                 {/* uppercase por CSS: el nombre se guarda en Sanity tal como
                     se escribe ("Llum de Vila") y la mayúscula es diseño. */}
-                <span className="font-title text-background absolute bottom-6 left-6 text-2xl uppercase opacity-0 transition-opacity duration-300 group-active:opacity-100 group-hover:opacity-100">
+                <span className="font-title text-background absolute bottom-6 left-6 text-2xl uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-active:opacity-100">
                   {project.name}
                 </span>
               </Link>

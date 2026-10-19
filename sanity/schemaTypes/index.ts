@@ -18,6 +18,7 @@ import {
 } from "./documents/project";
 import { product, productCategory, productFinish } from "./documents/product";
 import { service } from "./documents/service";
+import { article, articleBody, landingPage } from "./documents/landing";
 import { partner, testimonial } from "./documents/misc";
 import {
   legalDetails,
@@ -95,6 +96,9 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   service,
   testimonial,
   partner,
+  landingPage,
+  article,
+  articleBody,
 
   // Legales
   legalDocument,

@@ -39,10 +39,11 @@ export function Footer({ data }: { data: FooterData }) {
             columna queda anclada al margen izquierdo, la última al derecho,
             y Navegación/Contacto se reparten el espacio entre ambas con
             huecos uniformes — igual que en Figma, sin forzar anchos iguales. */}
-        {/* Se apila hasta que las cuatro columnas caben de verdad. A 768 iban
-            tan justas que hubo que quitar Navegación; a 1024 caben las cuatro,
-            así que ya no falta ninguna en ningún ancho. */}
-        <div className="flex flex-col gap-y-12 py-20 lg:flex-row lg:flex-nowrap lg:justify-between">
+        {/* Se apila hasta que todas las columnas caben de verdad. Con cuatro
+            bastaba desde 1024; con la columna de Interiorismo (cinco), a 1024
+            los títulos se tocaban, así que la fila empieza en 1280 y lleva un
+            hueco mínimo entre columnas. */}
+        <div className="flex flex-col gap-y-12 py-20 xl:flex-row xl:flex-nowrap xl:justify-between xl:gap-x-8">
           <div>
             <Image
               src="/images/logos/trimmed/Camelia logo sin fondo vino actualizado.png"
