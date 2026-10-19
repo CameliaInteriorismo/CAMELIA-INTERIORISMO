@@ -1,5 +1,6 @@
 "use server";
 
+import { after } from "next/server";
 import { z } from "zod";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { EMAILS_PAGE_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
@@ -13,6 +14,7 @@ import type { TextosCorreo } from "@/lib/email/textos";
 import * as producto from "@/lib/email/productRequest";
 import * as proyecto from "@/lib/email/projectRequest";
 import { revisarGuard } from "@/lib/security/formGuard";
+import { avisarANora } from "@/lib/requests/nora";
 
 /**
  * Las dos acciones que envían los correos de los formularios.
@@ -193,6 +195,10 @@ export async function enviarSolicitudProyecto(
       ? { ok: true }
       : { ok: false, error: veredicto.error };
   }
+
+  // A Nora, cuando ya se ha contestado al cliente: no le hace esperar. Va
+  // aunque fallen los correos de abajo; así la solicitud tampoco se pierde.
+  after(() => avisarANora(answers));
 
   try {
     assertEmailConfig();
