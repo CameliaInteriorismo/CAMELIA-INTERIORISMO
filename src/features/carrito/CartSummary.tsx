@@ -28,7 +28,7 @@ export function CartSummary({
           <h1 className="font-title text-primary text-3xl md:text-4xl">
             {copy.title ?? "Resumen del pedido"}
           </h1>
-          <p className="text-primary/75 mt-block text-sm">
+          <p className="text-primary mt-block text-sm">
             {copy.emptyText ?? "Tu carrito está vacío."}
           </p>
           <ButtonLink href="/tienda" className="mt-block">

@@ -35,7 +35,7 @@ export default function NotFound() {
             <p className="font-title text-primary text-6xl md:text-7xl">
               404
             </p>
-            <p className="text-primary/70 mt-block text-sm leading-relaxed">
+            <p className="text-primary mt-block text-sm leading-relaxed">
               No hemos encontrado esta página. Puede que se haya movido o que
               la dirección tenga un error.
             </p>

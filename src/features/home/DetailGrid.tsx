@@ -51,7 +51,7 @@ export function DetailGrid({
                 />
                 {/* En móvil no hay hover: `:active` (dedo pulsado) reproduce
                     el mismo revelado que el ratón dispara en desktop. */}
-                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-active:bg-black/30 group-hover:bg-black/30" />
+                <div className="absolute inset-0 bg-primary/0 transition-colors duration-300 group-active:bg-primary/30 group-hover:bg-primary/30" />
                 <span className="font-title text-background absolute bottom-6 left-6 text-2xl uppercase opacity-0 transition-opacity duration-300 group-active:opacity-100 group-hover:opacity-100">
                   {project.name}
                 </span>

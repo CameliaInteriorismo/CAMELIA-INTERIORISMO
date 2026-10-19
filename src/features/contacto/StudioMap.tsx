@@ -60,7 +60,7 @@ export function StudioMap({
                 375 y faltan 162. Solo se come hueco vacío —a esa anchura
                 quedan 383px libres hasta el título de al lado—, y el borde
                 derecho no se mueve, así que la alineación es la misma. */}
-            <p className="text-primary/75 mt-sm text-sm leading-relaxed xl:-ml-[220px] xl:whitespace-nowrap">
+            <p className="text-primary mt-sm text-sm leading-relaxed xl:-ml-[220px] xl:whitespace-nowrap">
               {text}
             </p>
           </div>
@@ -123,7 +123,7 @@ export function StudioMap({
                     Both columns tighten together (see the action's gap-5
                     below) so the whole card loses height rather than one
                     side going compact while the other holds it open. */}
-                <div className="text-primary/75 mt-sm space-y-1 text-sm">
+                <div className="text-primary mt-sm space-y-1 text-sm">
                   {contact.addressLines.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
@@ -139,7 +139,7 @@ export function StudioMap({
                 // leían desalineadas.
                 // Mitades iguales fuera del mapa; desde lg vuelve al reparto 63/37
                 // de la tarjeta superpuesta, que es el del diseño.
-                className="border-primary/15 text-primary hover:text-primary/60 flex flex-1 basis-1/2 flex-col items-start gap-5 border-l p-6 transition-colors duration-300 md:flex-none md:basis-[37%] md:p-10"
+                className="border-primary/15 text-primary hover:text-secondary flex flex-1 basis-1/2 flex-col items-start gap-5 border-l p-6 transition-colors duration-300 md:flex-none md:basis-[37%] md:p-10"
               >
                 <span className="flex items-start gap-2 text-sm">
                   <MapIcon className="mt-0.5 h-4 w-4 shrink-0" />

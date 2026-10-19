@@ -66,7 +66,7 @@ function StepText({ step }: { step: ProcessStep }) {
           esta frase queda por debajo, como recalco. Desde `md` la barra
           horizontal ya hace de navegación y el título recupera su escala. */}
       <h3 className="font-title text-primary text-2xl">{step.title}</h3>
-      <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
+      <div className="text-primary mt-md space-y-md text-sm leading-relaxed">
         {(step.paragraphs ?? []).map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
@@ -239,7 +239,7 @@ export function ProcesoTabs({
                     // del contenedor y dejaba 64px donde La experiencia, en la
                     // misma página, abre con 32.
                     index === 0 && "pt-0",
-                    abierta ? "text-primary" : "text-primary/50",
+                    abierta ? "text-primary" : "text-auxiliary",
                   )}
                 >
                   <span>

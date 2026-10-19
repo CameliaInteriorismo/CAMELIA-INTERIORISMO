@@ -88,12 +88,12 @@ function LineaPedido({
             líneas, no dos datos distintos — el hueco grande va después,
             antes de cantidad/observaciones. */}
         {item.finish && (
-          <p className="text-primary/70 mt-1 text-sm">{item.finish}</p>
+          <p className="text-primary mt-1 text-sm">{item.finish}</p>
         )}
         {product?.price !== undefined && (
           <p className="text-primary mt-1 text-sm">
             {formatPrice(product.price * item.quantity)}{" "}
-            <span className="text-primary/60 text-xs italic">
+            <span className="text-primary text-xs italic">
               IVA incluido
             </span>
           </p>
@@ -115,7 +115,7 @@ function LineaPedido({
               value={item.notes ?? ""}
               onChange={(event) => updateNotes(item.id, event.target.value)}
               placeholder="Texto"
-              className="border-primary/30 text-primary placeholder:text-primary/40 h-11 w-full border px-4 text-sm"
+              className="border-primary/30 text-primary placeholder:text-auxiliary h-11 w-full border px-4 text-sm"
             />
           </div>
         </div>
@@ -185,7 +185,7 @@ export function OrderReview({
       <h1 className="font-title text-primary text-3xl md:text-4xl">
         Revisa tu pedido
       </h1>
-      <p className="text-primary/70 mt-sm max-w-[36rem] text-sm leading-relaxed">
+      <p className="text-primary mt-sm max-w-[36rem] text-sm leading-relaxed">
         Antes de tramitarlo, comprueba que todo esté como quieres.
       </p>
 
@@ -235,19 +235,19 @@ export function OrderReview({
         ) : (
           <div className="mt-sm grid grid-cols-1 gap-x-10 gap-y-sm sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <p className="text-primary/60 text-xs tracking-[0.02em]">
+              <p className="text-primary text-xs tracking-[0.02em]">
                 Nombre y apellidos o empresa
               </p>
               <p className="text-primary mt-1 text-sm">{datos.name}</p>
             </div>
             <div>
-              <p className="text-primary/60 text-xs tracking-[0.02em]">
+              <p className="text-primary text-xs tracking-[0.02em]">
                 DNI/NIE o NIF
               </p>
               <p className="text-primary mt-1 text-sm">{datos.taxId}</p>
             </div>
             <div>
-              <p className="text-primary/60 text-xs tracking-[0.02em]">
+              <p className="text-primary text-xs tracking-[0.02em]">
                 Correo electrónico
               </p>
               <p className="text-primary mt-1 text-sm break-words">
@@ -255,13 +255,13 @@ export function OrderReview({
               </p>
             </div>
             <div>
-              <p className="text-primary/60 text-xs tracking-[0.02em]">
+              <p className="text-primary text-xs tracking-[0.02em]">
                 Teléfono
               </p>
               <p className="text-primary mt-1 text-sm">{datos.phone}</p>
             </div>
             <div className="sm:col-span-2 lg:col-span-1">
-              <p className="text-primary/60 text-xs tracking-[0.02em]">
+              <p className="text-primary text-xs tracking-[0.02em]">
                 Entrega
               </p>
               <p className="text-primary mt-1 text-sm">
@@ -281,13 +281,13 @@ export function OrderReview({
             <p className="text-primary text-sm">Subtotal</p>
             <p className="text-primary text-sm">
               {formatPrice(subtotal)}{" "}
-              <span className="text-primary/60 text-xs italic">
+              <span className="text-primary text-xs italic">
                 IVA incluido
               </span>
             </p>
           </div>
           {datos.deliveryMode === "domicilio" && (
-            <p className="text-primary/60 mt-sm text-xs">
+            <p className="text-primary mt-sm text-xs">
               {shippingNote ??
                 "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
             </p>

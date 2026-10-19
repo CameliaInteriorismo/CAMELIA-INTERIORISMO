@@ -31,7 +31,7 @@ export function ConsentToggle({
       onClick={() => onChange(!checked)}
       className={cn(
         "focus-visible:outline-primary relative h-6 w-11 shrink-0 rounded-full transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2",
-        checked ? "bg-primary" : "bg-primary/20",
+        checked ? "bg-primary" : "bg-auxiliary",
         disabled && "cursor-not-allowed opacity-40",
       )}
     >

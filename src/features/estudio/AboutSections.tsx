@@ -31,7 +31,7 @@ export type AboutBlock = {
 /** Un tramo de texto ya renderizado, para no repetirlo entre las dos vistas. */
 function Tramos({ blocks }: { blocks: AboutBlock[] }) {
   return (
-    <div className="text-primary/80 text-sm leading-relaxed">
+    <div className="text-primary text-sm leading-relaxed">
       {blocks.map((block, index) => (
         <div key={block._key ?? index} className={index > 0 ? "mt-block" : ""}>
           {block.heading && (
@@ -130,7 +130,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 <h2
                   className={cn(
                     "font-title text-2xl transition-colors duration-300",
-                    i === enScroll ? "text-primary" : "text-primary/40",
+                    i === enScroll ? "text-primary" : "text-auxiliary",
                   )}
                 >
                   {seccion.title}
@@ -140,7 +140,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                     `md` el IndicatorList sí lo muestra bajo cada nombre. Mismo
                     dato y mismo tratamiento que allí. */}
                 {seccion.subtitle && (
-                  <p className="text-primary/70 mt-2 text-xs tracking-wide">
+                  <p className="text-primary mt-2 text-xs tracking-wide">
                     {seccion.subtitle}
                   </p>
                 )}
@@ -226,7 +226,7 @@ export function AboutSections({ sections }: { sections: AboutSection[] }) {
                 fragmentos sueltos en vez de como una unidad. La distancia
                 entre "Nuestra historia" y "Nuestra filosofía" no se toca: es
                 la que hace ver que empieza otra parte. */}
-            <div className="text-primary/80 mt-content text-sm leading-relaxed">
+            <div className="text-primary mt-content text-sm leading-relaxed">
               {blocks.map((block, index) => (
                 <div
                   key={block._key ?? index}

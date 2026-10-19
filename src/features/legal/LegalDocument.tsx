@@ -9,7 +9,7 @@ import type {
 } from "@/features/legal/types";
 
 /** The site's body copy, unchanged: 14px, 75% vino, relaxed leading. */
-const BODY = "text-primary/75 text-sm leading-relaxed";
+const BODY = "text-primary text-sm leading-relaxed";
 
 /** The one link treatment on these pages — a hairline rule that darkens. */
 const LINK =
@@ -84,7 +84,7 @@ function Block({ block }: { block: LegalBlock }) {
 
     case "list":
       return (
-        <ul className={`${BODY} marker:text-primary/40 space-y-2 pl-5`}>
+        <ul className={`${BODY} marker:text-auxiliary space-y-2 pl-5`}>
           {block.items.map((item) => (
             <li key={item} className="list-disc">
               {item}

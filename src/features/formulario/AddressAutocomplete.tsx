@@ -222,7 +222,7 @@ export function AddressAutocomplete({
       {showStatus && (
         <p
           role="status"
-          className="text-primary/45 absolute top-full right-0 mt-2 text-xs"
+          className="text-auxiliary absolute top-full right-0 mt-2 text-xs"
         >
           {loading ? "Buscando direcciones…" : "Sugerencias no disponibles"}
         </p>
@@ -267,7 +267,7 @@ export function AddressAutocomplete({
                     {suggestion.primary}
                   </span>
                   {suggestion.secondary && (
-                    <span className="text-primary/55 mt-0.5 block text-xs">
+                    <span className="text-primary mt-0.5 block text-xs">
                       {suggestion.secondary}
                     </span>
                   )}

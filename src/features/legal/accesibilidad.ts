@@ -5,7 +5,7 @@
  * Worth keeping on record: the claims here were measured against the site
  * before the first draft went out, and the numbers still hold.
  *
- * - Contrast figures are measured, not asserted. Body copy (text-primary/75
+ * - Contrast figures are measured, not asserted. Body copy (text-primary
  *   on the cream ground) is 8.4:1 and the full-strength vino is 17.2:1,
  *   both well past WCAG AA. The lighter tints used for secondary lines
  *   (/55, /50, /45) and field placeholders (/35) fall between 3.1:1 and

@@ -47,7 +47,7 @@ export function TeamIntro({ team }: { team?: TeamIntroData }) {
             {team?.text && (
               // Ancho en rem y no `max-w-md`: aquí «md» es un escalón de
               // espaciado (globals.css) y Tailwind lo tomaba de ahí.
-              <p className="text-primary/80 mt-content max-w-[28rem] text-sm leading-relaxed">
+              <p className="text-primary mt-content max-w-[28rem] text-sm leading-relaxed">
                 {team.text}
               </p>
             )}

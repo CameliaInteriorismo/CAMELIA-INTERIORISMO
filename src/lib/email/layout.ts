@@ -10,24 +10,19 @@ import { BASE_ASSETS, EMAIL_ASSETS } from "@/lib/email/assets";
  * variables CSS. Las tablas anidadas son el equivalente en correo a un
  * contenedor centrado.
  *
- * Colores de marca en hexadecimal, muestreados de los propios logotipos:
- * las variables CSS del sitio tampoco viajan hasta aquí.
+ * Colores de marca en hexadecimal, los de «CODIGOS DE COLOR_CAMELIA.pdf»
+ * (Z:\07-MARKETING\00 - MARCA): las variables CSS del sitio tampoco viajan
+ * hasta aquí. El texto va siempre en uno de ellos, nunca en mezclas: el
+ * detalle secundario se distingue por tamaño y peso, no por un vino aclarado.
  */
 const VINO = "#3f0e1a";
-const ROJO = "#c7414e";
+const ROJO = "#c6404e";
 const CREMA = "#fcf7ec";
 /**
- * El vino aclarado sobre el crema, para la información secundaria —el
- * "Acabado · Cantidad" de la referencia—. Es el propio vino al 65% mezclado
- * con el fondo, no un gris: en un correo no se puede usar `opacity` con
- * garantías, así que la mezcla va calculada y escrita en firme.
- */
-const VINO_CLARO = "#816064";
-/**
  * La línea fina bajo cada dato de una tabla. Vino al 12% mezclado con el
- * fondo crema, calculado y escrito en firme por la misma razón que
- * `VINO_CLARO`: en un correo `opacity` y el hex de 8 dígitos no son de fiar
- * en todos los clientes (Outlook de escritorio, sobre todo).
+ * fondo crema, calculado y escrito en firme: en un correo `opacity` y el hex
+ * de 8 dígitos no son de fiar en todos los clientes (Outlook de escritorio,
+ * sobre todo).
  */
 const LINEA = "#e5dbd3";
 
@@ -138,7 +133,7 @@ export function articulo(
 ): string {
   return `<div style="margin:0 0 20px;">
     <a href="${esc(url)}" class="prod" style="font-family:${TEXTO};font-size:15px;font-weight:500;line-height:1.4;color:${VINO};text-decoration:underline;word-break:break-word;">${esc(nombre)}</a>
-    <div class="det" style="margin-top:7px;font-family:${TEXTO};font-size:13px;font-weight:300;line-height:1.5;color:${VINO_CLARO};">${detalle}</div>
+    <div class="det" style="margin-top:7px;font-family:${TEXTO};font-size:13px;font-weight:300;line-height:1.5;color:${VINO};">${detalle}</div>
   </div>`;
 }
 

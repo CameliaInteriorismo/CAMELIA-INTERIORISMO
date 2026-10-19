@@ -160,7 +160,7 @@ export function ConsentSettings({
               >
                 Configuración de cookies
               </h2>
-              <p className="text-primary/75 mt-sm text-sm leading-relaxed">
+              <p className="text-primary mt-sm text-sm leading-relaxed">
                 Elige qué cookies quieres permitir. Puedes cambiar esta decisión
                 cuando quieras desde el pie de página. Más detalle en nuestra{" "}
                 <Link
@@ -188,7 +188,7 @@ export function ConsentSettings({
                         <p id={id} className="text-primary text-sm">
                           {category.title}
                           {category.locked && (
-                            <span className="text-primary/50">
+                            <span className="text-auxiliary">
                               {" "}
                               (siempre activas)
                             </span>
@@ -196,7 +196,7 @@ export function ConsentSettings({
                         </p>
                         <p
                           id={`${id}-desc`}
-                          className="text-primary/70 mt-2 text-sm leading-relaxed"
+                          className="text-primary mt-2 text-sm leading-relaxed"
                         >
                           {category.description}
                         </p>

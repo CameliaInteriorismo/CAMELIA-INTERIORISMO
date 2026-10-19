@@ -98,7 +98,7 @@ export function ProductHero({
 
           <div className="col-span-12 lg:col-span-5 lg:col-start-8">
             {product.category && (
-              <p className="text-primary/60 text-sm tracking-wide uppercase">
+              <p className="text-primary text-sm tracking-wide uppercase">
                 {product.category}
               </p>
             )}
@@ -109,14 +109,14 @@ export function ProductHero({
             {product.price !== undefined && (
               <div className="mt-sm">
                 <p className="text-primary text-xl">{product.price} €</p>
-                <p className="text-primary/60 text-xs italic">
+                <p className="text-primary text-xs italic">
                   {copy.taxNote ?? "IVA incluido"}
                 </p>
               </div>
             )}
 
             {product.description && (
-              <p className="text-primary/75 mt-sm text-sm leading-relaxed">
+              <p className="text-primary mt-sm text-sm leading-relaxed">
                 {product.description}
               </p>
             )}

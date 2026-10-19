@@ -37,7 +37,7 @@ export function ServiceCards({
           </h2>
         )}
         {intro && (
-          <p className="text-primary/80 mt-content max-w-[44rem] text-sm leading-relaxed">
+          <p className="text-primary mt-content max-w-[44rem] text-sm leading-relaxed">
             {intro}
           </p>
         )}
@@ -60,22 +60,22 @@ export function ServiceCards({
                     />
                   </div>
                 )}
-                <p className="text-primary/50 mt-6 text-xs tracking-[0.06em]">
+                <p className="text-auxiliary mt-6 text-xs tracking-[0.06em]">
                   {String(i + 1).padStart(2, "0")}
                 </p>
                 <h3 className="font-title text-primary mt-1 text-2xl">
                   {service.title}
                 </h3>
                 {service.shortDescription && (
-                  <p className="text-primary/80 mt-sm text-sm leading-relaxed">
+                  <p className="text-primary mt-sm text-sm leading-relaxed">
                     {service.shortDescription}
                   </p>
                 )}
                 {(service.includes ?? []).length > 0 && (
                   <ul className="border-primary/15 mt-6 space-y-2 border-t pt-4 text-sm">
                     {(service.includes ?? []).map((linea) => (
-                      <li key={linea} className="text-primary/80 flex gap-3">
-                        <span aria-hidden className="text-primary/40">
+                      <li key={linea} className="text-primary flex gap-3">
+                        <span aria-hidden className="text-auxiliary">
                           —
                         </span>
                         <span>{linea}</span>

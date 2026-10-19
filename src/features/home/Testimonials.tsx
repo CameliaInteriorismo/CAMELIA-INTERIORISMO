@@ -120,13 +120,13 @@ export function Testimonials({
                         ),
                       )}
                     </div>
-                    <p className="text-primary/80 mt-sm text-sm leading-relaxed">
+                    <p className="text-primary mt-sm text-sm leading-relaxed">
                       “{testimonial.quote}”
                     </p>
                     <p className="mt-sm text-sm font-medium">
                       {testimonial.author}
                     </p>
-                    <p className="text-primary/70 text-xs">
+                    <p className="text-primary text-xs">
                       {testimonial.source}
                     </p>
                   </div>

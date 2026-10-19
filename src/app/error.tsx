@@ -49,7 +49,7 @@ export default function ErrorPage({
             <h1 className="font-title text-primary text-4xl md:text-5xl">
               Algo ha fallado
             </h1>
-            <p className="text-primary/70 mt-block text-sm leading-relaxed">
+            <p className="text-primary mt-block text-sm leading-relaxed">
               No hemos podido cargar esta página. Prueba de nuevo y, si sigue
               pasando, escríbenos a info@cameliainteriorismo.com.
             </p>

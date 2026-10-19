@@ -42,7 +42,7 @@ export function CtaBanner({ cta }: { cta?: CtaBannerData }) {
               {cta?.title}
             </h2>
             {cta?.text && (
-              <p className="text-primary/75 mt-sm max-w-xl text-sm leading-relaxed">
+              <p className="text-primary mt-sm max-w-xl text-sm leading-relaxed">
                 {cta.text}
               </p>
             )}

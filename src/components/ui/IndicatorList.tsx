@@ -56,18 +56,18 @@ export function IndicatorList({
             )}
             <h2
               className={cn(
-                "font-title text-3xl transition-opacity duration-500",
-                active ? "text-primary opacity-100" : "text-primary opacity-40",
+                "font-title text-3xl transition-colors duration-500",
+                active ? "text-primary" : "text-auxiliary",
               )}
             >
               {item.title}
             </h2>
             <p
               className={cn(
-                "mt-2 text-xs tracking-wide transition-opacity duration-500",
+                "mt-2 text-xs tracking-wide transition-colors duration-500",
                 active
-                  ? "text-primary/70 opacity-100"
-                  : "text-primary/70 opacity-50",
+                  ? "text-primary"
+                  : "text-auxiliary",
               )}
             >
               {item.subtitle}

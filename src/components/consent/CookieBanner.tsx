@@ -42,7 +42,7 @@ export function CookieBanner({
             {/* Copy left, actions right — stacked below sm, where a row of
                 three 44px buttons would shrink below a usable width. */}
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-              <p className="text-primary/80 max-w-[38rem] text-sm leading-relaxed">
+              <p className="text-primary max-w-[38rem] text-sm leading-relaxed">
                 Usamos cookies propias y de terceros para que la web funcione,
                 entender cómo se usa y medir nuestras campañas. Puedes
                 aceptarlas todas, rechazar las que no son necesarias o elegir
@@ -62,7 +62,7 @@ export function CookieBanner({
                 <button
                   type="button"
                   onClick={onConfigure}
-                  className="text-primary hover:text-primary/60 inline-flex h-11 items-center justify-center text-sm underline underline-offset-4 transition-colors duration-300 sm:px-4"
+                  className="text-primary hover:text-secondary inline-flex h-11 items-center justify-center text-sm underline underline-offset-4 transition-colors duration-300 sm:px-4"
                 >
                   Configurar
                 </button>

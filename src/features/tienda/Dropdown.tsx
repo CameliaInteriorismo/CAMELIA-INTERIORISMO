@@ -50,7 +50,7 @@ export function Dropdown({
       </button>
 
       {open && (
-        <div className="border-primary/15 bg-background absolute top-full right-0 z-10 mt-2 min-w-48 border py-2 shadow-[0_4px_20px_rgba(49,3,4,0.08)]">
+        <div className="border-primary/15 bg-background absolute top-full right-0 z-10 mt-2 min-w-48 border py-2 shadow-[0_4px_20px_rgba(63,14,26,0.08)]">
           {options.map((option) => (
             <button
               key={option.value}
@@ -61,7 +61,7 @@ export function Dropdown({
               }}
               className={cn(
                 "hover:bg-primary/5 block w-full px-4 py-2 text-left text-sm",
-                option.value === value ? "text-primary" : "text-primary/75",
+                option.value === value ? "text-secondary" : "text-primary",
               )}
             >
               {option.label}

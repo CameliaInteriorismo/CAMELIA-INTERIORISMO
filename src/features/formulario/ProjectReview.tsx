@@ -102,7 +102,7 @@ export function ProjectReview({
       <h1 className="font-title text-primary text-2xl md:text-3xl">
         Revisa tu información
       </h1>
-      <p className="text-primary/70 mt-sm max-w-[30rem] text-sm leading-relaxed">
+      <p className="text-primary mt-sm max-w-[30rem] text-sm leading-relaxed">
         Antes de enviar tu solicitud, comprueba que todo esté como quieres.
         Puedes editar cualquier apartado sin perder el resto.
       </p>
@@ -155,7 +155,7 @@ export function ProjectReview({
                     return (
                       <div key={campo.label}>
                         {!soloUnCampoIgualAlTitulo && (
-                          <p className="text-primary/60 text-xs tracking-[0.02em]">
+                          <p className="text-primary text-xs tracking-[0.02em]">
                             {campo.label}
                           </p>
                         )}

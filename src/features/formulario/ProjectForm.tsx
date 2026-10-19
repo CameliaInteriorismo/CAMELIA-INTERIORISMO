@@ -90,7 +90,7 @@ function StepBody({
         {step.title}
       </h1>
       {step.help && (
-        <p className="text-primary/70 mt-sm text-sm leading-relaxed md:max-w-[30rem]">
+        <p className="text-primary mt-sm text-sm leading-relaxed md:max-w-[30rem]">
           {renderHelp(step)}
         </p>
       )}
@@ -267,9 +267,9 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                 para saber cuánto le queda, igual que lo ve quien mira la
                 pantalla. */}
             {mostrarProgreso && (
-              <p className="text-primary/60 text-xs tracking-[0.08em]">
+              <p className="text-primary text-xs tracking-[0.08em]">
                 {String(pasoActual).padStart(2, "0")}
-                <span className="text-primary/30" aria-hidden>
+                <span className="text-auxiliary" aria-hidden>
                   {" "}
                   ·{" "}
                 </span>
@@ -371,7 +371,7 @@ export function ProjectForm({ steps }: { steps: Step[] }) {
                           </span>
                         ))}
                       </h1>
-                      <div className="text-primary/75 mt-block space-y-6 text-sm leading-relaxed md:max-w-[30rem]">
+                      <div className="text-primary mt-block space-y-6 text-sm leading-relaxed md:max-w-[30rem]">
                         {primero.paragraphs.map((p) => (
                           <p key={p}>{p}</p>
                         ))}

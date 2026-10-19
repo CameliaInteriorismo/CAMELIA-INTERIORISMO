@@ -57,7 +57,7 @@ export function CartLineItem({
         <h2 className="font-title text-primary text-2xl">{item.title}</h2>
 
         {product?.description && (
-          <p className="text-primary/75 mt-sm text-sm leading-relaxed">
+          <p className="text-primary mt-sm text-sm leading-relaxed">
             {product.description}
           </p>
         )}
@@ -65,7 +65,7 @@ export function CartLineItem({
         {product?.price !== undefined && (
           <p className="text-primary mt-sm text-base">
             {formatPrice(product.price * item.quantity)}{" "}
-            <span className="text-primary/60 text-xs italic">
+            <span className="text-primary text-xs italic">
               {copy.taxNote ?? "IVA incluido"}
             </span>
           </p>
@@ -96,7 +96,7 @@ export function CartLineItem({
               value={item.notes ?? ""}
               onChange={(event) => updateNotes(item.id, event.target.value)}
               placeholder={copy.notesPlaceholder ?? "Texto"}
-              className="border-primary/30 text-primary placeholder:text-primary/40 h-11 w-full border px-4 text-sm"
+              className="border-primary/30 text-primary placeholder:text-auxiliary h-11 w-full border px-4 text-sm"
             />
           </div>
         </div>

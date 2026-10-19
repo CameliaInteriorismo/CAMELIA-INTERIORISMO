@@ -176,7 +176,7 @@ export function NavigationLoader({ label }: { label?: string }) {
               className="h-7 w-auto"
             />
           </motion.div>
-          <p className="text-primary/70 text-sm tracking-wide">
+          <p className="text-primary text-sm tracking-wide">
             {label ?? "Cargando..."}
           </p>
         </motion.div>

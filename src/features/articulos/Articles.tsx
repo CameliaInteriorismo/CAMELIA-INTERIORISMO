@@ -52,14 +52,14 @@ export function ArticlesGrid({ articles }: { articles: ArticleCard[] }) {
                     />
                   )}
                 </div>
-                <p className="text-primary/60 mt-6 text-xs tracking-[0.06em] uppercase">
+                <p className="text-primary mt-6 text-xs tracking-[0.06em] uppercase">
                   {fechaLarga(article.date)}
                 </p>
                 <h2 className="font-title text-primary mt-2 text-2xl">
                   {article.title}
                 </h2>
                 {article.excerpt && (
-                  <p className="text-primary/80 mt-sm text-sm leading-relaxed">
+                  <p className="text-primary mt-sm text-sm leading-relaxed">
                     {article.excerpt}
                   </p>
                 )}
@@ -75,7 +75,7 @@ export function ArticlesGrid({ articles }: { articles: ArticleCard[] }) {
 const COMPONENTES: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
-      <p className="text-primary/80 mt-4 text-base leading-relaxed">
+      <p className="text-primary mt-4 text-base leading-relaxed">
         {children}
       </p>
     ),
@@ -95,12 +95,12 @@ const COMPONENTES: PortableTextComponents = {
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="text-primary/80 mt-4 list-disc space-y-2 pl-6 text-base leading-relaxed">
+      <ul className="text-primary mt-4 list-disc space-y-2 pl-6 text-base leading-relaxed">
         {children}
       </ul>
     ),
     number: ({ children }) => (
-      <ol className="text-primary/80 mt-4 list-decimal space-y-2 pl-6 text-base leading-relaxed">
+      <ol className="text-primary mt-4 list-decimal space-y-2 pl-6 text-base leading-relaxed">
         {children}
       </ol>
     ),
@@ -166,7 +166,7 @@ export function ArticleBody({
     <section className="pt-section">
       <Container>
         <article className="mx-auto max-w-2xl">
-          <p className="text-primary/60 text-xs tracking-[0.06em] uppercase">
+          <p className="text-primary text-xs tracking-[0.06em] uppercase">
             {fechaLarga(date)}
           </p>
           <PortableText value={body} components={COMPONENTES} />

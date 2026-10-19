@@ -78,7 +78,7 @@ function ExperienciaRow({
       >
         <div>
           <h3 className="font-title text-primary text-2xl">{step.title}</h3>
-          <div className="text-primary/75 mt-md space-y-md text-sm leading-relaxed">
+          <div className="text-primary mt-md space-y-md text-sm leading-relaxed">
             {(step.paragraphs ?? []).map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
@@ -90,7 +90,7 @@ function ExperienciaRow({
         {isActive && (
           <motion.div
             layoutId={MARKER_LAYOUT_ID}
-            className="bg-primary/80 absolute top-0 left-0 h-full w-[2px]"
+            className="bg-primary absolute top-0 left-0 h-full w-[2px]"
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           />
         )}
@@ -172,7 +172,7 @@ export function ExperienciaScroll({
             laterales los pone el Container, los mismos del resto de la web.
             El `max-md:text-left` que había aquí sobra desde que el texto ya
             no se centra en ningún ancho. */}
-        <p className="text-primary/75 mt-content text-sm leading-relaxed">
+        <p className="text-primary mt-content text-sm leading-relaxed">
           {text}
         </p>
 

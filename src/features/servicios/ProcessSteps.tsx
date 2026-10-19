@@ -38,7 +38,7 @@ export function ProcessSteps({
               <div className="grid grid-cols-12 items-baseline gap-x-2 gap-y-3 md:gap-x-8">
                 <span
                   aria-hidden
-                  className="font-title text-primary/30 col-span-2 text-4xl md:col-span-1"
+                  className="font-title text-auxiliary col-span-2 text-4xl md:col-span-1"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -46,7 +46,7 @@ export function ProcessSteps({
                   {step.title}
                 </h3>
                 <div className="col-span-12 md:col-span-6 md:col-start-7">
-                  <p className="text-primary/80 text-sm leading-relaxed">
+                  <p className="text-primary text-sm leading-relaxed">
                     {step.text}
                   </p>
                   {step.result && (

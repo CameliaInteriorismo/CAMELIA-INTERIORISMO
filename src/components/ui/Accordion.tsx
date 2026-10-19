@@ -145,7 +145,7 @@ export function Accordion({
                 >
                   <p
                     className={cn(
-                      "text-primary/75 text-sm leading-relaxed",
+                      "text-primary text-sm leading-relaxed",
                       compact ? "pb-5" : "pb-6",
                     )}
                   >

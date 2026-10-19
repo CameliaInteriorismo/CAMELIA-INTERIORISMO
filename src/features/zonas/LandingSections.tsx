@@ -27,7 +27,7 @@ export function LandingIntro({
           <h2 className="font-title text-primary col-span-12 text-3xl md:col-span-5 md:text-4xl">
             <Multiline text={title} />
           </h2>
-          <div className="text-primary/80 col-span-12 space-y-4 text-sm leading-relaxed md:col-span-6 md:col-start-7">
+          <div className="text-primary col-span-12 space-y-4 text-sm leading-relaxed md:col-span-6 md:col-start-7">
             {(paragraphs ?? []).map((p, i) => (
               <p key={i}>{p}</p>
             ))}
@@ -52,7 +52,7 @@ export function LandingSections({ sections }: { sections: LandingSection[] }) {
             <h3 className="font-title text-primary col-span-12 text-2xl md:col-span-5">
               {section.title}
             </h3>
-            <div className="text-primary/80 col-span-12 space-y-4 text-sm leading-relaxed md:col-span-6 md:col-start-7">
+            <div className="text-primary col-span-12 space-y-4 text-sm leading-relaxed md:col-span-6 md:col-start-7">
               {(section.paragraphs ?? []).map((p, i) => (
                 <p key={i}>{p}</p>
               ))}

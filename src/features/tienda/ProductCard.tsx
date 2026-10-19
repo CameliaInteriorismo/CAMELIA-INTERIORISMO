@@ -55,7 +55,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         {/* Finishes reveal on hover — centered, generously spaced, and
             selecting one swaps the photo above immediately. */}
         {product.finishes && product.finishes.length > 0 && (
-          <div className="bg-background/95 absolute inset-x-0 bottom-0 translate-y-full px-4 py-4 transition-transform duration-300 ease-out group-hover:translate-y-0">
+          <div className="bg-background absolute inset-x-0 bottom-0 translate-y-full px-4 py-4 transition-transform duration-300 ease-out group-hover:translate-y-0">
             <FinishSwatches
               finishes={product.finishes}
               selected={finishIndex}
@@ -72,7 +72,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         )}
       </div>
       {product.category && (
-        <p className="text-primary/60 mt-0.5 text-xs">{product.category}</p>
+        <p className="text-primary mt-0.5 text-xs">{product.category}</p>
       )}
     </Link>
   );

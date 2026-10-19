@@ -115,7 +115,7 @@ export function ServiceTabs({
                       transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="text-primary/75 mt-md text-sm leading-relaxed">
+                      <p className="text-primary mt-md text-sm leading-relaxed">
                         {tab.shortDescription}
                       </p>
                     </motion.div>
@@ -158,7 +158,7 @@ export function ServiceTabs({
                 sizes="(min-width: 768px) 50vw, 100vw"
               />
             </div>
-            <p className="text-primary/75 mt-md w-full text-sm leading-relaxed">
+            <p className="text-primary mt-md w-full text-sm leading-relaxed">
               {current?.shortDescription}
             </p>
             {cta && (

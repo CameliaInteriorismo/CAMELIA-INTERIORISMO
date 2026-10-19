@@ -25,7 +25,7 @@ export function DeliveryModeToggle({
         {copy.title ?? "Método de entrega"}
       </h2>
       <div className="mt-block">
-        <p className="text-primary/75 mb-2 text-sm">
+        <p className="text-primary mb-2 text-sm">
           {copy.subtitle ?? "Selecciona cómo prefieres recibir tu pedido"}
         </p>
         <div className="flex h-11 flex-wrap items-center gap-x-8 gap-y-2">

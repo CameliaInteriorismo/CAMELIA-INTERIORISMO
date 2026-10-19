@@ -190,7 +190,7 @@ export function ProjectPhases({
             "completo" y parecía un salto puesto a mano. A 56rem cabe de una
             vez, sin irse al ancho completo del contenedor. */}
         {introText && (
-          <p className="text-primary/80 mt-content max-w-4xl text-sm leading-relaxed">
+          <p className="text-primary mt-content max-w-4xl text-sm leading-relaxed">
             <Multiline text={introText} />
           </p>
         )}
@@ -376,7 +376,7 @@ export function ProjectPhases({
                       <h3
                         className={cn(
                           "font-title text-2xl uppercase",
-                          stackedOpen ? "text-background/40" : "text-primary/25",
+                          stackedOpen ? "text-auxiliary" : "text-auxiliary",
                         )}
                       >
                         FASE {String(index + 1).padStart(2, "0")}. {phase.title}
@@ -384,7 +384,7 @@ export function ProjectPhases({
                       <div
                         className={cn(
                           "mt-md space-y-md text-sm leading-relaxed",
-                          stackedOpen ? "text-background/90" : "text-primary/75",
+                          stackedOpen ? "text-background" : "text-primary",
                         )}
                       >
                         {(phase.longDescription ?? []).map((paragraph, i) => (

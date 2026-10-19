@@ -17,13 +17,13 @@ export function PlaceholderImage({
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-[repeating-linear-gradient(135deg,transparent,transparent_10px,rgba(49,3,4,0.06)_10px,rgba(49,3,4,0.06)_11px)]",
+        "relative overflow-hidden bg-[repeating-linear-gradient(135deg,transparent,transparent_10px,rgba(63,14,26,0.06)_10px,rgba(63,14,26,0.06)_11px)]",
         className,
       )}
       style={{ aspectRatio }}
     >
       {process.env.NODE_ENV !== "production" && (
-        <span className="bg-primary/80 text-background absolute bottom-2 left-2 rounded px-2 py-1 text-[10px] tracking-wide">
+        <span className="bg-primary text-background absolute bottom-2 left-2 rounded px-2 py-1 text-[10px] tracking-wide">
           {/* TODO(asset): sustituir por la imagen real — ver Diseño/ */}
           {label}
         </span>

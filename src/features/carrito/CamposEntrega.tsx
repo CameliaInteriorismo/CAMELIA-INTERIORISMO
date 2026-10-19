@@ -73,14 +73,14 @@ function PickupInfo({
       <PinIcon className="text-primary mt-1 h-4 w-4 shrink-0" />
       <div>
         <p className="text-primary text-base">{copy.studioName}</p>
-        <div className="text-primary/75 mt-2 space-y-1 text-sm">
+        <div className="text-primary mt-2 space-y-1 text-sm">
           {contact.addressLines.map((line) => (
             <p key={line}>{line}</p>
           ))}
           <p>{copy.studioHours}</p>
         </div>
         {copy.studioNote && (
-          <p className="text-primary/75 mt-2 text-sm">{copy.studioNote}</p>
+          <p className="text-primary mt-2 text-sm">{copy.studioNote}</p>
         )}
         <a
           href={directions?.href || contact.mapsUrl}
@@ -219,7 +219,7 @@ export function CamposEntrega({
                     error={errors.province?.message}
                     {...register("province")}
                   />
-                  <p className="text-primary/60 text-xs">
+                  <p className="text-primary text-xs">
                     {copy.shippingNote ??
                       "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
                   </p>

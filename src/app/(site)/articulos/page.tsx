@@ -46,7 +46,7 @@ export default async function ArticulosPage() {
           <h1 className="font-title text-primary text-4xl md:text-5xl">
             {TITULO}
           </h1>
-          <p className="text-primary/80 mt-content max-w-[40rem] text-sm leading-relaxed">
+          <p className="text-primary mt-content max-w-[40rem] text-sm leading-relaxed">
             {ENTRADILLA}
           </p>
         </Container>
@@ -56,7 +56,7 @@ export default async function ArticulosPage() {
       ) : (
         <section className="pt-section">
           <Container>
-            <p className="text-primary/70 text-sm">Muy pronto, el primero.</p>
+            <p className="text-primary text-sm">Muy pronto, el primero.</p>
           </Container>
         </section>
       )}

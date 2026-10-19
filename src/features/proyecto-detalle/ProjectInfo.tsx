@@ -21,8 +21,8 @@ function fitOneLine(el: HTMLElement | null): number | null {
 }
 
 const labelClass = "font-title text-primary uppercase tracking-[0.05em]";
-const valueClass = "text-primary/75";
-const dividerClass = "text-primary/40";
+const valueClass = "text-primary";
+const dividerClass = "text-auxiliary";
 
 export function ProjectInfo({
   year,

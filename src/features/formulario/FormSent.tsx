@@ -71,7 +71,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
               className="mt-block mx-auto h-6 w-auto"
             />
 
-            <p className="text-secondary/90 mt-block text-sm leading-relaxed">
+            <p className="text-secondary mt-block text-sm leading-relaxed">
               {content?.text}
             </p>
 
@@ -92,7 +92,7 @@ export function FormSent({ content }: { content?: ThanksContent }) {
             items={row.items}
             duration={row.duration}
             reverse={row.reverse}
-            className="text-secondary/20 font-title text-4xl md:text-6xl"
+            className="font-title text-4xl text-transparent [-webkit-text-stroke:1px_var(--color-secondary)] md:text-6xl"
             separator={
               <span aria-hidden className="text-2xl">
                 ·

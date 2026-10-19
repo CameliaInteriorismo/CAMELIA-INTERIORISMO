@@ -14,7 +14,7 @@ function CardAction({ href, label }: { href: string; label: string }) {
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="text-primary hover:text-primary/60 mt-auto inline-flex items-center gap-2 text-sm transition-colors duration-300"
+      className="text-primary hover:text-secondary mt-auto inline-flex items-center gap-2 text-sm transition-colors duration-300"
     >
       {label}
       <ArrowRightIcon className="h-3 w-3" />
@@ -62,7 +62,7 @@ export function ContactCards({
       <Container>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <Card title={byKind.email?.title ?? ""}>
-            <p className="text-primary/75 text-sm">{contact.email}</p>
+            <p className="text-primary text-sm">{contact.email}</p>
             <CardAction
               href={`mailto:${contact.email}`}
               label={byKind.email?.actionLabel ?? ""}
@@ -70,7 +70,7 @@ export function ContactCards({
           </Card>
 
           <Card title={byKind.phone?.title ?? ""}>
-            <p className="text-primary/75 text-sm">{contact.phone}</p>
+            <p className="text-primary text-sm">{contact.phone}</p>
             <CardAction
               href={contact.phoneHref}
               label={byKind.phone?.actionLabel ?? ""}
@@ -78,7 +78,7 @@ export function ContactCards({
           </Card>
 
           <Card title={byKind.address?.title ?? ""}>
-            <div className="text-primary/75 space-y-1 text-sm">
+            <div className="text-primary space-y-1 text-sm">
               {contact.addressLines.map((line) => (
                 <p key={line}>{line}</p>
               ))}

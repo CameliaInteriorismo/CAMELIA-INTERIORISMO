@@ -37,7 +37,7 @@ export function Reasons({
                 {reason.title}
               </h3>
               {reason.text && (
-                <p className="text-primary/80 mt-sm text-sm leading-relaxed">
+                <p className="text-primary mt-sm text-sm leading-relaxed">
                   {reason.text}
                 </p>
               )}

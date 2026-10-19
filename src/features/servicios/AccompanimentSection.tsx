@@ -66,7 +66,7 @@ export function AccompanimentSection({
             {/* Un escalón más grande (24px) para que gane peso sin acercarse
                 al h2 de 36px que la encabeza. */}
             <h3 className="font-title text-primary text-2xl">{subtitle}</h3>
-            <p className="text-primary/75 mt-md text-sm leading-relaxed">
+            <p className="text-primary mt-md text-sm leading-relaxed">
               {text}
             </p>
 

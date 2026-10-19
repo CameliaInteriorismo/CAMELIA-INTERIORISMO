@@ -62,7 +62,7 @@ export function FinishSwatches({
 
   return (
     <div className={cn("text-center", className)}>
-      {active && <p className="text-primary/70 mb-3 text-xs">{active.name}</p>}
+      {active && <p className="text-primary mb-3 text-xs">{active.name}</p>}
       <div className="flex items-center justify-center gap-4">
         {finishes.map((finish, index) => (
           <FinishSwatch
