@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Hero } from "@/features/home/Hero";
 import { ServiceTabs, type HomeService } from "@/features/home/ServiceTabs";
+import { Reasons, type Reason } from "@/features/home/Reasons";
 import { DetailGrid, type FeaturedProject } from "@/features/home/DetailGrid";
+import { TeamIntro, type TeamIntroData } from "@/features/home/TeamIntro";
 import { Testimonials, type Testimonial } from "@/features/home/Testimonials";
 import { CtaBanner } from "@/features/home/CtaBanner";
 import { PartnerLogos, type Partner } from "@/features/home/PartnerLogos";
@@ -21,6 +23,10 @@ type HomePage = {
   servicesTitle?: string;
   servicesCta?: LinkData;
   services?: HomeService[];
+  reasonsTitle?: string;
+  reasons?: Reason[];
+  reasonsCta?: LinkData;
+  team?: TeamIntroData;
   detailTitle?: string;
   featuredProjects?: FeaturedProject[];
   testimonialsTitle?: string;
@@ -82,10 +88,16 @@ export default async function Home() {
         title={page?.servicesTitle}
         cta={page?.servicesCta}
       />
+      <Reasons
+        reasons={page?.reasons ?? []}
+        title={page?.reasonsTitle}
+        cta={page?.reasonsCta}
+      />
       <DetailGrid
         projects={page?.featuredProjects ?? []}
         title={page?.detailTitle}
       />
+      <TeamIntro team={page?.team} />
       <Testimonials
         testimonials={page?.testimonials ?? []}
         title={page?.testimonialsTitle}

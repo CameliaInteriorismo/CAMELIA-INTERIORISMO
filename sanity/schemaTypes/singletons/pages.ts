@@ -106,6 +106,62 @@ export const homePage = defineType({
       group: "content",
     }),
     defineField({
+      name: "reasonsTitle",
+      title: "Título de «Por qué Camelia»",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "reasons",
+      title: "Por qué Camelia",
+      type: "array",
+      group: "content",
+      description:
+        "Los motivos que van bajo los servicios, en columnas. Lo que nos diferencia, no lo que hacemos: eso ya lo cuentan los servicios. Si se deja vacío, el bloque no aparece.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "reason",
+          fields: [
+            defineField({
+              name: "title",
+              title: "Título",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "text",
+              title: "Texto",
+              type: "text",
+              rows: 3,
+            }),
+          ],
+          preview: { select: { title: "title", subtitle: "text" } },
+        }),
+      ],
+      validation: (rule) => rule.max(3),
+    }),
+    defineField({
+      name: "reasonsCta",
+      title: "Botón de «Por qué Camelia»",
+      type: "link",
+      group: "content",
+    }),
+    defineField({
+      name: "team",
+      title: "Quiénes somos",
+      type: "object",
+      group: "content",
+      description:
+        "La foto de Laura y Adrián con dos líneas. Va antes de las reseñas, que los nombran a los dos. Sin foto, el bloque no aparece.",
+      fields: [
+        defineField({ name: "title", title: "Título", type: "string" }),
+        defineField({ name: "text", title: "Texto", type: "text", rows: 3 }),
+        defineField({ name: "image", title: "Foto", type: "imageWithAlt" }),
+        defineField({ name: "button", title: "Botón", type: "link" }),
+      ],
+    }),
+    defineField({
       name: "detailTitle",
       title: "Título de la cuadrícula de detalles",
       type: "string",

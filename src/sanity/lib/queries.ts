@@ -226,6 +226,10 @@ export const HOME_PAGE_QUERY = groq`
       _id, title, shortDescription,
       "image": homeImage ${IMAGE}
     },
+    reasonsTitle,
+    reasons[] { _key, title, text },
+    reasonsCta,
+    team { title, text, button, image ${IMAGE} },
     detailTitle,
     // El nombre y el enlace salen del proyecto; la foto es propia de la Home.
     // Los destacados salen solos de los proyectos marcados como tales: la
