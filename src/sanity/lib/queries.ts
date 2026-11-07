@@ -127,6 +127,7 @@ export const PRODUCTS_QUERY = groq`
     finishes[] { _key, name, color, images[] ${IMAGE} },
     "hasSizes": count(sizes) > 0,
     priceWithoutVat,
+    badge,
     // Lo más caro que se puede pedir: la opción más cara más el extra más caro.
     "priceMax": math::max(sizes[extra != true].price) + coalesce(math::max(sizes[extra == true].price), 0)
   }
@@ -145,6 +146,7 @@ export const PRODUCT_QUERY = groq`
     available,
     description,
     notice,
+    badge,
     optionsNote,
     priceWithoutVat,
     "category": category->title,

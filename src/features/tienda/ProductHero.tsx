@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { FinishSwatch } from "@/features/tienda/FinishSwatches";
+import { Etiqueta } from "@/features/tienda/ProductCard";
 import { ProductInfo } from "@/features/tienda/ProductInfo";
 import type { Product, ShopCopy } from "@/features/tienda/types";
 import { sinIva } from "@/features/tienda/precio";
@@ -112,6 +113,7 @@ export function ProductHero({
                 rejilla lo sigue fotograma a fotograma—. `object-cover` recorta,
                 nunca deforma. En móvil, apiladas, conserva su 17/25. */}
             <div className="relative aspect-[17/25] w-full overflow-hidden lg:aspect-auto lg:h-full">
+              {product.badge && <Etiqueta texto={product.badge} />}
               {activeImage ? (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div

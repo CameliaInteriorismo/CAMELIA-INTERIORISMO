@@ -54,6 +54,8 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           />
         )}
 
+        {product.badge && <Etiqueta texto={product.badge} />}
+
         {/* Finishes reveal on hover — centered, generously spaced, and
             selecting one swaps the photo above immediately. */}
         {product.finishes && product.finishes.length > 0 && (
@@ -101,4 +103,13 @@ function rango(desde: number, hasta?: number | null) {
   return hasta && hasta > desde
     ? `${formatPrice(desde)} a ${formatPrice(hasta)}`
     : formatPrice(desde);
+}
+
+/** La etiqueta de encima de la foto (los árboles: «Unidades limitadas…»). */
+export function Etiqueta({ texto }: { texto: string }) {
+  return (
+    <span className="bg-background text-primary pointer-events-none absolute top-3 left-3 z-10 max-w-[calc(100%-1.5rem)] px-3 py-1.5 text-[0.65rem] tracking-wide uppercase">
+      {texto}
+    </span>
+  );
 }

@@ -42,6 +42,8 @@ export type ProductCardData = {
   priceWithoutVat?: boolean;
   /** Lo más caro que se puede pedir en la ficha, extras incluidos. */
   priceMax?: number;
+  /** Etiqueta encima de la foto («Unidades limitadas · Por tiempo limitado»). */
+  badge?: string;
   /** Las trae el carrito para poner a cada línea el precio de su medida. */
   sizes?: Size[];
 };

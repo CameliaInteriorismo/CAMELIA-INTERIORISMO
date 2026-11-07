@@ -78,6 +78,15 @@ export const product = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "badge",
+      title: "Etiqueta sobre la foto",
+      type: "string",
+      group: "content",
+      description:
+        "Va encima de la foto, en el listado y en la ficha. Por ejemplo: " +
+        "«Unidades limitadas · Por tiempo limitado». Vacía, no sale.",
+    }),
+    defineField({
       name: "notice",
       title: "Aviso",
       type: "string",
