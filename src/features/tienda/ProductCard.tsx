@@ -87,7 +87,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             + IVA
           </p>
           <p className="text-primary text-xs italic">
-            {rango(product.price, product.priceMax)} IVA incluido
+            ({rango(product.price, product.priceMax)} IVA incluido)
           </p>
         </div>
       )}

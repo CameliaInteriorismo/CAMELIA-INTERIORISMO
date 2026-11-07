@@ -171,7 +171,7 @@ export function ProductHero({
                         total con IVA va siempre, justo debajo. */}
                     <p className="text-primary text-xl">{importe(price)}</p>
                     <p className="text-primary text-xs italic">
-                      {formatPrice(price)} IVA incluido
+                      ({formatPrice(price)} IVA incluido)
                     </p>
                   </>
                 ) : (
