@@ -108,7 +108,7 @@ function rango(desde: number, hasta?: number | null) {
 /** La etiqueta de encima de la foto (los árboles: «Unidades limitadas…»). */
 export function Etiqueta({ texto }: { texto: string }) {
   return (
-    <span className="bg-background text-primary pointer-events-none absolute top-3 left-3 z-10 max-w-[calc(100%-1.5rem)] px-3 py-1.5 text-[0.65rem] tracking-wide uppercase">
+    <span className="bg-secondary text-background pointer-events-none absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] px-3 py-1.5 text-[0.65rem] tracking-wide uppercase">
       {texto}
     </span>
   );

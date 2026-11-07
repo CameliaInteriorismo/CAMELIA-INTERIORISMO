@@ -113,7 +113,6 @@ export function ProductHero({
                 rejilla lo sigue fotograma a fotograma—. `object-cover` recorta,
                 nunca deforma. En móvil, apiladas, conserva su 17/25. */}
             <div className="relative aspect-[17/25] w-full overflow-hidden lg:aspect-auto lg:h-full">
-              {product.badge && <Etiqueta texto={product.badge} />}
               {activeImage ? (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
@@ -144,6 +143,7 @@ export function ProductHero({
                   className="w-full lg:h-full"
                 />
               )}
+              {product.badge && <Etiqueta texto={product.badge} />}
             </div>
           </div>
 
