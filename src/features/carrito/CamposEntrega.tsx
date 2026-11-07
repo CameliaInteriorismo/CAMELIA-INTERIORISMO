@@ -221,7 +221,7 @@ export function CamposEntrega({
                   />
                   <p className="text-primary text-xs">
                     {copy.shippingNote ??
-                      "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
+                      "*El transporte es a pie de calle, sin subida a la vivienda ni montaje. Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
                   </p>
                 </div>
               ) : (

@@ -7,7 +7,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { FinishSwatches } from "@/features/tienda/FinishSwatches";
 import type { ProductCardData } from "@/features/tienda/types";
+import { sinIva } from "@/features/tienda/precio";
 import { imageProps } from "@/sanity/lib/image";
+import { formatPrice } from "@/utils/formatPrice";
 
 export function ProductCard({ product }: { product: ProductCardData }) {
   const [finishIndex, setFinishIndex] = useState(0);
@@ -67,13 +69,36 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
       <div className="mt-3 flex items-baseline justify-between gap-4">
         <h3 className="font-title text-primary text-lg">{product.name}</h3>
-        {product.price !== undefined && (
-          <p className="text-primary shrink-0 text-base">{product.price} €</p>
+        {product.price != null && !product.priceWithoutVat && (
+          <p className="text-primary shrink-0 text-base">
+            {product.hasSizes ? "Desde " : ""}
+            {product.price} €
+          </p>
         )}
       </div>
+      {/* Los servicios (los árboles): de cuánto a cuánto sin IVA, y debajo
+          lo mismo con IVA, que es el precio final que hay que enseñar. */}
+      {product.price != null && product.priceWithoutVat && (
+        <div className="mt-0.5">
+          <p className="text-primary text-base">
+            {rango(sinIva(product.price), product.priceMax && sinIva(product.priceMax))}{" "}
+            + IVA
+          </p>
+          <p className="text-primary text-xs italic">
+            {rango(product.price, product.priceMax)} IVA incluido
+          </p>
+        </div>
+      )}
       {product.category && (
         <p className="text-primary mt-0.5 text-xs">{product.category}</p>
       )}
     </Link>
   );
+}
+
+/** «245 € a 655 €», o un solo importe si no hay más caro. */
+function rango(desde: number, hasta?: number | null) {
+  return hasta && hasta > desde
+    ? `${formatPrice(desde)} a ${formatPrice(hasta)}`
+    : formatPrice(desde);
 }

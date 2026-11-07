@@ -14,7 +14,7 @@ import type { TextosCorreo } from "@/lib/email/textos";
 import * as producto from "@/lib/email/productRequest";
 import * as proyecto from "@/lib/email/projectRequest";
 import { revisarGuard } from "@/lib/security/formGuard";
-import { avisarANora } from "@/lib/requests/nora";
+import { avisarANora, avisarANoraDelPedido } from "@/lib/requests/nora";
 
 /**
  * Las dos acciones que envían los correos de los formularios.
@@ -44,6 +44,7 @@ const articulo = z.object({
   title: noVacio,
   slug: noVacio,
   finish: z.string().trim().optional(),
+  size: z.string().trim().max(120).optional(),
   quantity: z.number().int().positive().max(999),
   notes: z.string().trim().max(2000).optional(),
 });
@@ -159,6 +160,9 @@ export async function enviarSolicitudProducto(
       producto.emailCliente(solicitud, contacto, textos.productoCliente),
       datos.email,
     );
+
+    // Y a Nora, como presupuesto para revisar, sin hacer esperar al cliente.
+    after(() => avisarANoraDelPedido(datos));
 
     return { ok: true };
   } catch (error) {

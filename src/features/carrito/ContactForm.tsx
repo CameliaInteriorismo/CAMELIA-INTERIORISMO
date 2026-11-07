@@ -144,6 +144,7 @@ export function ContactForm({
         title: item.title,
         slug: item.slug,
         finish: item.finish,
+        size: item.size,
         quantity: item.quantity,
         notes: item.notes,
       })),

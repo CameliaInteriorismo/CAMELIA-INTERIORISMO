@@ -6,6 +6,8 @@ export interface CartItem {
   slug: string;
   title: string;
   finish?: string;
+  /** La medida elegida, si la pieza tiene varias. */
+  size?: string;
   image?: string;
   quantity: number;
   notes?: string;

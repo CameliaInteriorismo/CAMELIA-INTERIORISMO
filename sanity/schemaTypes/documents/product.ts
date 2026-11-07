@@ -55,6 +55,48 @@ export const product = defineType({
       validation: (rule) => rule.min(0),
     }),
     defineField({
+      name: "sizes",
+      title: "Medidas",
+      type: "array",
+      group: "content",
+      description:
+        "Solo si la pieza se hace en varias medidas (por ejemplo, un cabecero " +
+        "para cada ancho de cama). Cada medida lleva su precio; la primera es " +
+        "la que sale elegida. Con medidas, el listado enseña «Desde» y el " +
+        "precio de arriba: pon ahí el de la medida más barata.",
+      of: [defineArrayMember({ type: "productSize" })],
+    }),
+    defineField({
+      name: "priceWithoutVat",
+      title: "Precio sin IVA delante",
+      type: "boolean",
+      group: "content",
+      description:
+        "Para los servicios, como los árboles de Navidad: la ficha enseña " +
+        "«245 € + IVA» y debajo el total con IVA. Los precios se siguen " +
+        "escribiendo con IVA.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "notice",
+      title: "Aviso",
+      type: "string",
+      group: "content",
+      description:
+        "Una línea encima del precio. Por ejemplo: «Reservas hasta el 25 de " +
+        "noviembre · Unidades limitadas».",
+    }),
+    defineField({
+      name: "optionsNote",
+      title: "Nota de las opciones",
+      type: "text",
+      rows: 2,
+      group: "content",
+      description:
+        "Va debajo de los desplegables para explicar cómo elegir (por " +
+        "ejemplo, cuándo decorar a 1 cara o a 2 caras).",
+    }),
+    defineField({
       name: "available",
       title: "Disponible",
       type: "boolean",
@@ -214,6 +256,65 @@ export const productFinish = defineType({
   ],
   preview: {
     select: { title: "name", subtitle: "color", media: "images.0" },
+  },
+});
+
+/**
+ * Una medida de la pieza con su precio, para lo que se fabrica en varios
+ * tamaños. El nombre es lo que lee el cliente («Cama de 150 · 170 × 120 cm»)
+ * y lo que llega en el correo de la solicitud.
+ */
+export const productSize = defineType({
+  name: "productSize",
+  title: "Medida",
+  type: "object",
+  fields: [
+    defineField({
+      name: "name",
+      title: "Nombre",
+      type: "string",
+      description: "Por ejemplo: Cama de 150 · 170 × 120 cm",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "price",
+      title: "Precio (€)",
+      type: "number",
+      description: "Vacío: la ficha no enseña importe con esta medida.",
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: "altura",
+      title: "Altura",
+      type: "string",
+      description:
+        "Solo para el configurador (los árboles). Si las medidas llevan " +
+        "altura y decoración, la ficha enseña dos desplegables, «Altura» y " +
+        "«Decoración», en vez de «Medida». Escribe la altura igual en todas " +
+        "las que la comparten.",
+    }),
+    defineField({
+      name: "caras",
+      title: "Decoración",
+      type: "string",
+      description: "Por ejemplo: «A 1 cara · en una esquina».",
+    }),
+    defineField({
+      name: "extra",
+      title: "Es un extra",
+      type: "boolean",
+      description:
+        "Un añadido que se marca con una casilla (las luces del árbol) y va " +
+        "en su propia línea de la solicitud. Ponle la misma altura que el " +
+        "árbol al que acompaña.",
+    }),
+  ],
+  preview: {
+    select: { title: "name", price: "price" },
+    prepare: ({ title, price }) => ({
+      title,
+      subtitle: price != null ? `${price} €` : "sin precio",
+    }),
   },
 });
 

@@ -10,7 +10,9 @@ import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { FinishSwatch } from "@/features/tienda/FinishSwatches";
 import { ProductInfo } from "@/features/tienda/ProductInfo";
 import type { Product, ShopCopy } from "@/features/tienda/types";
+import { sinIva } from "@/features/tienda/precio";
 import { imageProps } from "@/sanity/lib/image";
+import { formatPrice } from "@/utils/formatPrice";
 import { useCartStore } from "@/stores/cartStore";
 
 export function ProductHero({
@@ -23,22 +25,69 @@ export function ProductHero({
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [finishIndex, setFinishIndex] = useState(0);
+  const [sizeIndex, setSizeIndex] = useState(0);
   const addItem = useCartStore((state) => state.addItem);
 
+  // Configurador (los árboles): si las medidas llevan altura y decoración, se
+  // eligen con dos desplegables, y los extras (las luces) con una casilla.
+  // Cada combinación sigue siendo una «medida» con su precio, así el carrito,
+  // el correo y Nora la reciben igual que la de un cabecero.
+  const todas = product.sizes ?? [];
+  const configurador = todas.some((s) => s.altura && s.caras);
+  const opciones = todas.filter((s) => !s.extra);
+  const alturas = unicos(opciones.map((s) => s.altura));
+  const decoraciones = unicos(opciones.map((s) => s.caras));
+  const [altura, setAltura] = useState(alturas[0]);
+  const [caras, setCaras] = useState(decoraciones[0]);
+  const [conExtra, setConExtra] = useState(false);
+
   const finish = product.finishes?.[finishIndex];
+  // Con medidas, el precio es el de la medida elegida (la primera al entrar).
+  const size = configurador
+    ? opciones.find((s) => s.altura === altura && s.caras === caras)
+    : product.sizes?.[sizeIndex];
+  const extra = configurador
+    ? todas.find((s) => s.extra && s.altura === altura)
+    : undefined;
+  const sumaExtra = conExtra && extra?.price != null ? extra.price : 0;
+  const base = size ? size.price : product.price;
+  const price = base != null ? base + sumaExtra : undefined;
   // Un acabado sin foto propia mantiene la imagen base de la pieza.
   const activeImage = imageProps(finish?.images?.[0] ?? product.image);
 
+  /** «245 € + IVA» en los servicios; «245 €» en lo demás. */
+  function importe(conIva: number) {
+    return product.priceWithoutVat
+      ? `${formatPrice(sinIva(conIva))} + IVA`
+      : formatPrice(conIva);
+  }
+
   function handleAddToCart() {
     addItem({
-      id: product.slug,
+      // Una línea por combinación: el mismo cabecero en dos medidas o en dos
+      // acabados son dos líneas, no una con la cantidad sumada.
+      id: [product.slug, finish?.name, size?.name].filter(Boolean).join("|"),
       productId: product.slug,
       slug: product.slug,
       title: product.name,
       finish: finish?.name,
+      size: size?.name,
       image: activeImage?.src,
       quantity,
     });
+    // El extra (las luces) en su propia línea: se presupuesta y se factura
+    // aparte, y en Nora es otro artículo.
+    if (conExtra && extra) {
+      addItem({
+        id: [product.slug, extra.name].join("|"),
+        productId: product.slug,
+        slug: product.slug,
+        title: product.name,
+        size: extra.name,
+        image: activeImage?.src,
+        quantity,
+      });
+    }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -106,12 +155,31 @@ export function ProductHero({
               {product.name}
             </h1>
 
-            {product.price !== undefined && (
+            {product.notice && (
+              <p className="text-secondary mt-sm text-xs tracking-wide uppercase">
+                {product.notice}
+              </p>
+            )}
+
+            {price != null && (
               <div className="mt-sm">
-                <p className="text-primary text-xl">{product.price} €</p>
-                <p className="text-primary text-xs italic">
-                  {copy.taxNote ?? "IVA incluido"}
-                </p>
+                {product.priceWithoutVat ? (
+                  <>
+                    {/* A un particular hay que enseñarle el precio final: el
+                        total con IVA va siempre, justo debajo. */}
+                    <p className="text-primary text-xl">{importe(price)}</p>
+                    <p className="text-primary text-xs italic">
+                      {formatPrice(price)} IVA incluido
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-primary text-xl">{price} €</p>
+                    <p className="text-primary text-xs italic">
+                      {copy.taxNote ?? "IVA incluido"}
+                    </p>
+                  </>
+                )}
               </div>
             )}
 
@@ -119,6 +187,76 @@ export function ProductHero({
               <p className="text-primary mt-sm text-sm leading-relaxed">
                 {product.description}
               </p>
+            )}
+
+            {/* Desplegable y no una fila de botones: los nombres son largos
+                («Cama de 150 · 170 × 120 cm») y cinco botones apilados
+                alargaban la columna, y con ella la foto, que al seguir su
+                alto se recortaba hasta dejar el cabecero cortado. */}
+            {configurador && (
+              <div className="mt-sm space-y-4">
+                <Desplegable
+                  id="altura"
+                  etiqueta="Altura"
+                  valor={altura}
+                  opciones={alturas}
+                  onChange={setAltura}
+                />
+                <Desplegable
+                  id="decoracion"
+                  etiqueta="Decoración"
+                  valor={caras}
+                  opciones={decoraciones}
+                  onChange={setCaras}
+                />
+                {product.optionsNote && (
+                  <p className="text-primary max-w-[24rem] text-xs leading-relaxed">
+                    {product.optionsNote}
+                  </p>
+                )}
+                {extra && (
+                  <label className="text-primary flex max-w-[24rem] cursor-pointer items-start gap-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={conExtra}
+                      onChange={(event) => setConExtra(event.target.checked)}
+                      className="accent-primary mt-0.5 h-4 w-4 shrink-0"
+                    />
+                    <span>
+                      Añadir {extra.name.charAt(0).toLowerCase() + extra.name.slice(1)}
+                      {extra.price != null && (
+                        <span className="text-primary/80">
+                          {" "}
+                          · {importe(extra.price)}
+                        </span>
+                      )}
+                    </span>
+                  </label>
+                )}
+              </div>
+            )}
+
+            {!configurador && product.sizes && product.sizes.length > 0 && (
+              <div className="mt-sm">
+                <label
+                  htmlFor="medida"
+                  className="text-primary mb-2 block text-sm"
+                >
+                  Medida
+                </label>
+                <select
+                  id="medida"
+                  value={sizeIndex}
+                  onChange={(event) => setSizeIndex(Number(event.target.value))}
+                  className="border-primary/30 text-primary bg-background h-11 w-full max-w-[24rem] border px-4 text-sm"
+                >
+                  {product.sizes.map((s, index) => (
+                    <option key={s._key ?? s.name} value={index}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
 
             {/* Circle left, name to its right, one row per finish —
@@ -159,5 +297,45 @@ export function ProductHero({
         </Grid>
       </Container>
     </section>
+  );
+}
+
+/** Los valores distintos, en el orden en que salen en Sanity. */
+function unicos(valores: (string | undefined)[]): string[] {
+  return [...new Set(valores.filter((v): v is string => Boolean(v)))];
+}
+
+/** Un desplegable del configurador, con el mismo aspecto que el de «Medida». */
+function Desplegable({
+  id,
+  etiqueta,
+  valor,
+  opciones,
+  onChange,
+}: {
+  id: string;
+  etiqueta: string;
+  valor?: string;
+  opciones: string[];
+  onChange: (valor: string) => void;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="text-primary mb-2 block text-sm">
+        {etiqueta}
+      </label>
+      <select
+        id={id}
+        value={valor}
+        onChange={(event) => onChange(event.target.value)}
+        className="border-primary/30 text-primary bg-background h-11 w-full max-w-[24rem] border px-4 text-sm"
+      >
+        {opciones.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

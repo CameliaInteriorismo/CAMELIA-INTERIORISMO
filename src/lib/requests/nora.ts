@@ -39,3 +39,38 @@ export async function avisarANora(answers: Record<string, string>) {
     console.error("[nora] no se ha podido avisar:", error);
   }
 }
+
+/**
+ * Cada solicitud del carrito entra en Nora como un presupuesto (PT) para
+ * revisar, con sus artículos, medidas y si es envío o recogida (07/11/2026).
+ * Igual que la consulta: es un añadido, el correo a info@ sigue siendo la vía
+ * segura. La dirección es la de las consultas cambiando el final
+ * (`…/api/web/consultas` → `…/api/web/pedidos`), o `NORA_WEB_PEDIDOS_URL`.
+ */
+export async function avisarANoraDelPedido(pedido: Record<string, unknown>) {
+  const base = process.env.NORA_WEB_URL?.trim();
+  const url =
+    process.env.NORA_WEB_PEDIDOS_URL?.trim() ||
+    (base ? base.replace(/\/api\/web\/consultas\/?$/, "/api/web/pedidos") : "");
+  const clave = process.env.NORA_WEB_CLAVE?.trim();
+  if (!url || !clave || url === base) return;
+
+  try {
+    const respuesta = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Nora-Web": clave },
+      body: JSON.stringify(pedido),
+      signal: AbortSignal.timeout(ESPERA_MS),
+      cache: "no-store",
+    });
+    if (!respuesta.ok) {
+      console.error(
+        "[nora] el pedido no ha entrado:",
+        respuesta.status,
+        (await respuesta.text()).slice(0, 200),
+      );
+    }
+  } catch (error) {
+    console.error("[nora] no se ha podido avisar del pedido:", error);
+  }
+}

@@ -9,6 +9,7 @@ import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import type { ProductCardData } from "@/features/tienda/types";
 import { useCartStore } from "@/stores/cartStore";
 import type { CartItem, DeliveryMode } from "@/types/cart";
+import { precioUnitario } from "@/features/tienda/precio";
 import { formatPrice } from "@/utils/formatPrice";
 
 /** Los datos ya validados en el formulario, a la espera de confirmación. */
@@ -50,6 +51,7 @@ function LineaPedido({
 }) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const updateNotes = useCartStore((state) => state.updateNotes);
+  const unidad = precioUnitario(product, item.size);
 
   return (
     <Grid className="border-primary/15 border-t py-block first:border-t-0 first:pt-0">
@@ -87,12 +89,14 @@ function LineaPedido({
         {/* Pegado al nombre a propósito: son el mismo dato leído en dos
             líneas, no dos datos distintos — el hueco grande va después,
             antes de cantidad/observaciones. */}
-        {item.finish && (
-          <p className="text-primary mt-1 text-sm">{item.finish}</p>
-        )}
-        {product?.price !== undefined && (
+        {(item.size || item.finish) && (
           <p className="text-primary mt-1 text-sm">
-            {formatPrice(product.price * item.quantity)}{" "}
+            {[item.size, item.finish].filter(Boolean).join(" · ")}
+          </p>
+        )}
+        {unidad !== undefined && (
+          <p className="text-primary mt-1 text-sm">
+            {formatPrice(unidad * item.quantity)}{" "}
             <span className="text-primary text-xs italic">
               IVA incluido
             </span>
@@ -162,14 +166,16 @@ export function OrderReview({
   const conPrecio = items
     .map((item) => ({
       item,
-      product: products.find((p) => p.slug === item.slug),
+      unidad: precioUnitario(
+        products.find((p) => p.slug === item.slug),
+        item.size,
+      ),
     }))
     .filter(
-      (l): l is { item: CartItem; product: ProductCardData } =>
-        l.product?.price !== undefined,
+      (l): l is { item: CartItem; unidad: number } => l.unidad !== undefined,
     );
   const subtotal = conPrecio.reduce(
-    (suma, { item, product }) => suma + product.price! * item.quantity,
+    (suma, { item, unidad }) => suma + unidad * item.quantity,
     0,
   );
   // El subtotal solo se enseña si TODAS las líneas tienen precio: sumar solo
@@ -289,7 +295,7 @@ export function OrderReview({
           {datos.deliveryMode === "domicilio" && (
             <p className="text-primary mt-sm text-xs">
               {shippingNote ??
-                "*Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
+                "*El transporte es a pie de calle, sin subida a la vivienda ni montaje. Una vez recibamos tu solicitud, calcularemos los gastos de envío y te enviaremos el presupuesto completo."}
             </p>
           )}
         </div>

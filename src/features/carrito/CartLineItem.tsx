@@ -5,6 +5,7 @@ import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import type { CartCopy } from "@/features/carrito/types";
 import type { ProductCardData } from "@/features/tienda/types";
 import { useCartStore } from "@/stores/cartStore";
+import { precioUnitario } from "@/features/tienda/precio";
 import { formatPrice } from "@/utils/formatPrice";
 import type { CartItem } from "@/types/cart";
 
@@ -28,6 +29,7 @@ export function CartLineItem({
 }) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const updateNotes = useCartStore((state) => state.updateNotes);
+  const unidad = precioUnitario(product, item.size);
 
   return (
     <Grid>
@@ -55,6 +57,11 @@ export function CartLineItem({
 
       <div className="mt-block col-span-12 md:col-span-7 md:col-start-6 md:mt-0 md:flex md:flex-col md:justify-center">
         <h2 className="font-title text-primary text-2xl">{item.title}</h2>
+        {(item.size || item.finish) && (
+          <p className="text-primary mt-1 text-sm">
+            {[item.size, item.finish].filter(Boolean).join(" · ")}
+          </p>
+        )}
 
         {product?.description && (
           <p className="text-primary mt-sm text-sm leading-relaxed">
@@ -62,9 +69,9 @@ export function CartLineItem({
           </p>
         )}
 
-        {product?.price !== undefined && (
+        {unidad !== undefined && (
           <p className="text-primary mt-sm text-base">
-            {formatPrice(product.price * item.quantity)}{" "}
+            {formatPrice(unidad * item.quantity)}{" "}
             <span className="text-primary text-xs italic">
               {copy.taxNote ?? "IVA incluido"}
             </span>

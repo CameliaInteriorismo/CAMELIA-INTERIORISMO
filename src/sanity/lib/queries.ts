@@ -124,7 +124,11 @@ export const PRODUCTS_QUERY = groq`
     // Los acabados los necesita la tarjeta del listado: al pasar el cursor
     // asoma su muestrario y elegir uno cambia la foto sin entrar en la ficha.
     // El componente ya lo hacía; lo que faltaba era el dato.
-    finishes[] { _key, name, color, images[] ${IMAGE} }
+    finishes[] { _key, name, color, images[] ${IMAGE} },
+    "hasSizes": count(sizes) > 0,
+    priceWithoutVat,
+    // Lo más caro que se puede pedir: la opción más cara más el extra más caro.
+    "priceMax": math::max(sizes[extra != true].price) + coalesce(math::max(sizes[extra == true].price), 0)
   }
 `;
 
@@ -140,10 +144,14 @@ export const PRODUCT_QUERY = groq`
     price,
     available,
     description,
+    notice,
+    optionsNote,
+    priceWithoutVat,
     "category": category->title,
     image ${IMAGE},
     gallery[] ${IMAGE},
     finishes[] { _key, name, color, images[] ${IMAGE} },
+    sizes[] { _key, name, price, altura, caras, extra },
     details,
     seo ${SEO},
     // Piezas de la misma categoría, sin incluirse a sí misma.
@@ -161,7 +169,8 @@ export const PRODUCT_QUERY = groq`
  */
 export const CART_PRODUCTS_QUERY = groq`
   *[_type == "product" && defined(slug.current)] {
-    _id, name, "slug": slug.current, price, description, image ${IMAGE}
+    _id, name, "slug": slug.current, price, description, image ${IMAGE},
+    sizes[] { _key, name, price, altura, caras, extra }
   }
 `;
 

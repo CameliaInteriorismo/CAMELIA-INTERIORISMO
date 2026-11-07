@@ -21,6 +21,7 @@ export type ArticuloSolicitado = {
   title: string;
   slug: string;
   finish?: string;
+  size?: string;
   quantity: number;
   notes?: string;
 };
@@ -45,9 +46,10 @@ const ENTREGA = {
   recogida: "Recogida en el estudio",
 } as const;
 
-/** "Acabado: Roble · Cantidad: 2". El acabado se cae si la pieza no tiene. */
+/** "Medida: … · Acabado: Roble · Cantidad: 2". Lo que la pieza no tiene se cae. */
 function detalle(item: ArticuloSolicitado) {
   return [
+    item.size ? `Medida: ${esc(item.size)}` : "",
     item.finish ? `Acabado: ${esc(item.finish)}` : "",
     `Cantidad: ${esc(String(item.quantity))}`,
   ]
@@ -72,6 +74,7 @@ function articulosTexto(items: ArticuloSolicitado[]) {
     .map((item) =>
       [
         `- ${item.title}`,
+        item.size ? `  Medida: ${item.size}` : "",
         item.finish ? `  Acabado: ${item.finish}` : "",
         `  Cantidad: ${item.quantity}`,
         item.notes ? `  Nota: ${item.notes}` : "",

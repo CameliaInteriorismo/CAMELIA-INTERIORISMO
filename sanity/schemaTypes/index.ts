@@ -16,7 +16,12 @@ import {
   gallerySingle,
   project,
 } from "./documents/project";
-import { product, productCategory, productFinish } from "./documents/product";
+import {
+  product,
+  productCategory,
+  productFinish,
+  productSize,
+} from "./documents/product";
 import { service } from "./documents/service";
 import { article, articleBody, landingPage } from "./documents/landing";
 import { partner, testimonial } from "./documents/misc";
@@ -90,6 +95,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   galleryBlock,
   product,
   productFinish,
+  productSize,
   productCategory,
   service,
   testimonial,
